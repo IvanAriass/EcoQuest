@@ -11,4 +11,5 @@ sealed interface AuthEvent {
     data object OnGoToRegistro : AuthEvent
     data object OnRegistroExitoso : AuthEvent
     data object OnNavigateToHomeConsumed : AuthEvent
+    data object OnNavigateToLoginConsumed : AuthEvent
 }

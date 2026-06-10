@@ -266,17 +266,17 @@ fun NavGraphBuilder.authNavGraph(
     ) {
         val vm: AuthViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
+
+        LaunchedEffect(uiState.navigateToLogin) {
+            if (uiState.navigateToLogin) {
+                vm.onEvent(AuthEvent.OnNavigateToLoginConsumed)
+                navController.navigate(Routes.Login) { popUpTo<Routes.Register> { inclusive = true } }
+            }
+        }
+
         RegisterScreen(
             uiState = uiState,
-            onEvent = { event ->
-                when (event) {
-                    is AuthEvent.OnRegisterClicked -> {
-                        vm.onEvent(event)
-                        navController.navigate(Routes.Login) { popUpTo<Routes.Register> { inclusive = true } }
-                    }
-                    else -> vm.onEvent(event)
-                }
-            }
+            onEvent = { event -> vm.onEvent(event) }
         )
     }
 }

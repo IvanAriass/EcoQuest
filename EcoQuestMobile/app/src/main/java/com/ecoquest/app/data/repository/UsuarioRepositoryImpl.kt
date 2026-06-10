@@ -28,6 +28,9 @@ class UsuarioRepositoryImpl @Inject constructor(
             entity?.toDomain()
         }
 
+    override suspend fun getByEmailOnce(email: String): Usuario? =
+        usuarioDao.getByEmailOnce(email)?.toDomain()
+
     override suspend fun upsert(usuario: Usuario) = usuarioDao.upsert(usuario.toEntity())
 
     override suspend fun delete(usuario: Usuario) = usuarioDao.delete(usuario.toEntity())

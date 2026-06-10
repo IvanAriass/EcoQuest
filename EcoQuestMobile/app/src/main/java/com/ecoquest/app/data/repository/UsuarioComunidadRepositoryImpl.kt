@@ -1,5 +1,6 @@
 package com.ecoquest.app.data.repository
 
+import com.ecoquest.app.data.local.dao.ComunidadDao
 import com.ecoquest.app.data.local.dao.UsuarioComunidadDao
 import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.mapper.toDomain
@@ -17,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class UsuarioComunidadRepositoryImpl @Inject constructor(
     private val usuarioComunidadDao: UsuarioComunidadDao,
-    private val usuarioDao: UsuarioDao
+    private val usuarioDao: UsuarioDao,
+    private val comunidadDao: ComunidadDao
 ) : UsuarioComunidadRepository {
 
     override fun getMiembrosByComunidad(comunidadId: Long): Flow<List<Usuario>> =
@@ -29,8 +31,8 @@ class UsuarioComunidadRepositoryImpl @Inject constructor(
 
     override fun getComunidadesByUsuario(usuarioId: Long): Flow<List<Comunidad>> {
         return usuarioComunidadDao.getByUsuario(usuarioId).map { relaciones ->
-            relaciones.map { relacion ->
-                com.ecoquest.app.domain.model.Comunidad(id = relacion.comunidadId)
+            relaciones.mapNotNull { relacion ->
+                comunidadDao.getById(relacion.comunidadId).firstOrNull()?.toDomain()
             }
         }
     }

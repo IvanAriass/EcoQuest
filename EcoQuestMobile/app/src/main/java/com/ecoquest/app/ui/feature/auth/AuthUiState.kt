@@ -7,7 +7,7 @@ data class AuthUiState(
     val birthDate: String = "",
     val confirmPassword: String = "",
     val isLoading: Boolean = false,
-    val isLoggedIn: Boolean = false,
     val error: String? = null,
-    val navigateToHome: Boolean = false
+    val navigateToHome: Boolean = false,
+    val navigateToLogin: Boolean = false
 )

@@ -10,6 +10,7 @@ import com.ecoquest.app.domain.model.Usuario
 fun UsuarioEntity.toDomain(): Usuario = Usuario(
     id = id,
     nombreUsuario = nombreUsuario,
+    contrasena = contrasena,
     nombre = nombre,
     apellido = apellido,
     descripcion = descripcion,
@@ -21,6 +22,7 @@ fun UsuarioEntity.toDomain(): Usuario = Usuario(
 fun Usuario.toEntity(): UsuarioEntity = UsuarioEntity(
     id = id,
     nombreUsuario = nombreUsuario,
+    contrasena = contrasena,
     nombre = nombre,
     apellido = apellido,
     descripcion = descripcion,
