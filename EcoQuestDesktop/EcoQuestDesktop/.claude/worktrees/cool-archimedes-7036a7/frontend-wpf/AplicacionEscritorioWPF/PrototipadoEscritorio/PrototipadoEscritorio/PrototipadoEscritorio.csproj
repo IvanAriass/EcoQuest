@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Assets\avatares.png" />
+		<None Remove="Assets\Captura de pantalla 2025-12-04 132052.png" />
+		<None Remove="Assets\comunidad2.jpg" />
+		<None Remove="Assets\comunidad3.jpg" />
+		<None Remove="Assets\comunidad4.jpg" />
+		<None Remove="Assets\comunidad5.jpg" />
+		<None Remove="Assets\comunidad6.jpg" />
+		<None Remove="Assets\EcoTech.jpg" />
+		<None Remove="Assets\Fondo.png" />
+		<None Remove="Assets\mundo.png" />
+		<None Remove="Assets\periodicos.jpg" />
+		<None Remove="Assets\todosunidos.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Assets\logo.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Assets\avatares.png" />
+		<Resource Include="Assets\Captura de pantalla 2025-12-04 132052.png" />
+		<Resource Include="Assets\comunidad2.jpg" />
+		<Resource Include="Assets\comunidad3.jpg" />
+		<Resource Include="Assets\comunidad4.jpg" />
+		<Resource Include="Assets\comunidad5.jpg" />
+		<Resource Include="Assets\comunidad6.jpg" />
+		<Resource Include="Assets\EcoTech.jpg" />
+		<Resource Include="Assets\Fondo.png" />
+		<Resource Include="Assets\mundo.png" />
+		<Resource Include="Assets\periodicos.jpg" />
+		<Resource Include="Assets\todosunidos.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Components\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
+	  <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
+	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.2" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	  <PackageReference Include="RestSharp" Version="113.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+		  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+		<Compile Update="Views\UserControl\Comunidades\EliminarComunidadUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\UserControl\EliminarMarcoUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\UserControl\Usuarios\EliminarUsuarioUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\UserControl\Eventos\EliminarEventoUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\UserControl\Comunidades\RevisarComunidadUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\UserControl\Eventos\RevisarEventoUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+
+</Project>

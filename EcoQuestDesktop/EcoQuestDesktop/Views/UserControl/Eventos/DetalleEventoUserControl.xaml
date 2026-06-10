@@ -1,0 +1,161 @@
+<UserControl
+    x:Class="PrototipadoEscritorio.Views.DetalleEventoUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="560"
+    d:DesignWidth="520"
+    mc:Ignorable="d">
+
+    <Border
+        Width="480"
+        MaxHeight="620"
+        Background="White"
+        BorderBrush="#E0E0E0"
+        BorderThickness="1"
+        CornerRadius="16">
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="16"
+                Opacity="0.25"
+                ShadowDepth="4" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Width="16"
+                Background="{Binding Evento.ColorBorde}"
+                CornerRadius="16,0,0,16" />
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Grid.Row="0"
+                    Background="{Binding Evento.ColorBorde}"
+                    CornerRadius="0,16,0,0">
+                    <StackPanel
+                        Margin="14,10,14,10"
+                        Orientation="Horizontal">
+                        <Border
+                            Width="36"
+                            Height="36"
+                            Background="#FFFFFF"
+                            CornerRadius="18">
+                            <Border.Clip>
+                                <EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18" />
+                            </Border.Clip>
+                            <Image
+                                Source="{Binding Evento.UrlImagenComunidad}"
+                                Stretch="UniformToFill" />
+                        </Border>
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="SemiBold"
+                            Foreground="White"
+                            Text="{Binding NombreComunidadMostrar}" />
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="18,16,18,16">
+                        <Border
+                            Height="180"
+                            Background="#EFEAF4"
+                            CornerRadius="12">
+                            <Image
+                                Source="{Binding Evento.UrlImagen}"
+                                Stretch="Uniform" />
+                        </Border>
+
+                        <TextBlock
+                            Margin="0,14,0,4"
+                            FontSize="22"
+                            FontWeight="SemiBold"
+                            Foreground="#222"
+                            Text="{Binding Evento.Nombre}"
+                            TextDecorations="Underline"
+                            TextWrapping="Wrap" />
+
+                        <TextBlock
+                            Margin="0,0,0,2"
+                            FontSize="14"
+                            Foreground="#666"
+                            Text="{Binding Evento.Ubicacion, StringFormat='📍 {0}'}" />
+
+                        <TextBlock
+                            Margin="0,0,0,12"
+                            FontSize="14"
+                            Foreground="#666"
+                            Text="{Binding FechaFormateada, StringFormat='📅 {0}'}" />
+
+                        <Border
+                            Padding="14"
+                            Background="#F9F9F9"
+                            BorderBrush="#E8E8E8"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                            <TextBlock
+                                FontSize="13"
+                                Foreground="#444"
+                                Text="{Binding Evento.Descripcion}"
+                                TextWrapping="Wrap" />
+                        </Border>
+
+                        <Button
+                            Height="36"
+                            Margin="0,14,0,0"
+                            Padding="20,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding CerrarCommand}"
+                            Content="Cerrar"
+                            Cursor="Hand"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="White">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="Black" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border
+                                                    Padding="{TemplateBinding Padding}"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderThickness="0"
+                                                    CornerRadius="8">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#333" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#1A1A1A" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

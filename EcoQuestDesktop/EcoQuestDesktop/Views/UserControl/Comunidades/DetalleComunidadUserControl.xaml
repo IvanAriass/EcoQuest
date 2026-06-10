@@ -1,0 +1,304 @@
+<UserControl
+    x:Class="PrototipadoEscritorio.Views.DetalleComunidadUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:PrototipadoEscritorio.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="540"
+    d:DesignWidth="500"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <conv:ColorTipoToBrushConverter x:Key="ColorTipoToBrush" />
+    </UserControl.Resources>
+
+    <Border
+        Width="460"
+        MaxHeight="680"
+        Background="White"
+        BorderBrush="#E4E9E6"
+        BorderThickness="1"
+        CornerRadius="16">
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="16"
+                Opacity="0.25"
+                ShadowDepth="4" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                x:Name="LeftBar"
+                Grid.Column="0"
+                Width="16"
+                CornerRadius="16,0,0,16">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#3BB273" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ColorTipo}" Value="amarillo">
+                                <Setter Property="Background" Value="#F0A030" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ColorTipo}" Value="rojo">
+                                <Setter Property="Background" Value="#E74C3C" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    x:Name="HeaderBar"
+                    Grid.Row="0"
+                    CornerRadius="0,16,0,0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="#3BB273" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ColorTipo}" Value="amarillo">
+                                    <Setter Property="Background" Value="#F0A030" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ColorTipo}" Value="rojo">
+                                    <Setter Property="Background" Value="#E74C3C" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel Margin="14,10,14,10" Orientation="Horizontal">
+                        <Border
+                            Width="36"
+                            Height="36"
+                            Background="#FFFFFF"
+                            CornerRadius="18">
+                            <Border.Clip>
+                                <EllipseGeometry
+                                    Center="18,18"
+                                    RadiusX="18"
+                                    RadiusY="18" />
+                            </Border.Clip>
+                            <Image Source="{Binding Comunidad.UrlImagen}" Stretch="UniformToFill" />
+                        </Border>
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="SemiBold"
+                            Foreground="White"
+                            Text="{Binding Comunidad.Nombre}" />
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="18,16,18,16">
+                        <Border
+                            Height="200"
+                            Background="#EDF3EF"
+                            ClipToBounds="True"
+                            CornerRadius="12">
+                            <Image
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{Binding Comunidad.UrlImagen}"
+                                Stretch="UniformToFill" />
+                        </Border>
+
+                        <TextBlock
+                            Margin="0,14,0,4"
+                            FontSize="22"
+                            FontWeight="SemiBold"
+                            Foreground="#1F2A24"
+                            Text="{Binding Comunidad.Nombre}"
+                            TextDecorations="Underline"
+                            TextWrapping="Wrap" />
+
+                        <Border
+                            Margin="0,10,0,0"
+                            Padding="16"
+                            Background="#F6FAF8"
+                            BorderBrush="#E4E9E6"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="18"
+                                        Text="👥" />
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Foreground="#5A6B60"
+                                        Text="MIEMBROS" />
+                                </StackPanel>
+
+                                <Border
+                                    Height="1"
+                                    Margin="0,10,0,0"
+                                    Background="#E4E9E6" />
+
+                                <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                                    <TextBlock
+                                        x:Name="MiembrosCount"
+                                        FontSize="28"
+                                        FontWeight="Bold"
+                                        Text="{Binding NumeroMiembros}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#3BB273" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ColorTipo}" Value="amarillo">
+                                                        <Setter Property="Foreground" Value="#F0A030" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding ColorTipo}" Value="rojo">
+                                                        <Setter Property="Foreground" Value="#E74C3C" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock
+                                        Margin="8,12,0,0"
+                                        FontSize="14"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1F2A24"
+                                        Text="miembros" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border
+                            x:Name="RolesSection"
+                            Margin="0,10,0,0"
+                            Padding="16"
+                            Background="#F6FAF8"
+                            BorderBrush="#E4E9E6"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Text="🏷️" />
+                                    <TextBlock
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Foreground="#5A6B60"
+                                        Text="ROLES" />
+                                </StackPanel>
+
+                                <Border
+                                    Height="1"
+                                    Margin="0,10,0,0"
+                                    Background="#E4E9E6" />
+
+                                <ItemsControl Margin="0,12,0,0" ItemsSource="{Binding RolesUnicos}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                Margin="0,0,8,4"
+                                                Padding="14,6"
+                                                Background="{Binding DataContext.ColorTipo, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ColorTipoToBrush}}"
+                                                CornerRadius="14">
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="White"
+                                                    Text="{Binding}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border
+                            Margin="0,12,0,0"
+                            Padding="14"
+                            Background="#F6FAF8"
+                            BorderBrush="#E4E9E6"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                            <TextBlock
+                                FontSize="13"
+                                Foreground="#444"
+                                Text="{Binding Comunidad.Descripcion}"
+                                TextWrapping="Wrap" />
+                        </Border>
+
+                        <Button
+                            x:Name="CerrarBtn"
+                            Height="36"
+                            Margin="0,16,0,0"
+                            Padding="20,0"
+                            HorizontalAlignment="Right"
+                            BorderThickness="0"
+                            Command="{Binding CerrarCommand}"
+                            Content="Cerrar"
+                            Cursor="Hand"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="White">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#3BB273" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border
+                                                    Padding="{TemplateBinding Padding}"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderThickness="0"
+                                                    CornerRadius="8">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#2E8E5C" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#237047" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ColorTipo}" Value="amarillo">
+                                            <Setter Property="Background" Value="#F0A030" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ColorTipo}" Value="rojo">
+                                            <Setter Property="Background" Value="#E74C3C" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Border>
+
+</UserControl>

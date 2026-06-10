@@ -1,0 +1,107 @@
+﻿<UserControl
+    x:Class="PrototipadoEscritorio.Views.AñadirAccesorioUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:PrototipadoEscritorio.ViewModels.Tienda"
+    d:DesignHeight="450"
+    d:DesignWidth="700"
+    mc:Ignorable="d">
+
+    <UserControl.DataContext>
+        <vm:AñadirAccesorioUserControlVM />
+    </UserControl.DataContext>
+
+    <Grid>
+        <StackPanel
+            MaxWidth="460"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top">
+            <TextBlock
+                Margin="0,40,0,28"
+                Style="{StaticResource FormTitleText}"
+                Text="Añadir Accesorio" />
+
+            <Border
+                Padding="28,24"
+                Style="{StaticResource FormCard}">
+
+                <StackPanel>
+                    <!-- Nombre -->
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            Style="{StaticResource FormLabel}"
+                            Text="Nombre" />
+                        <Border Style="{StaticResource FormInputBorder}">
+                            <TextBox
+                                Height="38"
+                                Padding="12,0"
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource FormTextBox}"
+                                Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Puntos -->
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            Style="{StaticResource FormLabel}"
+                            Text="Puntos" />
+                        <Border Style="{StaticResource FormInputBorder}">
+                            <TextBox
+                                Height="38"
+                                Padding="12,0"
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource FormTextBox}"
+                                Text="{Binding Precio, UpdateSourceTrigger=PropertyChanged}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Separator -->
+                    <Border
+                        Margin="0,0,0,16"
+                        Style="{StaticResource FormSeparator}" />
+
+                    <!-- Imagen -->
+                    <StackPanel Margin="0,0,0,20">
+                        <DockPanel Margin="0,0,0,8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource FormLabel}"
+                                Text="Imagen" />
+                            <Button
+                                HorizontalAlignment="Right"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource FormImageSelectButton}"
+                                Command="{Binding SeleccionarImagenCommand}"
+                                Content="Seleccionar" />
+                        </DockPanel>
+
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            Style="{StaticResource FormImagePathText}"
+                            Text="{Binding RutaImagenLocal, FallbackValue='Ninguna imagen seleccionada', TargetNullValue='Ninguna imagen seleccionada'}" />
+
+                        <Border
+                            Width="120"
+                            Height="120"
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource FormImagePreviewBox}">
+                            <Image Source="{Binding Previsualizacion}" Stretch="Uniform" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Guardar -->
+                    <Button
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource FormGuardarButton}"
+                        Command="{Binding GuardarCommand}"
+                        Content="Guardar" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,755 @@
+{
+  "info": {
+    "_postman_id": "446c8169-66b0-4bed-8283-e841c2879765",
+    "name": "EcoQuest",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53147217",
+    "_collection_link": "https://go.postman.co/collection/53147217-446c8169-66b0-4bed-8283-e841c2879765?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Peticiones GET",
+          "item": [
+            {
+              "name": "GET Usuarios",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/usuarios",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Usuario por Id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/usuarios/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones POST",
+          "item": [
+            {
+              "name": "POST Nuevo Usuario",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombreUsuario\": \"manuel123\",\r\n    \"contraseña\": \"123\",\r\n    \"nombre\": \"Manuel\",\r\n    \"apellido\": \"Garcia\",\r\n    \"descripcion\": \"Muy maricon\",\r\n    \"edad\": 21,\r\n    \"email\": \"manuel@example.com\",\r\n    \"imagen\": \"manuel.jpg\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{Context}}/usuarios",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones PUT",
+          "item": [
+            {
+              "name": "PUT Usuario",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombreUsuario\": \"manuel321\",\r\n    \"contraseña\": \"123\",\r\n    \"nombre\": \"Manuel\",\r\n    \"apellido\": \"Garcia\",\r\n    \"descripcion\": \"Muy maricon\",\r\n    \"edad\": 21,\r\n    \"email\": \"manuel@example.com\",\r\n    \"imagen\": \"manuel.jpg\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{Context}}/usuarios/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones DELETE",
+          "item": [
+            {
+              "name": "DELETE Usuario",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/usuarios/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usuario-Comunidad",
+      "item": [
+        {
+          "name": "Peticiones GET",
+          "item": [
+            {
+              "name": "GET Comunidades de un Usuario",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombreUsuario\": \"manuel123\",\r\n    \"contraseña\": \"123\",\r\n    \"nombre\": \"Manuel\",\r\n    \"apellido\": \"Garcia\",\r\n    \"descripcion\": \"Muy maricon\",\r\n    \"edad\": 21,\r\n    \"email\": \"manuel@example.com\",\r\n    \"imagen\": \"manuel.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/usuario-comunidad/usuario/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuario-comunidad",
+                    "usuario",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Usuarios de una Comunidad",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombreUsuario\": \"manuel123\",\r\n    \"contraseña\": \"123\",\r\n    \"nombre\": \"Manuel\",\r\n    \"apellido\": \"Garcia\",\r\n    \"descripcion\": \"Muy maricon\",\r\n    \"edad\": 21,\r\n    \"email\": \"manuel@example.com\",\r\n    \"imagen\": \"manuel.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/usuario-comunidad/comunidad/2",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuario-comunidad",
+                    "comunidad",
+                    "2"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones POST",
+          "item": [
+            {
+              "name": "POST Unirse a una comunidad",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Cuerda de Escalada Suprema PRO MAX\",\r\n    \"descripcion\": \"Cuerda dinámica de 60m\",\r\n    \"precio\": 89\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/usuario-comunidad/unirse?usuarioId=1&comunidadId=2&rol=MIEMBRO",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuario-comunidad",
+                    "unirse"
+                  ],
+                  "query": [
+                    {
+                      "key": "usuarioId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "comunidadId",
+                      "value": "2"
+                    },
+                    {
+                      "key": "rol",
+                      "value": "MIEMBRO"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones DELETE",
+          "item": [
+            {
+              "name": "DELETE Abandonar comunidad",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Cuerda de Escalada Suprema PRO MAX\",\r\n    \"descripcion\": \"Cuerda dinámica de 60m\",\r\n    \"precio\": 89\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/usuario-comunidad/abandonar/1/2",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuario-comunidad",
+                    "abandonar",
+                    "1",
+                    "2"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones PATCH",
+          "item": [
+            {
+              "name": "PATCH Cambiar el rol de un Usuario en una Comunidad",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Cuerda de Escalada Suprema PRO MAX\",\r\n    \"descripcion\": \"Cuerda dinámica de 60m\",\r\n    \"precio\": 89\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/usuario-comunidad/rol/1/2/MIEMBRO",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "usuario-comunidad",
+                    "rol",
+                    "1",
+                    "2",
+                    "MIEMBRO"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Comunidades",
+      "item": [
+        {
+          "name": "Peticiones GET",
+          "item": [
+            {
+              "name": "GET Comunidades",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/comunidades",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "comunidades"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Comunidades por Id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/comunidades/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "comunidades",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones POST",
+          "item": [
+            {
+              "name": "POST Nueva Comunidad",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos Retro\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{Context}}/comunidades",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "comunidades"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones PUT",
+          "item": [
+            {
+              "name": "PUT Editar Comunidad",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/comunidades/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "comunidades",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones DELETE",
+          "item": [
+            {
+              "name": "DELETE Comunidad",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos Retro\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/comunidades/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "comunidades",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Eventos",
+      "item": [
+        {
+          "name": "Peticiones GET",
+          "item": [
+            {
+              "name": "GET Eventos",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/eventos",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "eventos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Evento por Id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/eventos/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "eventos",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones POST",
+          "item": [
+            {
+              "name": "POST Apuntar un Usuario a un Evento",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/eventos/1/usuarios/4",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "eventos",
+                    "1",
+                    "usuarios",
+                    "4"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones PUT",
+          "item": [
+            {
+              "name": "PUT Editar Evento",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos Retro\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/eventos",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "eventos"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones DELETE",
+          "item": [
+            {
+              "name": "DELETE Desapuntar un Usuario a un Evento",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{Context}}/eventos/1/usuarios/4",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "eventos",
+                    "1",
+                    "usuarios",
+                    "4"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "DELETE Evento",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos Retro\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/eventos",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "eventos"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Peticiones GET",
+          "item": [
+            {
+              "name": "GET Productos",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos Retro\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/productos",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "productos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Producto por Id",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Videojuegos Retro\",\r\n    \"descripcion\": \"Comunidad dedicada a los videojuegos clásicos y consolas antiguas\",\r\n    \"imagen\": \"retro.jpg\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/productos/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "productos",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones POST",
+          "item": [
+            {
+              "name": "POST Producto",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Cuerda de Escalada Suprema\",\r\n    \"descripcion\": \"Cuerda dinámica de 60m\",\r\n    \"precio\": 89\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{Context}}/productos",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "productos"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones PUT",
+          "item": [
+            {
+              "name": "PUT Producto",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Cuerda de Escalada Suprema PRO MAX\",\r\n    \"descripcion\": \"Cuerda dinámica de 60m\",\r\n    \"precio\": 89\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{Context}}/productos",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "productos"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Peticiones DELETE",
+          "item": [
+            {
+              "name": "DELETE Producto",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nombre\": \"Cuerda de Escalada Suprema PRO MAX\",\r\n    \"descripcion\": \"Cuerda dinámica de 60m\",\r\n    \"precio\": 89\r\n}"
+                },
+                "url": {
+                  "raw": "{{Context}}/productos/1",
+                  "host": [
+                    "{{Context}}"
+                  ],
+                  "path": [
+                    "productos",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "Context",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
