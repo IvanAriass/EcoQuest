@@ -1,0 +1,64 @@
+# .NET
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+*.user
+*.suo
+*.cache
+*.userprefs
+*.csproj.user
+*.dbmdl
+*.jfm
+
+# Visual Studio
+.vs/
+**/.vs/
+
+# Claude worktrees (temp branches)
+.claude/
+**/.claude/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Java / Maven
+**/target/
+*.class
+*.jar
+*.war
+*.log
+
+# Spring Boot
+*.logs
+heapdump*
+
+# Android / Kotlin
+*.iml
+.gradle/
+local.properties
+**/local.properties
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Android Studio / IntelliJ
+.idea/
+**/.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Environment / secrets
+.env
+.env.local
+*.env
+application-local.properties
+application-local.yml
