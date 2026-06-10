@@ -13,7 +13,6 @@ pmdmIesBalmisVersion = "24.1"
 ksp = "2.0.20-1.0.25"
 hilt = "2.53.1"
 hiltNavigationCompose = "1.2.0"
-composeNavigation = "2.8.1"
 room = "2.6.1"
 retrofit = "2.11.0"
 gson = "2.10.1"
@@ -47,7 +46,6 @@ pmdm-ies-balmis-utilities = { group = "com.github.pmdmiesbalmis", name = "utilit
 dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 
-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -74,3 +72,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 com-google-dagger = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
