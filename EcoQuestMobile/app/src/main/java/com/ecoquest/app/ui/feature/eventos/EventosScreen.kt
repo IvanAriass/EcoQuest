@@ -25,20 +25,22 @@ fun EventosScreen(
     onNavigateToEvento: (Long) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(bottom = 16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp)
     ) {
         item {
-            Spacer(modifier = Modifier.height(16.dp))
             SectionTitle(text = "Eventos")
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             SearchBar(
                 query = uiState.textoBusqueda,
                 onQueryChange = { onEvent(EventosEvent.OnBusquedaChanged(it)) },
-                placeholder = "Buscar evento"
+                placeholder = "Buscar eventos",
+                modifier = Modifier.fillMaxSize()
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         items(uiState.eventosFiltrados) { evento ->

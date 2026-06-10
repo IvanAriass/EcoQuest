@@ -1,5 +1,10 @@
 package com.ecoquest.app.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,17 +23,23 @@ import com.ecoquest.app.ui.feature.auth.RegisterScreen
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesEvent
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesScreen
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesViewModel
+import com.ecoquest.app.ui.feature.pantalla_home.PantallaHomeEvent
+import com.ecoquest.app.ui.feature.pantalla_home.PantallaHomeScreen
+import com.ecoquest.app.ui.feature.pantalla_home.PantallaHomeViewModel
 import com.ecoquest.app.ui.feature.comunidades_dentro.ComunidadesDentroScreen
 import com.ecoquest.app.ui.feature.comunidades_dentro.ComunidadesDentroViewModel
 import com.ecoquest.app.ui.feature.evento_dentro.EventoDentroScreen
 import com.ecoquest.app.ui.feature.evento_dentro.EventoDentroViewModel
 import com.ecoquest.app.ui.feature.eventos.EventosScreen
 import com.ecoquest.app.ui.feature.eventos.EventosViewModel
+import com.ecoquest.app.ui.feature.perfil.PerfilEvent
 import com.ecoquest.app.ui.feature.perfil.PerfilScreen
 import com.ecoquest.app.ui.feature.perfil.PerfilViewModel
 import com.ecoquest.app.ui.feature.tienda.TiendaScreen
 import com.ecoquest.app.ui.feature.tienda.TiendaViewModel
 import kotlinx.serialization.Serializable
+
+private const val ANIM_DURATION = 350
 
 object Routes {
 
@@ -37,6 +48,9 @@ object Routes {
 
     @Serializable
     data object Register
+
+    @Serializable
+    data object Home
 
     @Serializable
     data object Eventos
@@ -60,11 +74,58 @@ object Routes {
     data object Ajustes
 }
 
+private fun slideInFromRight() = slideInHorizontally(
+    initialOffsetX = { it },
+    animationSpec = tween(ANIM_DURATION)
+) + fadeIn(animationSpec = tween(ANIM_DURATION))
+
+private fun slideOutToLeft() = slideOutHorizontally(
+    targetOffsetX = { -it },
+    animationSpec = tween(ANIM_DURATION)
+) + fadeOut(animationSpec = tween(ANIM_DURATION))
+
+private fun slideInFromLeft() = slideInHorizontally(
+    initialOffsetX = { -it },
+    animationSpec = tween(ANIM_DURATION)
+) + fadeIn(animationSpec = tween(ANIM_DURATION))
+
+private fun slideOutToRight() = slideOutHorizontally(
+    targetOffsetX = { it },
+    animationSpec = tween(ANIM_DURATION)
+) + fadeOut(animationSpec = tween(ANIM_DURATION))
+
 fun NavGraphBuilder.appNavGraph(
     navController: NavHostController,
     onLogout: () -> Unit
 ) {
-    composable<Routes.Eventos> {
+    composable<Routes.Home>(
+        enterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
+        exitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
+        popExitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
+    ) {
+        val vm: PantallaHomeViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        PantallaHomeScreen(
+            uiState = uiState,
+            onEvent = { event ->
+                when (event) {
+                    is PantallaHomeEvent.OnNavigateToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
+                    is PantallaHomeEvent.OnNavigateToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
+                    is PantallaHomeEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
+                    is PantallaHomeEvent.OnNavigateToEvento -> navController.navigate(Routes.Evento(event.eventoId))
+                    is PantallaHomeEvent.OnNavigateToComunidad -> navController.navigate(Routes.ComunidadDentro(event.comunidadId.toInt()))
+                }
+            }
+        )
+    }
+
+    composable<Routes.Eventos>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) {
         val vm: EventosViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         EventosScreen(
@@ -74,7 +135,12 @@ fun NavGraphBuilder.appNavGraph(
         )
     }
 
-    composable<Routes.Evento> { backStackEntry ->
+    composable<Routes.Evento>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) { backStackEntry ->
         val route = backStackEntry.toRoute<Routes.Evento>()
         val vm: EventoDentroViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -82,7 +148,12 @@ fun NavGraphBuilder.appNavGraph(
         EventoDentroScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event -> vm.onEvent(event) })
     }
 
-    composable<Routes.Comunidades> {
+    composable<Routes.Comunidades>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) {
         val vm: ComunidadesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         ComunidadesScreen(
@@ -96,7 +167,12 @@ fun NavGraphBuilder.appNavGraph(
         )
     }
 
-    composable<Routes.ComunidadDentro> { backStackEntry ->
+    composable<Routes.ComunidadDentro>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) { backStackEntry ->
         val route = backStackEntry.toRoute<Routes.ComunidadDentro>()
         val vm: ComunidadesDentroViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -109,19 +185,42 @@ fun NavGraphBuilder.appNavGraph(
         )
     }
 
-    composable<Routes.Tienda> {
+    composable<Routes.Tienda>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) {
         val vm: TiendaViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         TiendaScreen(uiState = uiState, onEvent = { event -> vm.onEvent(event) })
     }
 
-    composable<Routes.Perfil> {
+    composable<Routes.Perfil>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) {
         val vm: PerfilViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
-        PerfilScreen(uiState = uiState, onEvent = { event -> vm.onEvent(event) })
+        PerfilScreen(
+            uiState = uiState,
+            onEvent = { event ->
+                when (event) {
+                    is PerfilEvent.OnGoToAjustes -> navController.navigate(Routes.Ajustes)
+                    else -> vm.onEvent(event)
+                }
+            }
+        )
     }
 
-    composable<Routes.Ajustes> {
+    composable<Routes.Ajustes>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) {
         val vm: AjustesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         AjustesScreen(uiState = uiState, onEvent = { event -> vm.onEvent(event) }, onLogout = onLogout)
@@ -132,7 +231,12 @@ fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
     onLoginSuccess: () -> Unit
 ) {
-    composable<Routes.Login> {
+    composable<Routes.Login>(
+        enterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
+        exitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
+        popExitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
+    ) {
         val vm: AuthViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
 
@@ -154,7 +258,12 @@ fun NavGraphBuilder.authNavGraph(
         )
     }
 
-    composable<Routes.Register> {
+    composable<Routes.Register>(
+        enterTransition = { slideInFromRight() },
+        exitTransition = { slideOutToLeft() },
+        popEnterTransition = { slideInFromLeft() },
+        popExitTransition = { slideOutToRight() }
+    ) {
         val vm: AuthViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
         RegisterScreen(
