@@ -54,7 +54,7 @@ class SeedDataInitializer @Inject constructor(
         eventoDao.insertAllIfAbsent(eventos)
 
         usuarioDao.upsert(
-            UsuarioEntity(id = 1, nombreUsuario = "ecoquest_user", nombre = "Usuario", apellido = "EcoQuest", email = "user@ecoquest.com", descripcion = "Amante de la naturaleza")
+            UsuarioEntity(id = 1, nombreUsuario = "ecoquest_user", contrasena = "123456", nombre = "Usuario", apellido = "EcoQuest", email = "user@ecoquest.com", descripcion = "Amante de la naturaleza")
         )
 
         usuarioEventoDao.upsertAll(

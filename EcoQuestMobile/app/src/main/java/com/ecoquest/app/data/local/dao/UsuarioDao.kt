@@ -19,6 +19,9 @@ interface UsuarioDao {
     @Query("SELECT * FROM usuarios WHERE nombreUsuario = :nombreUsuario LIMIT 1")
     fun getByNombreUsuario(nombreUsuario: String): Flow<UsuarioEntity?>
 
+    @Query("SELECT * FROM usuarios WHERE email = :email LIMIT 1")
+    suspend fun getByEmailOnce(email: String): UsuarioEntity?
+
     @Upsert
     suspend fun upsertAll(usuarios: List<UsuarioEntity>)
 
