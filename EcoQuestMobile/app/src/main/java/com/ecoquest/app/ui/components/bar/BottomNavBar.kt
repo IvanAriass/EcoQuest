@@ -1,27 +1,60 @@
 package com.ecoquest.app.ui.components.bar
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Storefront
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ecoquest.app.ui.theme.GreenBar
+import androidx.compose.ui.unit.sp
+import com.ecoquest.app.ui.theme.Green30
 
-enum class BottomNavTab(val label: String) {
-    EVENTOS("Home"),
-    COMUNIDADES("Comunidad"),
-    TIENDA("Tienda"),
-    PERFIL("Perfil")
+enum class BottomNavTab(val label: String, val routePrefix: String) {
+    HOME("Home", "Home"),
+    EVENTOS("Eventos", "Eventos"),
+    COMUNIDADES("Comunidad", "Comunidades"),
+    TIENDA("Tienda", "Tienda"),
+    PERFIL("Perfil", "Perfil")
 }
+
+private data class NavIconSet(
+    val filled: androidx.compose.ui.graphics.vector.ImageVector,
+    val outlined: androidx.compose.ui.graphics.vector.ImageVector
+)
+
+private val iconMap = mapOf(
+    BottomNavTab.HOME to NavIconSet(Icons.Filled.Home, Icons.Outlined.Home),
+    BottomNavTab.EVENTOS to NavIconSet(Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
+    BottomNavTab.COMUNIDADES to NavIconSet(Icons.Filled.Groups, Icons.Outlined.Groups),
+    BottomNavTab.TIENDA to NavIconSet(Icons.Filled.Storefront, Icons.Outlined.Storefront),
+    BottomNavTab.PERFIL to NavIconSet(Icons.Filled.Person, Icons.Outlined.Person)
+)
 
 @Composable
 fun BottomNavBar(
@@ -29,51 +62,71 @@ fun BottomNavBar(
     onTabSelected: (BottomNavTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    NavigationBar(
-        containerColor = GreenBar,
-        contentColor = Color.White,
-        tonalElevation = 0.dp,
+    val selectedIndex = when {
+        currentRoute?.contains("Home", ignoreCase = true) == true && currentRoute?.contains("Evento", ignoreCase = true) != true -> 0
+        currentRoute?.contains("Evento", ignoreCase = true) == true -> 1
+        currentRoute?.contains("Comunidad", ignoreCase = true) == true -> 2
+        currentRoute?.contains("Tienda", ignoreCase = true) == true -> 3
+        currentRoute?.contains("Perfil", ignoreCase = true) == true || currentRoute?.contains("Ajustes", ignoreCase = true) == true -> 4
+        else -> 0
+    }
+
+    Box(
         modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 12.dp)
     ) {
-        NavigationBarItem(
-            selected = currentRoute?.contains("Eventos") == true || currentRoute?.contains("Evento") == true,
-            onClick = { onTabSelected(BottomNavTab.EVENTOS) },
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("Home") },
-            colors = navItemColors()
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Green30)
+                .padding(horizontal = 4.dp, vertical = 4.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BottomNavTab.entries.forEachIndexed { index, tab ->
+                    val isSelected = index == selectedIndex
+                    val icons = iconMap[tab]!!
 
-        NavigationBarItem(
-            selected = currentRoute == "com.ecoquest.app.ui.navigation.Routes.Comunidades",
-            onClick = { onTabSelected(BottomNavTab.COMUNIDADES) },
-            icon = { Icon(Icons.Filled.List, contentDescription = "Comunidad") },
-            label = { Text("Comunidad") },
-            colors = navItemColors()
-        )
-
-        NavigationBarItem(
-            selected = currentRoute == "com.ecoquest.app.ui.navigation.Routes.Tienda",
-            onClick = { onTabSelected(BottomNavTab.TIENDA) },
-            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Tienda") },
-            label = { Text("Tienda") },
-            colors = navItemColors()
-        )
-
-        NavigationBarItem(
-            selected = currentRoute == "com.ecoquest.app.ui.navigation.Routes.Perfil",
-            onClick = { onTabSelected(BottomNavTab.PERFIL) },
-            icon = { Icon(Icons.Filled.Settings, contentDescription = "Perfil") },
-            label = { Text("Perfil") },
-            colors = navItemColors()
-        )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp)
+                            .clip(RoundedCornerShape(18.dp))
+                            .then(
+                                if (isSelected) Modifier.background(Color.White.copy(alpha = 0.18f))
+                                else Modifier
+                            )
+                            .clickable { onTabSelected(tab) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isSelected) icons.filled else icons.outlined,
+                                contentDescription = tab.label,
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = tab.label,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                color = Color.White.copy(alpha = if (isSelected) 1f else 0.6f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
-
-@Composable
-private fun navItemColors() = NavigationBarItemDefaults.colors(
-    selectedIconColor = GreenBar,
-    selectedTextColor = Color.White,
-    indicatorColor = Color.White,
-    unselectedIconColor = Color.White.copy(alpha = 0.7f),
-    unselectedTextColor = Color.White.copy(alpha = 0.7f)
-)

@@ -3,6 +3,7 @@ package com.ecoquest.app.ui.feature.comunidades
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -13,15 +14,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ecoquest.app.ui.components.general.SearchBar
 import com.ecoquest.app.ui.components.general.SectionTitle
 import com.ecoquest.app.ui.feature.comunidades.dialogo.CrearComunidadDialog
 import com.ecoquest.app.ui.feature.comunidades.dialogo.EditarComunidadDialog
-import com.ecoquest.app.ui.theme.GreenBar
 
 @Composable
 fun ComunidadesScreen(
@@ -42,13 +42,14 @@ fun ComunidadesScreen(
     ) {
         item(span = { GridItemSpan(2) }) {
             SectionTitle(text = "Comunidades")
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             SearchBar(
                 query = uiState.textoBusqueda,
                 onQueryChange = { onEvent(ComunidadesEvent.OnBusquedaChanged(it)) },
-                placeholder = "Buscar comunidad"
+                placeholder = "Buscar comunidades",
+                modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
         items(comunidadesFiltradas) { comunidad ->
@@ -88,9 +89,10 @@ fun ComunidadesScreen(
 
     FloatingActionButton(
         onClick = { onEvent(ComunidadesEvent.OnCrearComunidad) },
-        containerColor = GreenBar,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
         modifier = Modifier.padding(16.dp)
     ) {
-        Icon(Icons.Filled.Add, contentDescription = "Crear comunidad", tint = Color.White)
+        Icon(Icons.Filled.Add, contentDescription = "Crear comunidad")
     }
 }

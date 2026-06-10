@@ -1,6 +1,7 @@
 package com.ecoquest.app.ui.feature.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import com.ecoquest.app.ui.components.bar.BottomNavBar
 import com.ecoquest.app.ui.components.bar.BottomNavTab
 import com.ecoquest.app.ui.navigation.AppNavHost
 import com.ecoquest.app.ui.navigation.Routes
+import com.ecoquest.app.ui.theme.Green99
 
 @Composable
 fun HomeScreen(
@@ -35,6 +37,12 @@ fun HomeScreen(
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Green99.copy(alpha = 0.10f))
         )
 
         Scaffold(
@@ -59,6 +67,12 @@ fun HomeScreen(
 
 private fun navigateToTab(navController: androidx.navigation.NavHostController, tab: BottomNavTab) {
     when (tab) {
+        BottomNavTab.HOME -> {
+            navController.navigate(Routes.Home) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
         BottomNavTab.EVENTOS -> {
             navController.navigate(Routes.Eventos) {
                 popUpTo(0) { inclusive = true }

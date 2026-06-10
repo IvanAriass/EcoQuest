@@ -46,6 +46,7 @@ class PerfilViewModel @Inject constructor(
                     usuarioRepository.upsert(_state.value.usuario.copy(imagen = event.uri))
                 }
             }
+            is PerfilEvent.OnGoToAjustes -> { }
         }
     }
 
