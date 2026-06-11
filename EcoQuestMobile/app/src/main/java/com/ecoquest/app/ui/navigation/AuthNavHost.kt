@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 
-private const val ANIM_DURATION = 300
-
 @Composable
 fun AuthNavHost(
     navController: NavHostController,
@@ -17,8 +15,8 @@ fun AuthNavHost(
     NavHost(
         navController = navController,
         startDestination = Routes.Login,
-        enterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
-        exitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
+        enterTransition = { fadeIn(animationSpec = tween(NAV_DURATION)) },
+        exitTransition = { fadeOut(animationSpec = tween(NAV_DURATION)) }
     ) {
         authNavGraph(navController = navController, onLoginSuccess = onLoginSuccess)
     }

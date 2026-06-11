@@ -1,7 +1,12 @@
 package com.ecoquest.app.ui.components.navegacion
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,10 +31,14 @@ import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,8 +53,8 @@ enum class BottomNavTab(val label: String, val routePrefix: String) {
 }
 
 private data class NavIconSet(
-    val filled: androidx.compose.ui.graphics.vector.ImageVector,
-    val outlined: androidx.compose.ui.graphics.vector.ImageVector
+    val filled: ImageVector,
+    val outlined: ImageVector
 )
 
 private val iconMap = mapOf(
@@ -94,16 +103,55 @@ fun BottomNavBar(
                     val isSelected = index == selectedIndex
                     val icons = iconMap[tab]!!
 
+                    val bgAlpha by animateFloatAsState(
+                        targetValue = if (isSelected) 1f else 0f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        label = "bgAlpha"
+                    )
+                    val textAlpha by animateFloatAsState(
+                        targetValue = if (isSelected) 1f else 0.6f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioNoBouncy,
+                            stiffness = Spring.StiffnessMediumLow
+                        ),
+                        label = "textAlpha"
+                    )
+                    val scale by animateFloatAsState(
+                        targetValue = if (isSelected) 1f else 0.95f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessHigh
+                        ),
+                        label = "scale"
+                    )
+                    val iconTint by animateColorAsState(
+                        targetValue = Color.White,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        label = "iconTint"
+                    )
+
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .height(56.dp)
+                            .scale(scale)
                             .clip(RoundedCornerShape(18.dp))
                             .then(
-                                if (isSelected) Modifier.background(Color.White.copy(alpha = 0.18f))
+                                if (bgAlpha > 0.01f) Modifier.background(
+                                    Color.White.copy(alpha = 0.18f * bgAlpha)
+                                )
                                 else Modifier
                             )
-                            .clickable { onTabSelected(tab) },
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onTabSelected(tab) },
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
@@ -113,7 +161,7 @@ fun BottomNavBar(
                             Icon(
                                 imageVector = if (isSelected) icons.filled else icons.outlined,
                                 contentDescription = tab.label,
-                                tint = Color.White,
+                                tint = iconTint,
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.height(2.dp))
@@ -121,7 +169,7 @@ fun BottomNavBar(
                                 text = tab.label,
                                 fontSize = 11.sp,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                                color = Color.White.copy(alpha = if (isSelected) 1f else 0.6f)
+                                color = Color.White.copy(alpha = textAlpha)
                             )
                         }
                     }

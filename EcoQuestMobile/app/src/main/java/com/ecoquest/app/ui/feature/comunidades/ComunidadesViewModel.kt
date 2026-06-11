@@ -53,6 +53,9 @@ class ComunidadesViewModel @Inject constructor(
 
     private fun cargarComunidades() {
         viewModelScope.launch {
+            comunidadRepository.refreshComunidades()
+        }
+        viewModelScope.launch {
             getComunidadesUseCase().collect { comunidades ->
                 _state.update { it.copy(comunidades = comunidades) }
             }

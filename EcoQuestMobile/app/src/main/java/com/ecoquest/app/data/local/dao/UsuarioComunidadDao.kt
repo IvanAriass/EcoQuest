@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface UsuarioComunidadDao {
 
+    @Query("SELECT * FROM usuario_comunidad")
+    fun getAll(): Flow<List<UsuarioComunidadEntity>>
+
     @Query("SELECT * FROM usuario_comunidad WHERE comunidadId = :comunidadId")
     fun getByComunidad(comunidadId: Long): Flow<List<UsuarioComunidadEntity>>
 

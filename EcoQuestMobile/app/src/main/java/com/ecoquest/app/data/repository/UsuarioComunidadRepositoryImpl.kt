@@ -8,10 +8,12 @@ import com.ecoquest.app.data.local.entity.UsuarioComunidadEntity
 import com.ecoquest.app.data.remote.ApiService
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.domain.model.UsuarioComunidad
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,9 +33,16 @@ class UsuarioComunidadRepositoryImpl @Inject constructor(
         }
 
     override fun getComunidadesByUsuario(usuarioId: Long): Flow<List<Comunidad>> {
-        return usuarioComunidadDao.getByUsuario(usuarioId).map { relaciones ->
+        val comunidadesFlow = usuarioComunidadDao.getByUsuario(usuarioId).map { relaciones ->
             relaciones.mapNotNull { relacion ->
                 comunidadDao.getById(relacion.comunidadId).firstOrNull()?.toDomain()
+            }
+        }
+        val relacionesFlow = usuarioComunidadDao.getAll()
+        return comunidadesFlow.combine(relacionesFlow) { comunidades, relaciones ->
+            comunidades.map { comunidad ->
+                val miembros = relaciones.filter { it.comunidadId == comunidad.id }
+                comunidad.copy(usuarios = miembros.map { UsuarioComunidad(rol = it.rol) })
             }
         }
     }

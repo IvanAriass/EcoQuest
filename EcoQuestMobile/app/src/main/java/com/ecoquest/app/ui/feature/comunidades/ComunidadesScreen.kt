@@ -70,13 +70,4 @@ fun ComunidadesScreen(
             }
         )
     }
-
-    FloatingActionButton(
-        onClick = { onEvent(ComunidadesEvent.OnCrearComunidad) },
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Icon(Icons.Filled.Add, contentDescription = "Crear comunidad")
-    }
 }
