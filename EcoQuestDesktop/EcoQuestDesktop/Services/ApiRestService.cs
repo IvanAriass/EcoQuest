@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using PrototipadoEscritorio.Models;
+using Newtonsoft.Json;
+using EcoQuestDesktop.Models;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace PrototipadoEscritorio.Services
+namespace EcoQuestDesktop.Services
 {
     public class ApiRestService
     {

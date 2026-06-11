@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using PrototipadoEscritorio.Properties;
+using EcoQuestDesktop.Properties;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace PrototipadoEscritorio.Models
+namespace EcoQuestDesktop.Models
 {
     public partial class Comunidad : ObservableObject
     {
@@ -53,13 +53,23 @@ namespace PrototipadoEscritorio.Models
                     return new BitmapImage(new Uri(fallback, UriKind.RelativeOrAbsolute));
                 }
 
+                if (Imagen.StartsWith("http://") || Imagen.StartsWith("https://"))
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(Imagen, UriKind.Absolute);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    return bitmap;
+                }
+
                 var url = $"{Settings.Default.ApiRestEndPoint.TrimEnd('/')}/comunidades/imagen/{Imagen}";
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(url, UriKind.Absolute);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                return bitmap;
+                var bitmap2 = new BitmapImage();
+                bitmap2.BeginInit();
+                bitmap2.UriSource = new Uri(url, UriKind.Absolute);
+                bitmap2.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap2.EndInit();
+                return bitmap2;
             }
         }
 

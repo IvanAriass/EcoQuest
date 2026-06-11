@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 using System.Windows.Media;
 
-namespace PrototipadoEscritorio.Models
+namespace EcoQuestDesktop.Models
 {
     [DataContract]
     public partial class Usuario : ObservableObject

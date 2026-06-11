@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
+using EcoQuestDesktop.Services;
 using System.Threading.Tasks;
 
-namespace PrototipadoEscritorio.ViewModels.Comunidades
+namespace EcoQuestDesktop.ViewModels.Comunidades
 {
     public partial class RevisarComunidadUserControlVM : ObservableObject
     {

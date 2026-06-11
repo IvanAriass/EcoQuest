@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
 
-namespace PrototipadoEscritorio.ViewModels.Comunidades
+namespace EcoQuestDesktop.ViewModels.Comunidades
 {
     public partial class EliminarComunidadUserControlVM : ObservableObject
     {

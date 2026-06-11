@@ -8,6 +8,7 @@ interface UsuarioRepository {
     fun getById(id: Long): Flow<Usuario?>
     fun getByNombreUsuario(nombreUsuario: String): Flow<Usuario?>
     suspend fun getByEmailOnce(email: String): Usuario?
+    suspend fun refreshUsuarios()
     suspend fun upsert(usuario: Usuario)
     suspend fun delete(usuario: Usuario)
     suspend fun deleteAll()

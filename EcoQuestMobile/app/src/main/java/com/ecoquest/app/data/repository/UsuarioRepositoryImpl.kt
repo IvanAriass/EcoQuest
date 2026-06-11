@@ -3,6 +3,8 @@ package com.ecoquest.app.data.repository
 import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.mapper.toDomain
 import com.ecoquest.app.data.local.mapper.toEntity
+import com.ecoquest.app.data.remote.ApiService
+import com.ecoquest.app.data.remote.mapper.toDomain
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.repository.UsuarioRepository
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +14,8 @@ import javax.inject.Singleton
 
 @Singleton
 class UsuarioRepositoryImpl @Inject constructor(
-    private val usuarioDao: UsuarioDao
+    private val usuarioDao: UsuarioDao,
+    private val apiService: ApiService
 ) : UsuarioRepository {
 
     override fun getAll(): Flow<List<Usuario>> = usuarioDao.getAll().map { entities ->
@@ -30,6 +33,16 @@ class UsuarioRepositoryImpl @Inject constructor(
 
     override suspend fun getByEmailOnce(email: String): Usuario? =
         usuarioDao.getByEmailOnce(email)?.toDomain()
+
+    override suspend fun refreshUsuarios() {
+        runCatching {
+            val usuarios = apiService.getUsuarios()
+            usuarios.forEach { dto ->
+                val entity = dto.toDomain().toEntity()
+                usuarioDao.upsert(entity)
+            }
+        }
+    }
 
     override suspend fun upsert(usuario: Usuario) = usuarioDao.upsert(usuario.toEntity())
 

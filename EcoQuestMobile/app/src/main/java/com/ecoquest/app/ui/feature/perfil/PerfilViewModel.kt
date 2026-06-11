@@ -8,6 +8,7 @@ import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
+import com.ecoquest.app.managers.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,11 +23,15 @@ class PerfilViewModel @Inject constructor(
     private val comunidadRepository: ComunidadRepository,
     private val eventoRepository: EventoRepository,
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
-    private val usuarioEventoRepository: UsuarioEventoRepository
+    private val usuarioEventoRepository: UsuarioEventoRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PerfilUiState())
     val state: StateFlow<PerfilUiState> = _state.asStateFlow()
+
+    private val usuarioId: Long
+        get() = tokenManager.getUsuarioId().takeIf { it > 0 } ?: 1L
 
     init {
         cargarPerfil()
@@ -53,17 +58,17 @@ class PerfilViewModel @Inject constructor(
     private fun cargarPerfil() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            usuarioRepository.getById(1L).collect { usuario ->
+            usuarioRepository.getById(usuarioId).collect { usuario ->
                 _state.update { it.copy(usuario = usuario ?: Usuario(), isLoading = false) }
             }
         }
         viewModelScope.launch {
-            usuarioComunidadRepository.getComunidadesByUsuario(1L).collect { comunidades ->
+            usuarioComunidadRepository.getComunidadesByUsuario(usuarioId).collect { comunidades ->
                 _state.update { it.copy(comunidades = comunidades) }
             }
         }
         viewModelScope.launch {
-            usuarioEventoRepository.getEventosByUsuario(1L).collect { eventos ->
+            usuarioEventoRepository.getEventosByUsuario(usuarioId).collect { eventos ->
                 _state.update { it.copy(eventos = eventos) }
             }
         }

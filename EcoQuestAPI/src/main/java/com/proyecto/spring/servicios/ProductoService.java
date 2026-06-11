@@ -32,7 +32,10 @@ public class ProductoService {
     }
 
     public Optional<Producto> obtenerPorId(Long id) {
-        return productoRepository.findById(id);
+        return productoRepository.findById(id).map(p -> {
+            p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+            return p;
+        });
     }
 
     public Producto crear(Producto producto) {

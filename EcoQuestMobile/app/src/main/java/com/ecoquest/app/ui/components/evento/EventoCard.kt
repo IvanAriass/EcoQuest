@@ -1,8 +1,6 @@
 package com.ecoquest.app.ui.components.evento
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ecoquest.app.R
 import com.ecoquest.app.domain.model.Evento
+import com.ecoquest.app.ui.components.general.StatusBadge
 
 @Composable
 fun EventoCard(
@@ -121,23 +119,8 @@ fun EventoCard(
                     }
                 }
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = evento.estado.ifBlank { "Evento" },
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
-                    modifier = Modifier
-                        .background(estadoColor(evento.estado), RoundedCornerShape(6.dp))
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                )
+                StatusBadge(text = evento.estado)
             }
         }
     }
-}
-
-private fun estadoColor(estado: String): Color = when (estado.lowercase()) {
-    "noticia" -> Color(0xFFE53935)
-    "urgente" -> Color(0xFFFF6F00)
-    "cerrado" -> Color(0xFF757575)
-    else -> Color(0xFF2E7D32)
 }

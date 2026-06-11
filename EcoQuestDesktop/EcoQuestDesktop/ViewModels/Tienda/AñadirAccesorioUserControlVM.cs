@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Services;
 using RestSharp;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace PrototipadoEscritorio.ViewModels.Tienda
+namespace EcoQuestDesktop.ViewModels.Tienda
 {
     public partial class AñadirAccesorioUserControlVM : ObservableObject
     {

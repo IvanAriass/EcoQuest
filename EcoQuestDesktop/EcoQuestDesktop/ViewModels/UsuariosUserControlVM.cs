@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Services;
 using System.Windows.Controls;
 
-namespace PrototipadoEscritorio.ViewModels
+namespace EcoQuestDesktop.ViewModels
 {
     public partial class UsuariosUserControlVM : ObservableObject
     {

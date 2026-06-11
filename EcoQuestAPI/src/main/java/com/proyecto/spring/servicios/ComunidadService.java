@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.proyecto.spring.modelos.Comunidad;
@@ -19,12 +20,23 @@ public class ComunidadService {
     @Autowired
     private ComunidadRepository comunidadRepository;
 
+    @Value("${app.base.url}")
+    private String baseUrl;
+
     public List<Comunidad> obtenerTodos() {
-        return comunidadRepository.findAll();
+        return comunidadRepository.findAll().stream()
+                .map(c -> {
+                    c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+                    return c;
+                })
+                .toList();
     }
 
     public Optional<Comunidad> obtenerPorId(Long id) {
-        return comunidadRepository.findById(id);
+        return comunidadRepository.findById(id).map(c -> {
+            c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+            return c;
+        });
     }
 
     public Comunidad crear(Comunidad comunidad) {
@@ -91,6 +103,13 @@ public class ComunidadService {
     }
 
     public List<Comunidad> buscarPorEstado(String estado) {
-        return comunidadRepository.findByEstado(estado);
+        return comunidadRepository.findByEstado(estado).stream()
+                .map(c -> {
+                    if (c.getImagen() != null && !c.getImagen().isBlank()) {
+                        c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+                    }
+                    return c;
+                })
+                .toList();
     }
 }

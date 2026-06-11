@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.usecase.comunidades.GetComunidadesUseCase
+import com.ecoquest.app.ui.components.comunidad.ComunidadDialogConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,25 +34,18 @@ class ComunidadesViewModel @Inject constructor(
             }
             is ComunidadesEvent.OnComunidadClick -> { }
             is ComunidadesEvent.OnCrearComunidad -> {
-                _state.update { it.copy(showCrearDialog = true) }
+                _state.update { it.copy(dialogo = ComunidadDialogConfig.Crear) }
             }
             is ComunidadesEvent.OnGuardarComunidad -> {
                 viewModelScope.launch {
-                    comunidadRepository.upsert(Comunidad(nombre = event.nombre, descripcion = event.descripcion, imagen = event.imagen))
-                    _state.update { it.copy(showCrearDialog = false) }
-                }
-            }
-            is ComunidadesEvent.OnEliminarComunidad -> {
-                viewModelScope.launch { comunidadRepository.delete(Comunidad(id = event.comunidadId)) }
-            }
-            is ComunidadesEvent.OnEditarComunidad -> {
-                viewModelScope.launch {
-                    comunidadRepository.upsert(Comunidad(id = event.comunidadId, nombre = event.nombre, descripcion = event.descripcion, imagen = event.imagen))
-                    _state.update { it.copy(showEditarDialog = false, comunidadAEditar = null) }
+                    comunidadRepository.upsert(
+                        Comunidad(nombre = event.nombre, descripcion = event.descripcion, imagen = event.imagen)
+                    )
+                    _state.update { it.copy(dialogo = null) }
                 }
             }
             is ComunidadesEvent.OnDismissDialog -> {
-                _state.update { it.copy(showCrearDialog = false, showEditarDialog = false, comunidadAEditar = null) }
+                _state.update { it.copy(dialogo = null) }
             }
             is ComunidadesEvent.OnRefrescar -> cargarComunidades()
         }

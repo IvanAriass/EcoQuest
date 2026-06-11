@@ -1,12 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace PrototipadoEscritorio.ViewModels.Comunidades
+namespace EcoQuestDesktop.ViewModels.Comunidades
 {
     public partial class DetalleComunidadUserControlVM : ObservableObject
     {

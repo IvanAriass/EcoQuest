@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using PrototipadoEscritorio.Properties;
+using EcoQuestDesktop.Properties;
 
-namespace PrototipadoEscritorio.Models
+namespace EcoQuestDesktop.Models
 {
     [DataContract]
     public partial class Evento : ObservableObject
@@ -80,13 +80,23 @@ namespace PrototipadoEscritorio.Models
                 return new BitmapImage(new Uri(valor ?? fallback, UriKind.RelativeOrAbsolute));
             }
 
+            if (valor.StartsWith("http://") || valor.StartsWith("https://"))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(valor, UriKind.Absolute);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                return bitmap;
+            }
+
             var url = $"{Settings.Default.ApiRestEndPoint.TrimEnd('/')}/{ruta}/imagen/{valor}";
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(url, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            return bitmap;
+            var bitmap2 = new BitmapImage();
+            bitmap2.BeginInit();
+            bitmap2.UriSource = new Uri(url, UriKind.Absolute);
+            bitmap2.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap2.EndInit();
+            return bitmap2;
         }
 
         [JsonIgnore]

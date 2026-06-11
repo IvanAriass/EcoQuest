@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Media;
 
-namespace PrototipadoEscritorio.ViewModels
+namespace EcoQuestDesktop.ViewModels
 {
     public partial class ConfirmacionEliminacionModalVM : ObservableObject
     {

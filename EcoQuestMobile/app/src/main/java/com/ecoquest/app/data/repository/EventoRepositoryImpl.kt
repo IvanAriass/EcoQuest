@@ -3,6 +3,8 @@ package com.ecoquest.app.data.repository
 import com.ecoquest.app.data.local.dao.EventoDao
 import com.ecoquest.app.data.local.mapper.toDomain
 import com.ecoquest.app.data.local.mapper.toEntity
+import com.ecoquest.app.data.remote.ApiService
+import com.ecoquest.app.data.remote.mapper.toDomain
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.repository.EventoRepository
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +14,8 @@ import javax.inject.Singleton
 
 @Singleton
 class EventoRepositoryImpl @Inject constructor(
-    private val eventoDao: EventoDao
+    private val eventoDao: EventoDao,
+    private val apiService: ApiService
 ) : EventoRepository {
 
     override fun getAll(): Flow<List<Evento>> = eventoDao.getAll().map { entities ->
@@ -27,6 +30,16 @@ class EventoRepositoryImpl @Inject constructor(
         eventoDao.getByComunidad(comunidadId).map { entities ->
             entities.map { it.toDomain() }
         }
+
+    override suspend fun refreshEventos() {
+        runCatching {
+            val eventos = apiService.getEventos()
+            eventos.forEach { dto ->
+                val entity = dto.toDomain().toEntity()
+                eventoDao.upsert(entity)
+            }
+        }
+    }
 
     override suspend fun upsert(evento: Evento) = eventoDao.upsert(evento.toEntity())
 

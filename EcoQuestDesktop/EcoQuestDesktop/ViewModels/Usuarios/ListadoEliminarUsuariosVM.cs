@@ -1,14 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
+using EcoQuestDesktop.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
-namespace PrototipadoEscritorio.ViewModels.Usuarios
+namespace EcoQuestDesktop.ViewModels.Usuarios
 {
     public partial class ListadoEliminarUsuariosVM : ObservableObject, IRecipient<UsuarioAñadidoMessage>
     {

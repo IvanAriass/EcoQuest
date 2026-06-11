@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using PrototipadoEscritorio.Models;
+using EcoQuestDesktop.Models;
 
-namespace PrototipadoEscritorio.Messages
+namespace EcoQuestDesktop.Messages
 {
     public class DesbloquearUsuarioMessage : ValueChangedMessage<Usuario>
     {

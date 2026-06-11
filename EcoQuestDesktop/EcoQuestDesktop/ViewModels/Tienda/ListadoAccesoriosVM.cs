@@ -1,14 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
+using EcoQuestDesktop.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace PrototipadoEscritorio.ViewModels.Tienda
+namespace EcoQuestDesktop.ViewModels.Tienda
 {
     public partial class ListadoAccesoriosVM : ObservableObject, IRecipient<AccesorioAñadidoMessage>
     {

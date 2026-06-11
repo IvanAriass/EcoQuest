@@ -2,15 +2,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Services;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace PrototipadoEscritorio.ViewModels.Usuarios
+namespace EcoQuestDesktop.ViewModels.Usuarios
 {
     public partial class AñadirUsuarioUserControlVM : ObservableObject
     {

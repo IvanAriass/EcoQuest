@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.proyecto.spring.dto.EventoDTO;
@@ -30,25 +31,41 @@ public class EventoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Value("${app.base.url}")
+    private String baseUrl;
+
+    private void prefijarImagenes(EventoDTO dto) {
+        if (dto.imagen != null && !dto.imagen.isBlank()) {
+            dto.imagen = baseUrl + "/api/eventos/imagen/" + dto.imagen;
+        }
+        if (dto.imagenComunidad != null && !dto.imagenComunidad.isBlank()) {
+            dto.imagenComunidad = baseUrl + "/api/comunidades/imagen/" + dto.imagenComunidad;
+        }
+    }
+
     public List<EventoDTO> obtenerTodosDTO() {
         return eventoRepository.findAll().stream()
                 .map(EventoDTO::new)
+                .peek(this::prefijarImagenes)
                 .collect(Collectors.toList());
     }
 
     public Optional<EventoDTO> obtenerPorIdDTO(Long id) {
-        return eventoRepository.findById(id).map(EventoDTO::new);
+        return eventoRepository.findById(id).map(EventoDTO::new)
+                .map(dto -> { prefijarImagenes(dto); return dto; });
     }
 
     public List<EventoDTO> buscarPorNombre(String nombre) {
         return eventoRepository.findByNombreContainingIgnoreCase(nombre).stream()
                 .map(EventoDTO::new)
+                .peek(this::prefijarImagenes)
                 .collect(Collectors.toList());
     }
 
     public List<EventoDTO> buscarPorEstado(String estado) {
         return eventoRepository.findByEstado(estado).stream()
                 .map(EventoDTO::new)
+                .peek(this::prefijarImagenes)
                 .collect(Collectors.toList());
     }
 

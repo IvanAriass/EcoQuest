@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace PrototipadoEscritorio.Models
+namespace EcoQuestDesktop.Models
 {
     public class UsuarioResumen
     {

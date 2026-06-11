@@ -40,7 +40,12 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> obtenerPorId(Long id) {
-        return usuarioRepository.findById(id);
+        return usuarioRepository.findById(id).map(u -> {
+            if (u.getImagen() != null && !u.getImagen().isBlank()) {
+                u.setImagen(baseUrl + "/api/usuarios/imagen/" + u.getImagen());
+            }
+            return u;
+        });
     }
 
     public Usuario crear(Usuario usuario) {

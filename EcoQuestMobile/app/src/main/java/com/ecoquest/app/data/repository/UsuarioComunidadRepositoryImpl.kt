@@ -5,11 +5,11 @@ import com.ecoquest.app.data.local.dao.UsuarioComunidadDao
 import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.mapper.toDomain
 import com.ecoquest.app.data.local.entity.UsuarioComunidadEntity
+import com.ecoquest.app.data.remote.ApiService
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -19,7 +19,8 @@ import javax.inject.Singleton
 class UsuarioComunidadRepositoryImpl @Inject constructor(
     private val usuarioComunidadDao: UsuarioComunidadDao,
     private val usuarioDao: UsuarioDao,
-    private val comunidadDao: ComunidadDao
+    private val comunidadDao: ComunidadDao,
+    private val apiService: ApiService
 ) : UsuarioComunidadRepository {
 
     override fun getMiembrosByComunidad(comunidadId: Long): Flow<List<Usuario>> =
@@ -38,12 +39,18 @@ class UsuarioComunidadRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unirse(usuarioId: Long, comunidadId: Long, rol: String) {
+        runCatching {
+            apiService.unirseAComunidad(usuarioId, comunidadId, rol)
+        }
         usuarioComunidadDao.upsertAll(
             listOf(UsuarioComunidadEntity(usuarioId = usuarioId, comunidadId = comunidadId, rol = rol))
         )
     }
 
     override suspend fun abandonar(usuarioId: Long, comunidadId: Long) {
-        usuarioComunidadDao.deleteByUsuario(usuarioId)
+        runCatching {
+            apiService.abandonarComunidad(usuarioId, comunidadId)
+        }
+        usuarioComunidadDao.deleteByUsuarioAndComunidad(usuarioId, comunidadId)
     }
 }

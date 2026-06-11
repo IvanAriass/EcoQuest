@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proyecto.spring.dto.UsuarioDTO;
 import com.proyecto.spring.modelos.Usuario;
+import com.proyecto.spring.repository.UsuarioRepository;
 import com.proyecto.spring.servicios.UsuarioService;
 
 @RestController
@@ -35,6 +36,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public List<UsuarioDTO> obtenerTodos() {
@@ -142,7 +146,7 @@ public class UsuarioController {
             Usuario datosActualizados = mapper.readValue(usuarioJson, Usuario.class);
 
             if (imagen != null && !imagen.isEmpty()) {
-                usuarioService.obtenerPorId(id).ifPresent(usuarioViejo -> {
+                usuarioRepository.findById(id).ifPresent(usuarioViejo -> {
                     String viejaImagen = usuarioViejo.getImagen();
                     if (viejaImagen != null && !viejaImagen.isBlank()) {
                         try {

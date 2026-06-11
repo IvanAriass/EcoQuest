@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proyecto.spring.dto.EventoDTO;
 import com.proyecto.spring.modelos.Evento;
+import com.proyecto.spring.repository.EventoRepository;
 import com.proyecto.spring.servicios.EventoService;
 
 @RestController
@@ -38,6 +39,9 @@ public class EventoController {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private EventoRepository eventoRepository;
 
     @GetMapping
     public List<EventoDTO> obtenerTodos() {
@@ -152,6 +156,44 @@ public class EventoController {
         return eventoService.actualizar(id, evento)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(value = "/{id}/con-imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Evento> actualizarConImagen(
+            @PathVariable Long id,
+            @RequestParam("evento") String eventoJson,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
+
+        try {
+            Evento datosActualizados = objectMapper.readValue(eventoJson, Evento.class);
+
+            if (imagen != null && !imagen.isEmpty()) {
+                eventoRepository.findById(id).ifPresent(eventoViejo -> {
+                    String viejaImagen = eventoViejo.getImagen();
+                    if (viejaImagen != null && !viejaImagen.isBlank()) {
+                        try {
+                            Files.deleteIfExists(Paths.get("src/main/resources/static/imagenes/eventos", viejaImagen));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                String nombreArchivo = System.currentTimeMillis() + "_" + imagen.getOriginalFilename();
+                Path ruta = Paths.get("src/main/resources/static/imagenes/eventos/" + nombreArchivo);
+                Files.createDirectories(ruta.getParent());
+                Files.write(ruta, imagen.getBytes());
+                datosActualizados.setImagen(nombreArchivo);
+            }
+
+            return eventoService.actualizar(id, datosActualizados)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PatchMapping("/{id}/en-revision")

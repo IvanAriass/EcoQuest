@@ -23,4 +23,7 @@ interface UsuarioComunidadDao {
 
     @Query("DELETE FROM usuario_comunidad WHERE usuarioId = :usuarioId")
     suspend fun deleteByUsuario(usuarioId: Long)
+
+    @Query("DELETE FROM usuario_comunidad WHERE usuarioId = :usuarioId AND comunidadId = :comunidadId")
+    suspend fun deleteByUsuarioAndComunidad(usuarioId: Long, comunidadId: Long)
 }
