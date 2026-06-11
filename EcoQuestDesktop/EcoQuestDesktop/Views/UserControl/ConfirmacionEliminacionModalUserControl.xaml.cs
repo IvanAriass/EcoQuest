@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace PrototipadoEscritorio.Views
+namespace EcoQuestDesktop.Views
 {
     public partial class ConfirmacionEliminacionModalUserControl : UserControl
     {

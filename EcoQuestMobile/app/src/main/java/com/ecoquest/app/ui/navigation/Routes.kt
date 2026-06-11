@@ -274,6 +274,13 @@ fun NavGraphBuilder.authNavGraph(
             }
         }
 
+        LaunchedEffect(uiState.navigateToHome) {
+            if (uiState.navigateToHome) {
+                vm.onEvent(AccesoEvent.OnNavigateToHomeConsumed)
+                onLoginSuccess()
+            }
+        }
+
         RegistroScreen(
             uiState = uiState,
             onEvent = { event -> vm.onEvent(event) }

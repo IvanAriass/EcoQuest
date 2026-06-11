@@ -1,15 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrototipadoEscritorio.ViewModels
+namespace EcoQuestDesktop.ViewModels
 {
     public partial class EliminarMarcoUserControlVM : ObservableObject
     {

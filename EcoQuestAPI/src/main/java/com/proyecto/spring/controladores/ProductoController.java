@@ -2,6 +2,7 @@ package com.proyecto.spring.controladores;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proyecto.spring.modelos.Producto;
+import com.proyecto.spring.repository.ProductoRepository;
 import com.proyecto.spring.servicios.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,9 @@ public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @GetMapping
     public List<Producto> obtenerTodos() {
@@ -118,8 +122,7 @@ public class ProductoController {
             Producto datosActualizados = mapper.readValue(productoJson, Producto.class);
 
             if (imagen != null && !imagen.isEmpty()) {
-                // Borrar imagen anterior si existe
-                productoService.obtenerPorId(id).ifPresent(productoViejo -> {
+                productoRepository.findById(id).ifPresent(productoViejo -> {
                     String viejaImagen = productoViejo.getImagen();
                     if (viejaImagen != null && !viejaImagen.isBlank()) {
                         try {

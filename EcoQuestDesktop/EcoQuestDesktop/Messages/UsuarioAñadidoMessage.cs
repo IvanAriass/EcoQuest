@@ -1,4 +1,4 @@
-namespace PrototipadoEscritorio.Messages
+namespace EcoQuestDesktop.Messages
 {
     public class UsuarioAñadidoMessage { }
 }

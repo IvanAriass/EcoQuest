@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PrototipadoEscritorio.Views
+namespace EcoQuestDesktop.Views
 {
     public partial class ListadoEventosUserControl : UserControl
     {

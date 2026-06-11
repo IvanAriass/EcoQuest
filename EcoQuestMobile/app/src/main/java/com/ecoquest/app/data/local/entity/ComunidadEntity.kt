@@ -9,5 +9,6 @@ data class ComunidadEntity(
     val nombre: String = "",
     val descripcion: String = "",
     val imagen: String = "",
+    val estado: String = "",
     val creadorId: Long = 0
 )

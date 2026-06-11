@@ -1,13 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using PrototipadoEscritorio.Models;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Models;
+using EcoQuestDesktop.Services;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace PrototipadoEscritorio.ViewModels.Tienda
+namespace EcoQuestDesktop.ViewModels.Tienda
 {
     public partial class EditarAccesorioModalVM : ObservableObject
     {

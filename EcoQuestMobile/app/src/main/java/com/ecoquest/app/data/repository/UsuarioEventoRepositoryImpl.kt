@@ -5,6 +5,7 @@ import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.dao.UsuarioEventoDao
 import com.ecoquest.app.data.local.entity.UsuarioEventoEntity
 import com.ecoquest.app.data.local.mapper.toDomain
+import com.ecoquest.app.data.remote.ApiService
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
@@ -18,7 +19,8 @@ import javax.inject.Singleton
 class UsuarioEventoRepositoryImpl @Inject constructor(
     private val usuarioEventoDao: UsuarioEventoDao,
     private val eventoDao: EventoDao,
-    private val usuarioDao: UsuarioDao
+    private val usuarioDao: UsuarioDao,
+    private val apiService: ApiService
 ) : UsuarioEventoRepository {
 
     override fun getEventosByUsuario(usuarioId: Long): Flow<List<Evento>> =
@@ -36,10 +38,16 @@ class UsuarioEventoRepositoryImpl @Inject constructor(
         }
 
     override suspend fun unirse(usuarioId: Long, eventoId: Long) {
+        runCatching {
+            apiService.apuntarseAEvento(eventoId, usuarioId)
+        }
         usuarioEventoDao.upsert(UsuarioEventoEntity(usuarioId = usuarioId, eventoId = eventoId))
     }
 
     override suspend fun abandonar(usuarioId: Long, eventoId: Long) {
+        runCatching {
+            apiService.desapuntarseDeEvento(eventoId, usuarioId)
+        }
         usuarioEventoDao.delete(usuarioId, eventoId)
     }
 }

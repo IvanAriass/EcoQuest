@@ -9,6 +9,17 @@ import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Producto
 import com.ecoquest.app.domain.model.Usuario
 
+private const val API_BASE = "http://10.0.2.2:9000/api"
+private const val LOCALHOST = "http://localhost:9000"
+
+private fun String.toImageUrl(entityPath: String): String {
+    if (isBlank()) return this
+    return if (startsWith("http://") || startsWith("https://"))
+        replace(LOCALHOST, "http://10.0.2.2:9000")
+    else
+        "$API_BASE/$entityPath/$this"
+}
+
 fun UsuarioEntity.toDomain(): Usuario = Usuario(
     id = id,
     nombreUsuario = nombreUsuario,
@@ -18,7 +29,7 @@ fun UsuarioEntity.toDomain(): Usuario = Usuario(
     descripcion = descripcion,
     edad = edad,
     email = email,
-    imagen = imagen
+    imagen = imagen.toImageUrl("usuarios/imagen")
 )
 
 fun Usuario.toEntity(): UsuarioEntity = UsuarioEntity(
@@ -37,7 +48,8 @@ fun ComunidadEntity.toDomain(): Comunidad = Comunidad(
     id = id,
     nombre = nombre,
     descripcion = descripcion,
-    imagen = imagen,
+    imagen = imagen.toImageUrl("comunidades/imagen"),
+    estado = estado,
     creadorId = creadorId
 )
 
@@ -46,6 +58,7 @@ fun Comunidad.toEntity(): ComunidadEntity = ComunidadEntity(
     nombre = nombre,
     descripcion = descripcion,
     imagen = imagen,
+    estado = estado,
     creadorId = creadorId
 )
 
@@ -55,7 +68,7 @@ fun EventoEntity.toDomain(): Evento = Evento(
     descripcion = descripcion,
     fechaHora = fechaHora,
     ubicacion = ubicacion,
-    imagen = imagen,
+    imagen = imagen.toImageUrl("eventos/imagen"),
     estado = estado,
     comunidadId = comunidadId,
     creadorId = creadorId
@@ -77,6 +90,7 @@ fun ProductoEntity.toDomain(): Producto = Producto(
     id = id,
     nombre = nombre,
     descripcion = descripcion,
+    imagen = imagen.toImageUrl("productos/imagen"),
     precio = precio
 )
 
@@ -84,5 +98,6 @@ fun Producto.toEntity(): ProductoEntity = ProductoEntity(
     id = id,
     nombre = nombre,
     descripcion = descripcion,
+    imagen = imagen,
     precio = precio
 )

@@ -1,14 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PrototipadoEscritorio.Messages;
-using PrototipadoEscritorio.Models;
-using PrototipadoEscritorio.Properties;
+using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
+using EcoQuestDesktop.Properties;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace PrototipadoEscritorio.ViewModels.Usuarios
+namespace EcoQuestDesktop.ViewModels.Usuarios
 {
     public partial class DetalleUsuarioUserControlVM : ObservableObject
     {

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.usecase.eventos.JoinEventoUseCase
+import com.ecoquest.app.managers.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,11 +18,15 @@ import javax.inject.Inject
 class EventoDetalleViewModel @Inject constructor(
     private val eventoRepository: EventoRepository,
     private val usuarioEventoRepository: UsuarioEventoRepository,
-    private val joinEventoUseCase: JoinEventoUseCase
+    private val joinEventoUseCase: JoinEventoUseCase,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EventoDetalleUiState())
     val state: StateFlow<EventoDetalleUiState> = _state.asStateFlow()
+
+    private val usuarioId: Long
+        get() = tokenManager.getUsuarioId().takeIf { it > 0 } ?: 1L
 
     fun cargarEvento(eventoId: Long) {
         viewModelScope.launch {
@@ -41,12 +46,12 @@ class EventoDetalleViewModel @Inject constructor(
             }
             is EventoDetalleEvent.OnUnirse -> {
                 viewModelScope.launch {
-                    _state.value.evento?.let { joinEventoUseCase(1L, it.id) }
+                    _state.value.evento?.let { joinEventoUseCase(usuarioId, it.id) }
                 }
             }
             is EventoDetalleEvent.OnAbandonar -> {
                 viewModelScope.launch {
-                    _state.value.evento?.let { usuarioEventoRepository.abandonar(1L, it.id) }
+                    _state.value.evento?.let { usuarioEventoRepository.abandonar(usuarioId, it.id) }
                 }
             }
         }

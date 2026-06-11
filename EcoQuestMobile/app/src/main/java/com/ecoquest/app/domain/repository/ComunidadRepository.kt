@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface ComunidadRepository {
     fun getAll(): Flow<List<Comunidad>>
     fun getById(id: Long): Flow<Comunidad?>
+    suspend fun refreshComunidades()
     suspend fun upsert(comunidad: Comunidad)
     suspend fun delete(comunidad: Comunidad)
     suspend fun deleteAll()

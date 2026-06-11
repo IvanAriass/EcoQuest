@@ -2,7 +2,6 @@ package com.ecoquest.app.ui.feature.acceso
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.usecase.auth.LoginUseCase
 import com.ecoquest.app.domain.usecase.auth.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,7 +72,15 @@ class AccesoViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false, navigateToHome = true) }
                 }
                 .onFailure { e ->
-                    _uiState.update { it.copy(isLoading = false, error = e.message ?: "Error al iniciar sesión") }
+                    val mensaje = when {
+                        e.message?.contains("401") == true -> "Credenciales incorrectas"
+                        e.message?.contains("403") == true -> "Usuario bloqueado"
+                        e.message?.contains("Unable to resolve host") == true ||
+                        e.message?.contains("Failed to connect") == true ||
+                        e.message?.contains("timeout") == true -> "Error de conexión con el servidor"
+                        else -> e.message ?: "Error al iniciar sesión"
+                    }
+                    _uiState.update { it.copy(isLoading = false, error = mensaje) }
                 }
         }
     }
@@ -101,19 +108,23 @@ class AccesoViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             registerUseCase(
-                Usuario(
-                    nombreUsuario = current.username,
-                    nombre = current.username,
-                    email = current.email,
-                    contrasena = current.password
-                ),
-                current.password
+                nombreUsuario = current.username,
+                nombre = current.username,
+                email = current.email,
+                password = current.password
             )
                 .onSuccess {
-                    _uiState.update { it.copy(isLoading = false, navigateToLogin = true) }
+                    _uiState.update { it.copy(isLoading = false, navigateToHome = true) }
                 }
                 .onFailure { e ->
-                    _uiState.update { it.copy(isLoading = false, error = e.message ?: "Error al registrarse") }
+                    val mensaje = when {
+                        e.message?.contains("409") == true -> "El correo o usuario ya existe"
+                        e.message?.contains("Unable to resolve host") == true ||
+                        e.message?.contains("Failed to connect") == true ||
+                        e.message?.contains("timeout") == true -> "Error de conexión con el servidor"
+                        else -> e.message ?: "Error al registrarse"
+                    }
+                    _uiState.update { it.copy(isLoading = false, error = mensaje) }
                 }
         }
     }

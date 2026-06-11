@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proyecto.spring.dto.ComunidadDTO;
 import com.proyecto.spring.modelos.Comunidad;
+import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.servicios.ComunidadService;
 
 @RestController
@@ -39,6 +40,9 @@ public class ComunidadController {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ComunidadRepository comunidadRepository;
 
     @GetMapping
     public List<ComunidadDTO> obtenerTodos() {
@@ -137,6 +141,48 @@ public class ComunidadController {
         return comunidadService.actualizar(id, comunidad)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(value = "/{id}/con-imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Comunidad> actualizarConImagen(
+            @PathVariable Long id,
+            @RequestParam("comunidad") String comunidadJson,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
+
+        try {
+            Comunidad datosActualizados = objectMapper.readValue(comunidadJson, Comunidad.class);
+
+            if (datosActualizados.getEstado() == null) {
+                datosActualizados.setEstado("ACTIVO");
+            }
+
+            if (imagen != null && !imagen.isEmpty()) {
+                comunidadRepository.findById(id).ifPresent(comunidadVieja -> {
+                    String viejaImagen = comunidadVieja.getImagen();
+                    if (viejaImagen != null && !viejaImagen.isBlank()) {
+                        try {
+                            Files.deleteIfExists(Paths.get("src/main/resources/static/imagenes/comunidades", viejaImagen));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                String nombreArchivo = System.currentTimeMillis() + "_" + imagen.getOriginalFilename();
+                Path ruta = Paths.get("src/main/resources/static/imagenes/comunidades/" + nombreArchivo);
+                Files.createDirectories(ruta.getParent());
+                Files.write(ruta, imagen.getBytes());
+                datosActualizados.setImagen(nombreArchivo);
+            }
+
+            return comunidadService.actualizar(id, datosActualizados)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PatchMapping("/{id}/en-revision")

@@ -7,6 +7,7 @@ import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.usecase.comunidades.JoinComunidadUseCase
+import com.ecoquest.app.managers.TokenManager
 import com.ecoquest.app.ui.components.evento.EventoDialogConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,13 +22,17 @@ class ComunidadDetalleViewModel @Inject constructor(
     private val comunidadRepository: ComunidadRepository,
     private val eventoRepository: EventoRepository,
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
-    private val joinComunidadUseCase: JoinComunidadUseCase
+    private val joinComunidadUseCase: JoinComunidadUseCase,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ComunidadDetalleUiState())
     val state: StateFlow<ComunidadDetalleUiState> = _state.asStateFlow()
 
     private var comunidadId: Long = 0
+
+    private val usuarioId: Long
+        get() = tokenManager.getUsuarioId().takeIf { it > 0 } ?: 1L
 
     fun cargarComunidad(id: Long) {
         comunidadId = id
@@ -55,7 +60,17 @@ class ComunidadDetalleViewModel @Inject constructor(
             }
             is ComunidadDetalleEvent.OnGuardarEvento -> {
                 viewModelScope.launch {
-                    eventoRepository.upsert(Evento(nombre = event.nombre, descripcion = event.descripcion, fechaHora = event.fechaHora, ubicacion = event.ubicacion, imagen = event.imagen, comunidadId = comunidadId, creadorId = 1L))
+                    eventoRepository.upsert(
+                        Evento(
+                            nombre = event.nombre,
+                            descripcion = event.descripcion,
+                            fechaHora = event.fechaHora,
+                            ubicacion = event.ubicacion,
+                            imagen = event.imagen,
+                            comunidadId = comunidadId,
+                            creadorId = usuarioId
+                        )
+                    )
                     _state.update { it.copy(dialogo = null) }
                 }
             }
@@ -66,10 +81,10 @@ class ComunidadDetalleViewModel @Inject constructor(
                 _state.update { it.copy(info = event.info) }
             }
             is ComunidadDetalleEvent.OnUnirse -> {
-                viewModelScope.launch { joinComunidadUseCase(1L, comunidadId, "miembro") }
+                viewModelScope.launch { joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO") }
             }
             is ComunidadDetalleEvent.OnAbandonar -> {
-                viewModelScope.launch { usuarioComunidadRepository.abandonar(1L, comunidadId) }
+                viewModelScope.launch { usuarioComunidadRepository.abandonar(usuarioId, comunidadId) }
             }
         }
     }

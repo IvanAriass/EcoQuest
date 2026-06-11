@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace PrototipadoEscritorio.Converters
+namespace EcoQuestDesktop.Converters
 {
     public class ColorTipoToBrushConverter : IValueConverter
     {

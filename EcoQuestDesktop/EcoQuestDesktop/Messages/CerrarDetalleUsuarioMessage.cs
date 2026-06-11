@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
-namespace PrototipadoEscritorio.Messages
+namespace EcoQuestDesktop.Messages
 {
     public class CerrarDetalleUsuarioMessage : ValueChangedMessage<bool>
     {

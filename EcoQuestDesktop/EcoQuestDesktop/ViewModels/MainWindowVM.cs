@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PrototipadoEscritorio.Services;
+using EcoQuestDesktop.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
-namespace PrototipadoEscritorio.ViewModels
+namespace EcoQuestDesktop.ViewModels
 {
     public partial class MainWindowVM : ObservableObject
     {

@@ -8,6 +8,7 @@ import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
+import com.ecoquest.app.managers.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,11 +23,15 @@ class HomeContentViewModel @Inject constructor(
     private val eventoRepository: EventoRepository,
     private val usuarioEventoRepository: UsuarioEventoRepository,
     private val comunidadRepository: ComunidadRepository,
-    private val usuarioComunidadRepository: UsuarioComunidadRepository
+    private val usuarioComunidadRepository: UsuarioComunidadRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContentUiState())
     val state: StateFlow<HomeContentUiState> = _state.asStateFlow()
+
+    private val usuarioId: Long
+        get() = tokenManager.getUsuarioId().takeIf { it > 0 } ?: 1L
 
     init {
         cargarDatos()
@@ -38,19 +43,19 @@ class HomeContentViewModel @Inject constructor(
         _state.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            usuarioRepository.getById(1L).collect { usuario ->
+            usuarioRepository.getById(usuarioId).collect { usuario ->
                 _state.update { it.copy(usuario = usuario ?: Usuario(), isLoading = false) }
             }
         }
 
         viewModelScope.launch {
-            usuarioEventoRepository.getEventosByUsuario(1L).collect { eventos ->
+            usuarioEventoRepository.getEventosByUsuario(usuarioId).collect { eventos ->
                 _state.update { it.copy(proximosEventos = eventos.take(5)) }
             }
         }
 
         viewModelScope.launch {
-            usuarioComunidadRepository.getComunidadesByUsuario(1L).collect { comunidades ->
+            usuarioComunidadRepository.getComunidadesByUsuario(usuarioId).collect { comunidades ->
                 _state.update { it.copy(comunidades = comunidades) }
             }
         }
