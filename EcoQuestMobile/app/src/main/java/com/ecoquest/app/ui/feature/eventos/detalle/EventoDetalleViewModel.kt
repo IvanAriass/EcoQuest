@@ -30,6 +30,9 @@ class EventoDetalleViewModel @Inject constructor(
 
     fun cargarEvento(eventoId: Long) {
         viewModelScope.launch {
+            eventoRepository.refreshEventos()
+        }
+        viewModelScope.launch {
             eventoRepository.getById(eventoId).collect { evento ->
                 _state.update { it.copy(evento = evento) }
             }

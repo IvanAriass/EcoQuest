@@ -37,6 +37,12 @@ class ComunidadDetalleViewModel @Inject constructor(
     fun cargarComunidad(id: Long) {
         comunidadId = id
         viewModelScope.launch {
+            comunidadRepository.refreshComunidades()
+        }
+        viewModelScope.launch {
+            eventoRepository.refreshEventos()
+        }
+        viewModelScope.launch {
             comunidadRepository.getById(id).collect { comunidad ->
                 _state.update { it.copy(comunidad = comunidad) }
             }

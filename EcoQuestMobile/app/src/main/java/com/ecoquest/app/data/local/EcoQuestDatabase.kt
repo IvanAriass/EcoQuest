@@ -24,7 +24,7 @@ import com.ecoquest.app.data.local.entity.UsuarioEventoEntity
         UsuarioComunidadEntity::class,
         UsuarioEventoEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class EcoQuestDatabase : RoomDatabase() {

@@ -43,6 +43,13 @@ class HomeContentViewModel @Inject constructor(
         _state.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
+            eventoRepository.refreshEventos()
+        }
+        viewModelScope.launch {
+            comunidadRepository.refreshComunidades()
+        }
+
+        viewModelScope.launch {
             usuarioRepository.getById(usuarioId).collect { usuario ->
                 _state.update { it.copy(usuario = usuario ?: Usuario(), isLoading = false) }
             }

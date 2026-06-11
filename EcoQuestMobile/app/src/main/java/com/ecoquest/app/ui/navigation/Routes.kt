@@ -1,10 +1,18 @@
 package com.ecoquest.app.ui.navigation
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,7 +47,59 @@ import com.ecoquest.app.ui.feature.tienda.TiendaScreen
 import com.ecoquest.app.ui.feature.tienda.TiendaViewModel
 import kotlinx.serialization.Serializable
 
-private const val ANIM_DURATION = 350
+val NAV_DURATION = 350
+private val SPRING_FLOAT = spring<Float>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessMediumLow
+)
+private val SPRING_FLOAT_STIFF = spring<Float>(
+    dampingRatio = Spring.DampingRatioNoBouncy,
+    stiffness = Spring.StiffnessHigh
+)
+private val SPRING_OFFSET = spring<IntOffset>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessMediumLow
+)
+
+private fun slideInRight() = slideInHorizontally(
+    initialOffsetX = { it },
+    animationSpec = SPRING_OFFSET
+) + fadeIn(animationSpec = tween(220))
+
+private fun slideOutLeft() = slideOutHorizontally(
+    targetOffsetX = { -it },
+    animationSpec = tween(NAV_DURATION, easing = FastOutSlowInEasing)
+) + fadeOut(animationSpec = tween(200))
+
+private fun slideInLeft() = slideInHorizontally(
+    initialOffsetX = { -it },
+    animationSpec = SPRING_OFFSET
+) + fadeIn(animationSpec = tween(220))
+
+private fun slideOutRight() = slideOutHorizontally(
+    targetOffsetX = { it },
+    animationSpec = tween(NAV_DURATION, easing = FastOutSlowInEasing)
+) + fadeOut(animationSpec = tween(200))
+
+private fun scaleFadeIn() = scaleIn(
+    initialScale = 0.92f,
+    animationSpec = SPRING_FLOAT
+) + fadeIn(animationSpec = SPRING_FLOAT_STIFF)
+
+private fun scaleFadeOut() = scaleOut(
+    targetScale = 0.95f,
+    animationSpec = tween(200)
+) + fadeOut(animationSpec = tween(200))
+
+private fun slideUpIn() = slideInVertically(
+    initialOffsetY = { it / 6 },
+    animationSpec = SPRING_OFFSET
+) + fadeIn(animationSpec = SPRING_FLOAT_STIFF)
+
+private fun slideDownOut() = slideOutVertically(
+    targetOffsetY = { it / 4 },
+    animationSpec = tween(200)
+) + fadeOut(animationSpec = tween(200))
 
 object Routes {
 
@@ -74,35 +134,15 @@ object Routes {
     data object Ajustes
 }
 
-private fun slideInFromRight() = slideInHorizontally(
-    initialOffsetX = { it },
-    animationSpec = tween(ANIM_DURATION)
-) + fadeIn(animationSpec = tween(ANIM_DURATION))
-
-private fun slideOutToLeft() = slideOutHorizontally(
-    targetOffsetX = { -it },
-    animationSpec = tween(ANIM_DURATION)
-) + fadeOut(animationSpec = tween(ANIM_DURATION))
-
-private fun slideInFromLeft() = slideInHorizontally(
-    initialOffsetX = { -it },
-    animationSpec = tween(ANIM_DURATION)
-) + fadeIn(animationSpec = tween(ANIM_DURATION))
-
-private fun slideOutToRight() = slideOutHorizontally(
-    targetOffsetX = { it },
-    animationSpec = tween(ANIM_DURATION)
-) + fadeOut(animationSpec = tween(ANIM_DURATION))
-
 fun NavGraphBuilder.appNavGraph(
     navController: NavHostController,
     onLogout: () -> Unit
 ) {
     composable<Routes.Home>(
-        enterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
-        exitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) },
-        popEnterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
-        popExitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
     ) {
         val vm: HomeContentViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -121,10 +161,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.Eventos>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
     ) {
         val vm: EventosViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -136,10 +176,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.Evento>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
     ) { backStackEntry ->
         val route = backStackEntry.toRoute<Routes.Evento>()
         val vm: EventoDetalleViewModel = hiltViewModel()
@@ -149,10 +189,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.Comunidades>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
     ) {
         val vm: ComunidadesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -168,10 +208,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.ComunidadDentro>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
     ) { backStackEntry ->
         val route = backStackEntry.toRoute<Routes.ComunidadDentro>()
         val vm: ComunidadDetalleViewModel = hiltViewModel()
@@ -186,10 +226,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.Tienda>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
     ) {
         val vm: TiendaViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -197,10 +237,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.Perfil>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { slideUpIn() },
+        exitTransition = { slideDownOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
     ) {
         val vm: PerfilViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -216,10 +256,10 @@ fun NavGraphBuilder.appNavGraph(
     }
 
     composable<Routes.Ajustes>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
     ) {
         val vm: AjustesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
@@ -232,10 +272,10 @@ fun NavGraphBuilder.authNavGraph(
     onLoginSuccess: () -> Unit
 ) {
     composable<Routes.Login>(
-        enterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
-        exitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) },
-        popEnterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
-        popExitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
     ) {
         val vm: AccesoViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
@@ -259,10 +299,10 @@ fun NavGraphBuilder.authNavGraph(
     }
 
     composable<Routes.Register>(
-        enterTransition = { slideInFromRight() },
-        exitTransition = { slideOutToLeft() },
-        popEnterTransition = { slideInFromLeft() },
-        popExitTransition = { slideOutToRight() }
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
     ) {
         val vm: AccesoViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
