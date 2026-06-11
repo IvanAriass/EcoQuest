@@ -18,22 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ecoquest.app.ui.components.comunidad.ComunidadCard
+import com.ecoquest.app.ui.components.comunidad.ComunidadDialog
+import com.ecoquest.app.ui.components.comunidad.CrearComunidadCard
 import com.ecoquest.app.ui.components.general.SearchBar
 import com.ecoquest.app.ui.components.general.SectionTitle
-import com.ecoquest.app.ui.feature.comunidades.dialogo.CrearComunidadDialog
-import com.ecoquest.app.ui.feature.comunidades.dialogo.EditarComunidadDialog
 
 @Composable
 fun ComunidadesScreen(
     uiState: ComunidadesUiState,
     onEvent: (ComunidadesEvent) -> Unit
 ) {
-    val comunidadesFiltradas = if (uiState.textoBusqueda.isBlank()) uiState.comunidades
-    else uiState.comunidades.filter {
-        it.nombre.contains(uiState.textoBusqueda, ignoreCase = true) ||
-        it.descripcion.contains(uiState.textoBusqueda, ignoreCase = true)
-    }
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -52,37 +47,26 @@ fun ComunidadesScreen(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        items(comunidadesFiltradas) { comunidad ->
-            ComunidadesCard(
+        items(uiState.comunidadesFiltradas) { comunidad ->
+            ComunidadCard(
                 comunidad = comunidad,
                 onClick = { onEvent(ComunidadesEvent.OnComunidadClick(comunidad.id.toInt())) }
             )
         }
 
         item {
-            ComunidadesGrid(
+            CrearComunidadCard(
                 onClick = { onEvent(ComunidadesEvent.OnCrearComunidad) }
             )
         }
     }
 
-    if (uiState.showCrearDialog) {
-        CrearComunidadDialog(
+    uiState.dialogo?.let { config ->
+        ComunidadDialog(
+            config = config,
             onDismiss = { onEvent(ComunidadesEvent.OnDismissDialog) },
             onConfirm = { nombre, descripcion, imagen ->
                 onEvent(ComunidadesEvent.OnGuardarComunidad(nombre, descripcion, imagen))
-            }
-        )
-    }
-
-    if (uiState.showEditarDialog && uiState.comunidadAEditar != null) {
-        EditarComunidadDialog(
-            comunidad = uiState.comunidadAEditar!!,
-            onDismiss = { onEvent(ComunidadesEvent.OnDismissDialog) },
-            onConfirm = { nombre, descripcion, imagen ->
-                onEvent(ComunidadesEvent.OnEditarComunidad(
-                    uiState.comunidadAEditar!!.id, nombre, descripcion, imagen
-                ))
             }
         )
     }

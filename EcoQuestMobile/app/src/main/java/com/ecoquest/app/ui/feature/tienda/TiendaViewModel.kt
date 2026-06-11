@@ -1,19 +1,37 @@
 package com.ecoquest.app.ui.feature.tienda
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ecoquest.app.domain.usecase.productos.GetProductosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TiendaViewModel @Inject constructor() : ViewModel() {
+class TiendaViewModel @Inject constructor(
+    private val getProductosUseCase: GetProductosUseCase
+) : ViewModel() {
 
     private val _state = MutableStateFlow(TiendaUiState())
     val state: StateFlow<TiendaUiState> = _state.asStateFlow()
 
+    init {
+        cargarProductos()
+    }
+
     fun onEvent(event: TiendaEvent) {
         when (event) { else -> {} }
+    }
+
+    private fun cargarProductos() {
+        viewModelScope.launch {
+            getProductosUseCase().collect { productos ->
+                _state.update { it.copy(productos = productos, isLoading = false) }
+            }
+        }
     }
 }

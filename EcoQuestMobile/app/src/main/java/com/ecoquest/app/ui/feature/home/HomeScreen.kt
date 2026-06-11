@@ -16,8 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ecoquest.app.R
-import com.ecoquest.app.ui.components.bar.BottomNavBar
-import com.ecoquest.app.ui.components.bar.BottomNavTab
+import com.ecoquest.app.ui.components.navegacion.BottomNavBar
+import com.ecoquest.app.ui.components.navegacion.BottomNavTab
 import com.ecoquest.app.ui.navigation.AppNavHost
 import com.ecoquest.app.ui.navigation.Routes
 import com.ecoquest.app.ui.theme.Green99

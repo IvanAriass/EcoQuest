@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.ecoquest.app.data.local.EcoQuestDatabase
 import com.ecoquest.app.data.local.dao.ComunidadDao
 import com.ecoquest.app.data.local.dao.EventoDao
+import com.ecoquest.app.data.local.dao.ProductoDao
 import com.ecoquest.app.data.local.dao.UsuarioComunidadDao
 import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.dao.UsuarioEventoDao
@@ -37,6 +38,9 @@ object DatabaseModule {
 
     @Provides
     fun provideUsuarioComunidadDao(db: EcoQuestDatabase): UsuarioComunidadDao = db.usuarioComunidadDao()
+
+    @Provides
+    fun provideProductoDao(db: EcoQuestDatabase): ProductoDao = db.productoDao()
 
     @Provides
     fun provideUsuarioEventoDao(db: EcoQuestDatabase): UsuarioEventoDao = db.usuarioEventoDao()

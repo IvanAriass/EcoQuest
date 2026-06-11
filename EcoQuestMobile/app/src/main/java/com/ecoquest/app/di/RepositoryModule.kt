@@ -2,11 +2,13 @@ package com.ecoquest.app.di
 
 import com.ecoquest.app.data.repository.ComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.EventoRepositoryImpl
+import com.ecoquest.app.data.repository.ProductoRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioEventoRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioRepositoryImpl
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.ProductoRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
@@ -39,4 +41,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUsuarioEventoRepository(impl: UsuarioEventoRepositoryImpl): UsuarioEventoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductoRepository(impl: ProductoRepositoryImpl): ProductoRepository
 }

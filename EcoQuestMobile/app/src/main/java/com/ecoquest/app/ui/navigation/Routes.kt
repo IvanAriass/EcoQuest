@@ -16,20 +16,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.ecoquest.app.ui.feature.ajustes.AjustesScreen
 import com.ecoquest.app.ui.feature.ajustes.AjustesViewModel
-import com.ecoquest.app.ui.feature.auth.AuthEvent
-import com.ecoquest.app.ui.feature.auth.AuthViewModel
-import com.ecoquest.app.ui.feature.auth.LoginScreen
-import com.ecoquest.app.ui.feature.auth.RegisterScreen
+import com.ecoquest.app.ui.feature.acceso.AccesoEvent
+import com.ecoquest.app.ui.feature.acceso.AccesoViewModel
+import com.ecoquest.app.ui.feature.acceso.InicioSesionScreen
+import com.ecoquest.app.ui.feature.acceso.RegistroScreen
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesEvent
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesScreen
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesViewModel
-import com.ecoquest.app.ui.feature.pantalla_home.PantallaHomeEvent
-import com.ecoquest.app.ui.feature.pantalla_home.PantallaHomeScreen
-import com.ecoquest.app.ui.feature.pantalla_home.PantallaHomeViewModel
-import com.ecoquest.app.ui.feature.comunidades_dentro.ComunidadesDentroScreen
-import com.ecoquest.app.ui.feature.comunidades_dentro.ComunidadesDentroViewModel
-import com.ecoquest.app.ui.feature.evento_dentro.EventoDentroScreen
-import com.ecoquest.app.ui.feature.evento_dentro.EventoDentroViewModel
+import com.ecoquest.app.ui.feature.home.contenido.HomeContentEvent
+import com.ecoquest.app.ui.feature.home.contenido.HomeContentScreen
+import com.ecoquest.app.ui.feature.home.contenido.HomeContentViewModel
+import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
+import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
+import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleScreen
+import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.EventosScreen
 import com.ecoquest.app.ui.feature.eventos.EventosViewModel
 import com.ecoquest.app.ui.feature.perfil.PerfilEvent
@@ -104,17 +104,17 @@ fun NavGraphBuilder.appNavGraph(
         popEnterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
         popExitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
     ) {
-        val vm: PantallaHomeViewModel = hiltViewModel()
+        val vm: HomeContentViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
-        PantallaHomeScreen(
+        HomeContentScreen(
             uiState = uiState,
             onEvent = { event ->
                 when (event) {
-                    is PantallaHomeEvent.OnNavigateToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
-                    is PantallaHomeEvent.OnNavigateToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
-                    is PantallaHomeEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
-                    is PantallaHomeEvent.OnNavigateToEvento -> navController.navigate(Routes.Evento(event.eventoId))
-                    is PantallaHomeEvent.OnNavigateToComunidad -> navController.navigate(Routes.ComunidadDentro(event.comunidadId.toInt()))
+                    is HomeContentEvent.OnNavigateToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
+                    is HomeContentEvent.OnNavigateToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
+                    is HomeContentEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
+                    is HomeContentEvent.OnNavigateToEvento -> navController.navigate(Routes.Evento(event.eventoId))
+                    is HomeContentEvent.OnNavigateToComunidad -> navController.navigate(Routes.ComunidadDentro(event.comunidadId.toInt()))
                 }
             }
         )
@@ -142,10 +142,10 @@ fun NavGraphBuilder.appNavGraph(
         popExitTransition = { slideOutToRight() }
     ) { backStackEntry ->
         val route = backStackEntry.toRoute<Routes.Evento>()
-        val vm: EventoDentroViewModel = hiltViewModel()
+        val vm: EventoDetalleViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         LaunchedEffect(route) { vm.cargarEvento(route.eventoId) }
-        EventoDentroScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event -> vm.onEvent(event) })
+        EventoDetalleScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event -> vm.onEvent(event) })
     }
 
     composable<Routes.Comunidades>(
@@ -174,10 +174,10 @@ fun NavGraphBuilder.appNavGraph(
         popExitTransition = { slideOutToRight() }
     ) { backStackEntry ->
         val route = backStackEntry.toRoute<Routes.ComunidadDentro>()
-        val vm: ComunidadesDentroViewModel = hiltViewModel()
+        val vm: ComunidadDetalleViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         LaunchedEffect(route) { vm.cargarComunidad(route.comunidadId.toLong()) }
-        ComunidadesDentroScreen(
+        ComunidadDetalleScreen(
             comunidadId = route.comunidadId.toLong(),
             uiState = uiState,
             onEvent = { event -> vm.onEvent(event) },
@@ -237,21 +237,21 @@ fun NavGraphBuilder.authNavGraph(
         popEnterTransition = { fadeIn(animationSpec = tween(ANIM_DURATION)) },
         popExitTransition = { fadeOut(animationSpec = tween(ANIM_DURATION)) }
     ) {
-        val vm: AuthViewModel = hiltViewModel()
+        val vm: AccesoViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
 
         LaunchedEffect(uiState.navigateToHome) {
             if (uiState.navigateToHome) {
-                vm.onEvent(AuthEvent.OnNavigateToHomeConsumed)
+                vm.onEvent(AccesoEvent.OnNavigateToHomeConsumed)
                 onLoginSuccess()
             }
         }
 
-        LoginScreen(
+        InicioSesionScreen(
             uiState = uiState,
             onEvent = { event ->
                 when (event) {
-                    is AuthEvent.OnGoToRegistro -> navController.navigate(Routes.Register)
+                    is AccesoEvent.OnGoToRegistro -> navController.navigate(Routes.Register)
                     else -> vm.onEvent(event)
                 }
             }
@@ -264,17 +264,17 @@ fun NavGraphBuilder.authNavGraph(
         popEnterTransition = { slideInFromLeft() },
         popExitTransition = { slideOutToRight() }
     ) {
-        val vm: AuthViewModel = hiltViewModel()
+        val vm: AccesoViewModel = hiltViewModel()
         val uiState by vm.uiState.collectAsState()
 
         LaunchedEffect(uiState.navigateToLogin) {
             if (uiState.navigateToLogin) {
-                vm.onEvent(AuthEvent.OnNavigateToLoginConsumed)
+                vm.onEvent(AccesoEvent.OnNavigateToLoginConsumed)
                 navController.navigate(Routes.Login) { popUpTo<Routes.Register> { inclusive = true } }
             }
         }
 
-        RegisterScreen(
+        RegistroScreen(
             uiState = uiState,
             onEvent = { event -> vm.onEvent(event) }
         )

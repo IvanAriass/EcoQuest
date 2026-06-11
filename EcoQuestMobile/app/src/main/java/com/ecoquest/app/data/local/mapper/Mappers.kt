@@ -2,9 +2,11 @@ package com.ecoquest.app.data.local.mapper
 
 import com.ecoquest.app.data.local.entity.ComunidadEntity
 import com.ecoquest.app.data.local.entity.EventoEntity
+import com.ecoquest.app.data.local.entity.ProductoEntity
 import com.ecoquest.app.data.local.entity.UsuarioEntity
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
+import com.ecoquest.app.domain.model.Producto
 import com.ecoquest.app.domain.model.Usuario
 
 fun UsuarioEntity.toDomain(): Usuario = Usuario(
@@ -69,4 +71,18 @@ fun Evento.toEntity(): EventoEntity = EventoEntity(
     estado = estado,
     comunidadId = comunidadId,
     creadorId = creadorId
+)
+
+fun ProductoEntity.toDomain(): Producto = Producto(
+    id = id,
+    nombre = nombre,
+    descripcion = descripcion,
+    precio = precio
+)
+
+fun Producto.toEntity(): ProductoEntity = ProductoEntity(
+    id = id,
+    nombre = nombre,
+    descripcion = descripcion,
+    precio = precio
 )
