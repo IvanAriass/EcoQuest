@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
@@ -24,6 +25,7 @@ class HomeContentViewModel @Inject constructor(
     private val usuarioEventoRepository: UsuarioEventoRepository,
     private val comunidadRepository: ComunidadRepository,
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
+    private val transaccionPuntosRepository: TransaccionPuntosRepository,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -65,6 +67,11 @@ class HomeContentViewModel @Inject constructor(
             usuarioComunidadRepository.getComunidadesByUsuario(usuarioId).collect { comunidades ->
                 _state.update { it.copy(comunidades = comunidades) }
             }
+        }
+
+        viewModelScope.launch {
+            val saldo = transaccionPuntosRepository.getSaldo(usuarioId)
+            _state.update { it.copy(saldoPuntos = saldo) }
         }
     }
 }

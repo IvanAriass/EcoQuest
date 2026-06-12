@@ -137,7 +137,7 @@ namespace EcoQuestDesktop.Services
             catch { return new(); }
         }
 
-        public static async Task<Usuario?> CrearUsuarioConImagen(string nombreUsuario, string nombre, string apellido, string email, int edad, string descripcion, string contraseña, string? rutaImagen)
+        public static async Task<Usuario?> CrearUsuarioConImagen(string nombreUsuario, string nombre, string apellido, string email, DateTime? fechaNacimiento, string descripcion, string contraseña, string? rutaImagen)
         {
             RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
             RestRequest request = new RestRequest("usuarios/con-imagen", Method.Post);
@@ -148,7 +148,7 @@ namespace EcoQuestDesktop.Services
                 nombre,
                 apellido,
                 email,
-                edad,
+                fechaNacimiento,
                 descripcion,
                 contraseña
             });
@@ -169,7 +169,7 @@ namespace EcoQuestDesktop.Services
             return null;
         }
 
-        public static async Task<Usuario?> EditarUsuarioConImagen(int id, string nombreUsuario, string nombre, string apellido, string email, int edad, string descripcion, string? contraseña, string? rutaImagen)
+        public static async Task<Usuario?> EditarUsuarioConImagen(int id, string nombreUsuario, string nombre, string apellido, string email, DateTime? fechaNacimiento, string descripcion, string? contraseña, string? rutaImagen)
         {
             RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
             RestRequest request = new RestRequest($"usuarios/{id}/con-imagen", Method.Put);
@@ -180,7 +180,7 @@ namespace EcoQuestDesktop.Services
                 nombre,
                 apellido,
                 email,
-                edad,
+                fechaNacimiento,
                 descripcion,
                 contraseña
             });
@@ -571,6 +571,47 @@ namespace EcoQuestDesktop.Services
             {
                 return false;
             }
+        }
+    
+
+        // ==================== RETOS / PUNTOS ====================
+
+        public static List<Reto> GetRetos()
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new("retos", Method.Get);
+                RestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<List<Reto>>(response.Content) ?? new();
+            }
+            catch { return new(); }
+        }
+
+        public static List<TransaccionPuntos> GetHistorialPuntos(int usuarioId)
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new($"usuarios/{usuarioId}/puntos/historial", Method.Get);
+                RestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<List<TransaccionPuntos>>(response.Content) ?? new();
+            }
+            catch { return new(); }
+        }
+
+        public static int GetSaldoPuntos(int usuarioId)
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new($"usuarios/{usuarioId}/puntos/saldo", Method.Get);
+                RestResponse response = client.Execute(request);
+                if (response.IsSuccessful && int.TryParse(response.Content, out int saldo))
+                    return saldo;
+                return 0;
+            }
+            catch { return 0; }
         }
     }
 }

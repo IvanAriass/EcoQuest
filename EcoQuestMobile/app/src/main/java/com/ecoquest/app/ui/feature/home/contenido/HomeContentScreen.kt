@@ -1,6 +1,8 @@
 package com.ecoquest.app.ui.feature.home.contenido
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,7 +74,9 @@ fun HomeContentScreen(
 
         StatsRow(
             eventosCount = uiState.proximosEventos.size,
-            comunidadesCount = uiState.comunidades.size
+            comunidadesCount = uiState.comunidades.size,
+            saldoPuntos = uiState.saldoPuntos,
+            onPuntosClick = { onEvent(HomeContentEvent.OnNavigateToRetos) }
         )
 
         Spacer(modifier = Modifier.height(28.dp))
@@ -194,7 +199,12 @@ private fun HeaderSection(usuario: Usuario) {
 }
 
 @Composable
-private fun StatsRow(eventosCount: Int, comunidadesCount: Int) {
+private fun StatsRow(
+    eventosCount: Int,
+    comunidadesCount: Int,
+    saldoPuntos: Int,
+    onPuntosClick: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -217,11 +227,12 @@ private fun StatsRow(eventosCount: Int, comunidadesCount: Int) {
         )
         StatCard(
             icon = Icons.Filled.Eco,
-            value = "100",
+            value = "$saldoPuntos",
             label = "Puntos Eco",
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             iconTint = MaterialTheme.colorScheme.tertiary,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = onPuntosClick
         )
     }
 }
@@ -233,10 +244,15 @@ private fun StatCard(
     label: String,
     containerColor: Color,
     iconTint: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier,
+        modifier = if (onClick != null) modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick
+        ) else modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface

@@ -17,7 +17,7 @@ namespace EcoQuestDesktop.ViewModels.Usuarios
 
         public string NombreMostrar => $"{Usuario.Nombre} {Usuario.Apellido}".Trim();
 
-        public string EdadMostrar => $"{Usuario.Edad} años";
+        public string EdadMostrar => Usuario.Edad > 0 ? $"{Usuario.Edad} años" : "Sin fecha";
 
         [RelayCommand]
         private void Cerrar()

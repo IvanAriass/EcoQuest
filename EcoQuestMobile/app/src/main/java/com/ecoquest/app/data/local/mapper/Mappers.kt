@@ -3,10 +3,14 @@ package com.ecoquest.app.data.local.mapper
 import com.ecoquest.app.data.local.entity.ComunidadEntity
 import com.ecoquest.app.data.local.entity.EventoEntity
 import com.ecoquest.app.data.local.entity.ProductoEntity
+import com.ecoquest.app.data.local.entity.RetoEntity
+import com.ecoquest.app.data.local.entity.TransaccionPuntosEntity
 import com.ecoquest.app.data.local.entity.UsuarioEntity
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Producto
+import com.ecoquest.app.domain.model.Reto
+import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
 
 private const val API_BASE = "http://10.0.2.2:9000/api"
@@ -27,7 +31,7 @@ fun UsuarioEntity.toDomain(): Usuario = Usuario(
     nombre = nombre,
     apellido = apellido,
     descripcion = descripcion,
-    edad = edad,
+    fechaNacimiento = fechaNacimiento,
     email = email,
     imagen = imagen.toImageUrl("usuarios/imagen")
 )
@@ -39,7 +43,7 @@ fun Usuario.toEntity(): UsuarioEntity = UsuarioEntity(
     nombre = nombre,
     apellido = apellido,
     descripcion = descripcion,
-    edad = edad,
+    fechaNacimiento = fechaNacimiento,
     email = email,
     imagen = imagen
 )
@@ -102,4 +106,23 @@ fun Producto.toEntity(): ProductoEntity = ProductoEntity(
     descripcion = descripcion,
     imagen = imagen,
     precio = precio
+)
+
+fun RetoEntity.toDomain(): Reto = Reto(
+    id = id,
+    nombre = nombre,
+    descripcion = descripcion,
+    puntos = puntos,
+    tipo = tipo,
+    requisitoCantidad = requisitoCantidad,
+    frecuencia = frecuencia
+)
+
+fun TransaccionPuntosEntity.toDomain(): TransaccionPuntos = TransaccionPuntos(
+    id = id,
+    puntos = puntos,
+    tipo = tipo,
+    concepto = concepto,
+    referenciaId = referenciaId,
+    fecha = fecha
 )

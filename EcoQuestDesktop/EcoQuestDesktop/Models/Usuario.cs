@@ -42,9 +42,9 @@ namespace EcoQuestDesktop.Models
         private string _descripcion = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("edad")]
+        [JsonProperty("fechaNacimiento")]
         [DataMember]
-        private int _edad;
+        private DateTime? _fechaNacimiento;
 
         [ObservableProperty]
         [JsonProperty("email")]
@@ -71,6 +71,11 @@ namespace EcoQuestDesktop.Models
         [DataMember]
         private DateTime? _fechaBloqueo;
 
+        [ObservableProperty]
+        [JsonProperty("puntos")]
+        [DataMember]
+        private int _puntos;
+
         public string NombreCompleto => string.IsNullOrEmpty(Apellido) ? Nombre : $"{Apellido}, {Nombre}";
 
         public string Avatar => Imagen;
@@ -79,6 +84,8 @@ namespace EcoQuestDesktop.Models
 
         public string FechaBloqueoFormateada =>
             FechaBloqueo.HasValue ? FechaBloqueo.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty;
+
+        public int Edad => FechaNacimiento.HasValue ? (int)((DateTime.Now - FechaNacimiento.Value).TotalDays / 365.25) : 0;
 
         [JsonIgnore]
         public SolidColorBrush ColorBorde { get; } = new((Color)ColorConverter.ConvertFromString(_coloresHex[_random.Next(_coloresHex.Length)]));

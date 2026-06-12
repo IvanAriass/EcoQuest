@@ -31,7 +31,7 @@ public class UsuarioService {
     public List<Usuario> obtenerTodos() {
         return usuarioRepository.findByBloqueadoFalse().stream()
                 .map(u -> {
-                    if (u.getImagen() != null && !u.getImagen().isBlank()) {
+                    if (u.getImagen() != null && !u.getImagen().isBlank() && !u.getImagen().startsWith("http")) {
                         u.setImagen(baseUrl + "/api/usuarios/imagen/" + u.getImagen());
                     }
                     return u;
@@ -41,7 +41,7 @@ public class UsuarioService {
 
     public Optional<Usuario> obtenerPorId(Long id) {
         return usuarioRepository.findById(id).map(u -> {
-            if (u.getImagen() != null && !u.getImagen().isBlank()) {
+            if (u.getImagen() != null && !u.getImagen().isBlank() && !u.getImagen().startsWith("http")) {
                 u.setImagen(baseUrl + "/api/usuarios/imagen/" + u.getImagen());
             }
             return u;
@@ -62,7 +62,7 @@ public class UsuarioService {
             usuario.setNombre(usuarioActualizado.getNombre());
             usuario.setApellido(usuarioActualizado.getApellido());
             usuario.setDescripcion(usuarioActualizado.getDescripcion());
-            usuario.setEdad(usuarioActualizado.getEdad());
+            usuario.setFechaNacimiento(usuarioActualizado.getFechaNacimiento());
             usuario.setEmail(usuarioActualizado.getEmail());
             if (usuarioActualizado.getImagen() != null && !usuarioActualizado.getImagen().isBlank()) {
                 usuario.setImagen(usuarioActualizado.getImagen());
@@ -93,7 +93,7 @@ public class UsuarioService {
     public List<Usuario> buscarPorNombre(String nombre) {
         return usuarioRepository.findByNombreUsuarioContainingIgnoreCaseAndBloqueadoFalse(nombre).stream()
                 .map(u -> {
-                    if (u.getImagen() != null && !u.getImagen().isBlank()) {
+                    if (u.getImagen() != null && !u.getImagen().isBlank() && !u.getImagen().startsWith("http")) {
                         u.setImagen(baseUrl + "/api/usuarios/imagen/" + u.getImagen());
                     }
                     return u;
@@ -104,7 +104,7 @@ public class UsuarioService {
     public List<Usuario> obtenerTodosSinFiltro() {
         return usuarioRepository.findAll().stream()
                 .map(u -> {
-                    if (u.getImagen() != null && !u.getImagen().isBlank()) {
+                    if (u.getImagen() != null && !u.getImagen().isBlank() && !u.getImagen().startsWith("http")) {
                         u.setImagen(baseUrl + "/api/usuarios/imagen/" + u.getImagen());
                     }
                     return u;
@@ -115,7 +115,7 @@ public class UsuarioService {
     public List<Usuario> obtenerBloqueados() {
         return usuarioRepository.findByBloqueadoTrue().stream()
                 .map(u -> {
-                    if (u.getImagen() != null && !u.getImagen().isBlank()) {
+                    if (u.getImagen() != null && !u.getImagen().isBlank() && !u.getImagen().startsWith("http")) {
                         u.setImagen(baseUrl + "/api/usuarios/imagen/" + u.getImagen());
                     }
                     return u;

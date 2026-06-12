@@ -25,7 +25,9 @@ public class ProductoService {
     public List<Producto> obtenerTodos() {
         return productoRepository.findAll().stream()
                 .map(p -> {
-                    p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    if (p.getImagen() != null && !p.getImagen().isBlank() && !p.getImagen().startsWith("http")) {
+                        p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    }
                     return p;
                 })
                 .toList();
@@ -33,7 +35,9 @@ public class ProductoService {
 
     public Optional<Producto> obtenerPorId(Long id) {
         return productoRepository.findById(id).map(p -> {
-            p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+            if (p.getImagen() != null && !p.getImagen().isBlank() && !p.getImagen().startsWith("http")) {
+                p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+            }
             return p;
         });
     }
@@ -78,7 +82,9 @@ public class ProductoService {
     public List<Producto> buscarPorNombre(String nombre) {
         return productoRepository.findByNombreContainingIgnoreCase(nombre).stream()
                 .map(p -> {
-                    p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    if (p.getImagen() != null && !p.getImagen().isBlank() && !p.getImagen().startsWith("http")) {
+                        p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    }
                     return p;
                 })
                 .toList();

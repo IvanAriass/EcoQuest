@@ -19,6 +19,8 @@ import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.repository.EventoRepository;
 import com.proyecto.spring.repository.UsuarioRepository;
 
+import com.proyecto.spring.servicios.PuntosService;
+
 @Service
 public class EventoService {
 
@@ -30,6 +32,9 @@ public class EventoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PuntosService puntosService;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -97,6 +102,7 @@ public class EventoService {
         if (!usuario.getEventos().contains(evento)) {
             usuario.getEventos().add(evento);
             usuarioRepository.save(usuario);
+            puntosService.verificarYOtorgarReto(usuario, "EVENTO", eventoId);
         }
 
         return true;

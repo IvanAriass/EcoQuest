@@ -8,7 +8,7 @@ data class UsuarioDto(
     @SerializedName("nombre")          val nombre: String = "",
     @SerializedName("apellido")        val apellido: String = "",
     @SerializedName("descripcion")     val descripcion: String = "",
-    @SerializedName("edad")            val edad: Int = 0,
+    @SerializedName("fechaNacimiento") val fechaNacimiento: String? = null,
     @SerializedName("email")           val email: String = "",
     @SerializedName("imagen")          val imagen: String = "",
     @SerializedName("bloqueado")       val bloqueado: Boolean = false,

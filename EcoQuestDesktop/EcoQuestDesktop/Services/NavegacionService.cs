@@ -10,11 +10,12 @@ namespace EcoQuestDesktop.Services
 {
     internal class NavegacionService
     {
-        private static UserControl usuariosVista, accesoriosVista, eventosVista, comunidadesVista;
+        private static UserControl usuariosVista, accesoriosVista, eventosVista, comunidadesVista, retosVista;
         private static UserControl listadoAccesorios, añadirAccesorio, eliminarAccesorios;
         private static UserControl listadoEventos, añadirEvento, revisarEventos, eliminarEventos;
         private static UserControl listadoComunidades, añadirComunidad, revisarComunidades, eliminarComunidades;
         private static UserControl listadoUsuarios, añadirUsuario, eliminarUsuarios, listadoBloqueados;
+        private static UserControl listadoRetos;
 
         public UserControl ObtenerVentanaUsuarios()
         {
@@ -185,6 +186,24 @@ namespace EcoQuestDesktop.Services
                 listadoBloqueados = new ListadoBloqueadosUserControl();
             }
             return listadoBloqueados;
+        }
+
+        public UserControl ObtenerVentanaRetos()
+        {
+            if (retosVista is null)
+            {
+                retosVista = new RetosUserControl();
+            }
+            return retosVista;
+        }
+
+        public UserControl ObtenerVentanaListadoRetos()
+        {
+            if (listadoRetos is null)
+            {
+                listadoRetos = new ListadoRetosUserControl();
+            }
+            return listadoRetos;
         }
     }
 }

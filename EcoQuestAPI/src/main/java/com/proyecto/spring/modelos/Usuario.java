@@ -1,7 +1,10 @@
 package com.proyecto.spring.modelos;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -26,12 +29,13 @@ public class Usuario {
     private String nombre;
     private String apellido;
     private String descripcion;
-    private int edad;
+    private LocalDate fechaNacimiento;
     private String email;
     private String imagen;
     private boolean bloqueado;
     private String causaBloqueo;
     private LocalDateTime fechaBloqueo;
+    private Integer puntos;
 
     @JsonManagedReference("usuario-comunidades")
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
@@ -45,16 +49,17 @@ public class Usuario {
     }
 
     public Usuario(String nombreUsuario, String contraseña, String nombre, String apellido, String descripcion,
-            int edad, String email, String imagen) {
+            LocalDate fechaNacimiento, String email, String imagen) {
         this.nombreUsuario = nombreUsuario;
         this.contraseña = contraseña;
         this.nombre = nombre;
         this.apellido = apellido;
         this.descripcion = descripcion;
-        this.edad = edad;
+        this.fechaNacimiento = fechaNacimiento;
         this.email = email;
         this.imagen = imagen;
         this.bloqueado = false;
+        this.puntos = 0;
     }
 
     public Long getId() {
@@ -106,11 +111,15 @@ public class Usuario {
     }
 
     public int getEdad() {
-        return edad;
+        return fechaNacimiento == null ? 0 : Period.between(fechaNacimiento, LocalDate.now()).getYears();
     }
 
-    public void setEdad(int edad) {
-        this.edad = edad;
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
     public String getEmail() {
@@ -153,6 +162,14 @@ public class Usuario {
         this.fechaBloqueo = fechaBloqueo;
     }
 
+    public int getPuntos() {
+        return puntos != null ? puntos : 0;
+    }
+
+    public void setPuntos(Integer puntos) {
+        this.puntos = puntos;
+    }
+
     public List<UsuarioComunidad> getComunidades() {
         return comunidades;
     }
@@ -179,12 +196,13 @@ public class Usuario {
         result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
         result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
         result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
-        result = prime * result + edad;
+        result = prime * result + Objects.hashCode(fechaNacimiento);
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((imagen == null) ? 0 : imagen.hashCode());
         result = prime * result + (bloqueado ? 1231 : 1237);
         result = prime * result + ((causaBloqueo == null) ? 0 : causaBloqueo.hashCode());
         result = prime * result + ((fechaBloqueo == null) ? 0 : fechaBloqueo.hashCode());
+        result = prime * result + puntos;
         result = prime * result + ((comunidades == null) ? 0 : comunidades.hashCode());
         result = prime * result + ((eventos == null) ? 0 : eventos.hashCode());
         return result;
@@ -229,7 +247,7 @@ public class Usuario {
                 return false;
         } else if (!descripcion.equals(other.descripcion))
             return false;
-        if (edad != other.edad)
+        if (!Objects.equals(fechaNacimiento, other.fechaNacimiento))
             return false;
         if (email == null) {
             if (other.email != null)
@@ -253,6 +271,8 @@ public class Usuario {
                 return false;
         } else if (!fechaBloqueo.equals(other.fechaBloqueo))
             return false;
+        if (puntos != other.puntos)
+            return false;
         if (comunidades == null) {
             if (other.comunidades != null)
                 return false;
@@ -269,9 +289,9 @@ public class Usuario {
     @Override
     public String toString() {
         return "Usuario [id=" + id + ", nombreUsuario=" + nombreUsuario + ", contraseña=" + contraseña + ", nombre="
-                + nombre + ", apellido=" + apellido + ", descripcion=" + descripcion + ", edad=" + edad + ", email="
+                + nombre + ", apellido=" + apellido + ", descripcion=" + descripcion + ", fechaNacimiento=" + fechaNacimiento + ", email="
                 + email + ", imagen=" + imagen + ", bloqueado=" + bloqueado + ", causaBloqueo=" + causaBloqueo
-                + ", fechaBloqueo=" + fechaBloqueo + ", comunidades=" + comunidades + ", eventos="
+                + ", fechaBloqueo=" + fechaBloqueo + ", puntos=" + puntos + ", comunidades=" + comunidades + ", eventos="
                 + eventos + "]";
     }
 

@@ -35,6 +35,7 @@ import com.ecoquest.app.ui.feature.home.contenido.HomeContentEvent
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentScreen
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentViewModel
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
+import com.ecoquest.app.ui.feature.retos.RetosScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleScreen
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleViewModel
@@ -137,6 +138,9 @@ object Routes {
 
     @Serializable
     data class Miembros(val comunidadId: Long)
+
+    @Serializable
+    data object Retos
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -160,6 +164,7 @@ fun NavGraphBuilder.appNavGraph(
                     is HomeContentEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToEvento -> navController.navigate(Routes.Evento(event.eventoId))
                     is HomeContentEvent.OnNavigateToComunidad -> navController.navigate(Routes.ComunidadDentro(event.comunidadId.toInt()))
+                    is HomeContentEvent.OnNavigateToRetos -> navController.navigate(Routes.Retos) { launchSingleTop = true }
                 }
             }
         )
@@ -270,6 +275,15 @@ fun NavGraphBuilder.appNavGraph(
         val vm: AjustesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         AjustesScreen(uiState = uiState, onEvent = { event -> vm.onEvent(event) }, onLogout = onLogout)
+    }
+
+    composable<Routes.Retos>(
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
+    ) {
+        RetosScreen()
     }
 
     composable<Routes.Miembros>(
