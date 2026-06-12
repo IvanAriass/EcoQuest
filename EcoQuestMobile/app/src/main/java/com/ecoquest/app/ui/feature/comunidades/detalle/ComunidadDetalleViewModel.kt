@@ -48,13 +48,20 @@ class ComunidadDetalleViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            eventoRepository.getByComunidad(id).collect { eventos ->
-                _state.update { it.copy(eventos = eventos) }
+            eventoRepository.getAll().collect { todosEventos ->
+                val comunidad = _state.value.comunidad
+                val nombre = comunidad?.nombre ?: ""
+                val filtrados = todosEventos.filter { evento ->
+                    evento.comunidadId == id ||
+                    (nombre.isNotBlank() && evento.nombreComunidad == nombre)
+                }
+                _state.update { it.copy(eventos = filtrados) }
             }
         }
         viewModelScope.launch {
             usuarioComunidadRepository.getMiembrosByComunidad(id).collect { miembros ->
-                _state.update { it.copy(miembros = miembros) }
+                val esMiembro = miembros.any { it.id == usuarioId }
+                _state.update { it.copy(miembros = miembros, esMiembro = esMiembro) }
             }
         }
     }
@@ -87,10 +94,16 @@ class ComunidadDetalleViewModel @Inject constructor(
                 _state.update { it.copy(info = event.info) }
             }
             is ComunidadDetalleEvent.OnUnirse -> {
-                viewModelScope.launch { joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO") }
+                viewModelScope.launch {
+                    joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO")
+                    _state.update { it.copy(esMiembro = true) }
+                }
             }
             is ComunidadDetalleEvent.OnAbandonar -> {
-                viewModelScope.launch { usuarioComunidadRepository.abandonar(usuarioId, comunidadId) }
+                viewModelScope.launch {
+                    usuarioComunidadRepository.abandonar(usuarioId, comunidadId)
+                    _state.update { it.copy(esMiembro = false) }
+                }
             }
         }
     }

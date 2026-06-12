@@ -71,7 +71,8 @@ fun EventoEntity.toDomain(): Evento = Evento(
     imagen = imagen.toImageUrl("eventos/imagen"),
     estado = estado,
     comunidadId = comunidadId,
-    creadorId = creadorId
+    creadorId = creadorId,
+    nombreComunidad = nombreComunidad
 )
 
 fun Evento.toEntity(): EventoEntity = EventoEntity(
@@ -83,7 +84,8 @@ fun Evento.toEntity(): EventoEntity = EventoEntity(
     imagen = imagen,
     estado = estado,
     comunidadId = comunidadId,
-    creadorId = creadorId
+    creadorId = creadorId,
+    nombreComunidad = nombreComunidad
 )
 
 fun ProductoEntity.toDomain(): Producto = Producto(

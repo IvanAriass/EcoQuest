@@ -23,7 +23,7 @@ private val LightColorScheme = lightColorScheme(
     onError = Color.White,
     errorContainer = Error90,
     onErrorContainer = Error10,
-    background = Green99,
+    background = SurfaceLight,
     onBackground = Neutral10,
     surface = Color.White,
     onSurface = Neutral10,
@@ -33,7 +33,8 @@ private val LightColorScheme = lightColorScheme(
     outlineVariant = Green90,
     inverseSurface = Neutral20,
     inverseOnSurface = Neutral95,
-    inversePrimary = Green80
+    inversePrimary = Green80,
+    surfaceTint = Green30
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -53,7 +54,7 @@ private val DarkColorScheme = darkColorScheme(
     onError = Error20,
     errorContainer = Error30,
     onErrorContainer = Error90,
-    background = DarkGreen10,
+    background = SurfaceDark,
     onBackground = Green90,
     surface = Color(0xFF1A2E1A),
     onSurface = Green90,
@@ -63,7 +64,8 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant = DarkGreen30,
     inverseSurface = Green90,
     inverseOnSurface = DarkGreen10,
-    inversePrimary = Green40
+    inversePrimary = Green40,
+    surfaceTint = Green80
 )
 
 @Composable

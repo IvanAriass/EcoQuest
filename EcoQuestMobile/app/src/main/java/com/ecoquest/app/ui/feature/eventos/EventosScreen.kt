@@ -28,7 +28,7 @@ fun EventosScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
         contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp)
     ) {
         item {
@@ -40,7 +40,7 @@ fun EventosScreen(
                 placeholder = "Buscar eventos",
                 modifier = Modifier.fillMaxSize()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
         items(uiState.eventosFiltrados) { evento ->

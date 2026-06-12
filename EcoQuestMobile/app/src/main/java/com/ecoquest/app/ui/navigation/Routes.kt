@@ -40,6 +40,8 @@ import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleScreen
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.EventosScreen
 import com.ecoquest.app.ui.feature.eventos.EventosViewModel
+import com.ecoquest.app.ui.feature.miembros.MiembrosScreen
+import com.ecoquest.app.ui.feature.miembros.MiembrosViewModel
 import com.ecoquest.app.ui.feature.perfil.PerfilEvent
 import com.ecoquest.app.ui.feature.perfil.PerfilScreen
 import com.ecoquest.app.ui.feature.perfil.PerfilViewModel
@@ -132,6 +134,9 @@ object Routes {
 
     @Serializable
     data object Ajustes
+
+    @Serializable
+    data class Miembros(val comunidadId: Long)
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -221,7 +226,8 @@ fun NavGraphBuilder.appNavGraph(
             comunidadId = route.comunidadId.toLong(),
             uiState = uiState,
             onEvent = { event -> vm.onEvent(event) },
-            onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) }
+            onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) },
+            onNavigateToMiembros = { navController.navigate(Routes.Miembros(route.comunidadId.toLong())) }
         )
     }
 
@@ -264,6 +270,23 @@ fun NavGraphBuilder.appNavGraph(
         val vm: AjustesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         AjustesScreen(uiState = uiState, onEvent = { event -> vm.onEvent(event) }, onLogout = onLogout)
+    }
+
+    composable<Routes.Miembros>(
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
+    ) { backStackEntry ->
+        val route = backStackEntry.toRoute<Routes.Miembros>()
+        val vm: MiembrosViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        LaunchedEffect(route) { vm.cargarMiembros(route.comunidadId) }
+        MiembrosScreen(
+            title = "Miembros",
+            onBack = { navController.popBackStack() },
+            miembros = uiState.miembros
+        )
     }
 }
 

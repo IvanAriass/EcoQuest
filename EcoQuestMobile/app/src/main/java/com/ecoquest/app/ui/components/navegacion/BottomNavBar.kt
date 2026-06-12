@@ -162,12 +162,12 @@ fun BottomNavBar(
                                 imageVector = if (isSelected) icons.filled else icons.outlined,
                                 contentDescription = tab.label,
                                 tint = iconTint,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = tab.label,
-                                fontSize = 11.sp,
+                                fontSize = 10.sp,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                                 color = Color.White.copy(alpha = textAlpha)
                             )

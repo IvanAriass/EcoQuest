@@ -50,7 +50,8 @@ fun EventoDto.toDomain(): Evento = Evento(
     imagen = imagen.toImageUrl("eventos/imagen"),
     estado = estado,
     comunidadId = 0,
-    creadorId = 0
+    creadorId = 0,
+    nombreComunidad = nombreComunidad ?: ""
 )
 
 fun ProductoDto.toDomain(): Producto = Producto(
