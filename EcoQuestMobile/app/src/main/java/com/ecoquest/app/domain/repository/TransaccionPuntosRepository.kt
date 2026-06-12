@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransaccionPuntosRepository {
     fun getByUsuario(usuarioId: Long): Flow<List<TransaccionPuntos>>
-    suspend fun refresh(usuarioId: Long)
+    suspend fun refresh(usuarioId: Long, notifyNew: Boolean = false): List<TransaccionPuntos>
     suspend fun getSaldo(usuarioId: Long): Int
 }

@@ -27,29 +27,26 @@ class RetosViewModel @Inject constructor(
         get() = tokenManager.getUsuarioId().takeIf { it > 0 } ?: 1L
 
     init {
+        viewModelScope.launch {
+            retoRepository.getAll().collect { retos ->
+                _state.update { it.copy(retos = retos) }
+            }
+        }
+        viewModelScope.launch {
+            transaccionPuntosRepository.getByUsuario(usuarioId).collect { historial ->
+                _state.update { it.copy(historial = historial) }
+            }
+        }
         cargarDatos()
     }
 
-    private fun cargarDatos() {
+    fun cargarDatos() {
         viewModelScope.launch {
             retoRepository.refreshRetos()
         }
         viewModelScope.launch {
             transaccionPuntosRepository.refresh(usuarioId)
         }
-
-        viewModelScope.launch {
-            retoRepository.getAll().collect { retos ->
-                _state.update { it.copy(retos = retos) }
-            }
-        }
-
-        viewModelScope.launch {
-            transaccionPuntosRepository.getByUsuario(usuarioId).collect { historial ->
-                _state.update { it.copy(historial = historial) }
-            }
-        }
-
         viewModelScope.launch {
             val saldo = transaccionPuntosRepository.getSaldo(usuarioId)
             _state.update { it.copy(saldoPuntos = saldo) }

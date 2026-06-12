@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.usecase.comunidades.JoinComunidadUseCase
 import com.ecoquest.app.managers.TokenManager
@@ -23,7 +24,8 @@ class ComunidadDetalleViewModel @Inject constructor(
     private val eventoRepository: EventoRepository,
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
     private val joinComunidadUseCase: JoinComunidadUseCase,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val transaccionPuntosRepository: TransaccionPuntosRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ComunidadDetalleUiState())
@@ -97,6 +99,7 @@ class ComunidadDetalleViewModel @Inject constructor(
                 viewModelScope.launch {
                     joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO")
                     _state.update { it.copy(esMiembro = true) }
+                    transaccionPuntosRepository.refresh(usuarioId, notifyNew = true)
                 }
             }
             is ComunidadDetalleEvent.OnAbandonar -> {

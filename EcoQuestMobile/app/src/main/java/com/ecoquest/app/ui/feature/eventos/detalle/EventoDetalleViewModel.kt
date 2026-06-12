@@ -3,6 +3,7 @@ package com.ecoquest.app.ui.feature.eventos.detalle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
 import com.ecoquest.app.domain.usecase.eventos.JoinEventoUseCase
@@ -23,7 +24,8 @@ class EventoDetalleViewModel @Inject constructor(
     private val usuarioEventoRepository: UsuarioEventoRepository,
     private val joinEventoUseCase: JoinEventoUseCase,
     private val tokenManager: TokenManager,
-    private val usuarioRepository: UsuarioRepository
+    private val usuarioRepository: UsuarioRepository,
+    private val transaccionPuntosRepository: TransaccionPuntosRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EventoDetalleUiState())
@@ -82,6 +84,7 @@ class EventoDetalleViewModel @Inject constructor(
                 viewModelScope.launch {
                     _state.value.evento?.let { joinEventoUseCase(usuarioId, it.id) }
                     _state.update { it.copy(esParticipante = true) }
+                    transaccionPuntosRepository.refresh(usuarioId, notifyNew = true)
                 }
             }
             is EventoDetalleEvent.OnAbandonar -> {

@@ -11,6 +11,9 @@ interface TransaccionPuntosDao {
     @Query("SELECT * FROM transacciones_puntos WHERE usuarioId = :usuarioId ORDER BY fecha DESC")
     fun getByUsuario(usuarioId: Long): Flow<List<TransaccionPuntosEntity>>
 
+    @Query("SELECT * FROM transacciones_puntos WHERE usuarioId = :usuarioId ORDER BY fecha DESC")
+    suspend fun getAllByUsuario(usuarioId: Long): List<TransaccionPuntosEntity>
+
     @Upsert
     suspend fun upsertAll(transacciones: List<TransaccionPuntosEntity>)
 
