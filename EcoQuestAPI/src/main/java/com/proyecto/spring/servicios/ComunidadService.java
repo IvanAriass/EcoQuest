@@ -26,7 +26,9 @@ public class ComunidadService {
     public List<Comunidad> obtenerTodos() {
         return comunidadRepository.findAll().stream()
                 .map(c -> {
-                    c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+                    if (c.getImagen() != null && !c.getImagen().isBlank() && !c.getImagen().startsWith("http")) {
+                        c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+                    }
                     return c;
                 })
                 .toList();
@@ -34,7 +36,9 @@ public class ComunidadService {
 
     public Optional<Comunidad> obtenerPorId(Long id) {
         return comunidadRepository.findById(id).map(c -> {
-            c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+            if (c.getImagen() != null && !c.getImagen().isBlank() && !c.getImagen().startsWith("http")) {
+                c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
+            }
             return c;
         });
     }
@@ -105,7 +109,7 @@ public class ComunidadService {
     public List<Comunidad> buscarPorEstado(String estado) {
         return comunidadRepository.findByEstado(estado).stream()
                 .map(c -> {
-                    if (c.getImagen() != null && !c.getImagen().isBlank()) {
+                    if (c.getImagen() != null && !c.getImagen().isBlank() && !c.getImagen().startsWith("http")) {
                         c.setImagen(baseUrl + "/api/comunidades/imagen/" + c.getImagen());
                     }
                     return c;

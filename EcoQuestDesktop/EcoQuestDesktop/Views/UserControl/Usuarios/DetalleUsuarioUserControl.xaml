@@ -55,11 +55,12 @@
                     CornerRadius="45"
                     RenderOptions.BitmapScalingMode="HighQuality">
                     <Border.Clip>
-                        <EllipseGeometry Center="45,45" RadiusX="45" RadiusY="45" />
+                        <EllipseGeometry
+                            Center="45,45"
+                            RadiusX="45"
+                            RadiusY="45" />
                     </Border.Clip>
-                    <Image
-                        Source="{Binding UrlAvatar}"
-                        Stretch="UniformToFill" />
+                    <Image Source="{Binding UrlAvatar}" Stretch="UniformToFill" />
                 </Border>
 
                 <StackPanel Grid.Row="1" Margin="0,10,0,0">
@@ -87,9 +88,7 @@
                     Margin="30,14,30,0"
                     Background="#E8E8E8" />
 
-                <StackPanel
-                    Grid.Row="3"
-                    Margin="24,16,24,0">
+                <StackPanel Grid.Row="3" Margin="24,16,24,0">
                     <WrapPanel HorizontalAlignment="Center">
                         <Border
                             Margin="4"
@@ -107,8 +106,8 @@
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="#4F6F8F"
                                     FontWeight="SemiBold"
+                                    Foreground="#4F6F8F"
                                     Text="{Binding Usuario.Email}" />
                             </StackPanel>
                         </Border>
@@ -128,21 +127,19 @@
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="#4F6F8F"
                                     FontWeight="SemiBold"
-                                    Text="{Binding EdadMostrar}" />
+                                    Foreground="#4F6F8F"
+                                    Text="{Binding Usuario.FechaNacimiento, StringFormat='dd/MM/yyyy'}" />
                             </StackPanel>
                         </Border>
                     </WrapPanel>
 
-                    <Border
-                        Margin="0,16,0,0"
-                        CornerRadius="10">
+                    <Border Margin="0,16,0,0" CornerRadius="10">
                         <Grid>
                             <Border
                                 Background="{Binding Usuario.ColorBorde}"
-                                Opacity="0.12"
-                                CornerRadius="10" />
+                                CornerRadius="10"
+                                Opacity="0.12" />
                             <Border
                                 Padding="16"
                                 BorderBrush="{Binding Usuario.ColorBorde}"

@@ -1,26 +1,21 @@
 package com.ecoquest.app.ui.feature.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ecoquest.app.R
 import com.ecoquest.app.ui.components.navegacion.BottomNavBar
 import com.ecoquest.app.ui.components.navegacion.BottomNavTab
 import com.ecoquest.app.ui.navigation.AppNavHost
 import com.ecoquest.app.ui.navigation.Routes
-import com.ecoquest.app.ui.theme.Green99
 
 @Composable
 fun HomeScreen(
@@ -31,36 +26,21 @@ fun HomeScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.fondo),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(
+                currentRoute = currentRoute,
+                onTabSelected = { tab -> navigateToTab(navController, tab) }
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Green99.copy(alpha = 0.10f))
-        )
-
-        Scaffold(
-            bottomBar = {
-                BottomNavBar(
-                    currentRoute = currentRoute,
-                    onTabSelected = { tab -> navigateToTab(navController, tab) }
-                )
-            },
-            containerColor = Color.Transparent
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                AppNavHost(navController = navController, onLogout = onLogout)
-            }
+                .padding(paddingValues)
+        ) {
+            AppNavHost(navController = navController, onLogout = onLogout)
         }
     }
 }

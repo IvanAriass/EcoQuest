@@ -102,6 +102,8 @@ fun EventoDialog(
                     value = fechaHora,
                     onValueChange = { fechaHora = it },
                     label = { Text("Fecha y hora") },
+                    placeholder = { Text("Ej: 2026-06-15T20:00:00") },
+                    supportingText = { Text("Formato: AAAA-MM-DDTHH:mm:ss") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),

@@ -43,14 +43,14 @@ fun ComunidadCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(130.dp)
+                    .height(140.dp)
             ) {
                 AsyncImage(
                     model = if (comunidad.imagen.isNotEmpty()) comunidad.imagen else R.drawable.iconoeco,
@@ -67,10 +67,8 @@ fun ComunidadCard(
                             Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Transparent,
-                                    Color.Black.copy(alpha = 0.6f)
-                                ),
-                                startY = Float.POSITIVE_INFINITY,
-                                endY = 0f
+                                    Color.Black.copy(alpha = 0.7f)
+                                )
                             )
                         )
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
@@ -90,7 +88,10 @@ fun ComunidadCard(
                     )
                 }
             }
-            Column(modifier = Modifier.padding(12.dp)) {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -98,7 +99,7 @@ fun ComunidadCard(
                     Icon(
                         imageVector = Icons.Filled.People,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(15.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
@@ -108,14 +109,12 @@ fun ComunidadCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = comunidad.descripcion,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Start
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

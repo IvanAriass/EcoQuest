@@ -49,5 +49,11 @@ namespace EcoQuestDesktop.ViewModels
             ContenidoVentana = sn.ObtenerVentanaComunidades();
         }
 
+        [RelayCommand]
+        public void AbrirVentanaRetos()
+        {
+            ContenidoVentana = sn.ObtenerVentanaRetos();
+        }
+
     }
 }

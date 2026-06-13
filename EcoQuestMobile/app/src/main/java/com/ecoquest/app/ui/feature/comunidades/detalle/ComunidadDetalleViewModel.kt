@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.usecase.comunidades.JoinComunidadUseCase
 import com.ecoquest.app.managers.TokenManager
@@ -23,7 +24,8 @@ class ComunidadDetalleViewModel @Inject constructor(
     private val eventoRepository: EventoRepository,
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
     private val joinComunidadUseCase: JoinComunidadUseCase,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val transaccionPuntosRepository: TransaccionPuntosRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ComunidadDetalleUiState())
@@ -48,13 +50,20 @@ class ComunidadDetalleViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            eventoRepository.getByComunidad(id).collect { eventos ->
-                _state.update { it.copy(eventos = eventos) }
+            eventoRepository.getAll().collect { todosEventos ->
+                val comunidad = _state.value.comunidad
+                val nombre = comunidad?.nombre ?: ""
+                val filtrados = todosEventos.filter { evento ->
+                    evento.comunidadId == id ||
+                    (nombre.isNotBlank() && evento.nombreComunidad == nombre)
+                }
+                _state.update { it.copy(eventos = filtrados) }
             }
         }
         viewModelScope.launch {
             usuarioComunidadRepository.getMiembrosByComunidad(id).collect { miembros ->
-                _state.update { it.copy(miembros = miembros) }
+                val esMiembro = miembros.any { it.id == usuarioId }
+                _state.update { it.copy(miembros = miembros, esMiembro = esMiembro) }
             }
         }
     }
@@ -87,10 +96,17 @@ class ComunidadDetalleViewModel @Inject constructor(
                 _state.update { it.copy(info = event.info) }
             }
             is ComunidadDetalleEvent.OnUnirse -> {
-                viewModelScope.launch { joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO") }
+                viewModelScope.launch {
+                    joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO")
+                    _state.update { it.copy(esMiembro = true) }
+                    transaccionPuntosRepository.refresh(usuarioId, notifyNew = true)
+                }
             }
             is ComunidadDetalleEvent.OnAbandonar -> {
-                viewModelScope.launch { usuarioComunidadRepository.abandonar(usuarioId, comunidadId) }
+                viewModelScope.launch {
+                    usuarioComunidadRepository.abandonar(usuarioId, comunidadId)
+                    _state.update { it.copy(esMiembro = false) }
+                }
             }
         }
     }

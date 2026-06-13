@@ -2,6 +2,7 @@ package com.proyecto.spring.servicios;
 
 import com.proyecto.spring.modelos.*;
 import com.proyecto.spring.repository.*;
+import com.proyecto.spring.servicios.PuntosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class UsuarioComunidadService {
     @Autowired
     private ComunidadRepository comunidadRepository;
 
+    @Autowired
+    private PuntosService puntosService;
+
     public Optional<UsuarioComunidad> unirse(Long usuarioId, Long comunidadId, String rol) {
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
         Optional<Comunidad> comunidad = comunidadRepository.findById(comunidadId);
@@ -27,7 +31,9 @@ public class UsuarioComunidadService {
         if (usuario.isEmpty() || comunidad.isEmpty()) return Optional.empty();
 
         UsuarioComunidad relacion = new UsuarioComunidad(usuario.get(), comunidad.get(), rol);
-        return Optional.of(usuarioComunidadRepository.save(relacion));
+        UsuarioComunidad guardado = usuarioComunidadRepository.save(relacion);
+        puntosService.verificarYOtorgarReto(usuario.get(), "COMUNIDAD", comunidadId);
+        return Optional.of(guardado);
     }
 
     public List<UsuarioComunidad> comunidadesDeUsuario(Long usuarioId) {

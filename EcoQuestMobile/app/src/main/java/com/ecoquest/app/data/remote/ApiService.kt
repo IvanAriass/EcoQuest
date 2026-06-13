@@ -1,10 +1,13 @@
 package com.ecoquest.app.data.remote
 
+import com.ecoquest.app.data.remote.dto.CategoriaDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
-import com.ecoquest.app.data.remote.dto.UsuarioDto
+import com.ecoquest.app.data.remote.dto.RetoDto
+import com.ecoquest.app.data.remote.dto.TransaccionPuntosDto
 import com.ecoquest.app.data.remote.dto.UsuarioComunidadDto
+import com.ecoquest.app.data.remote.dto.UsuarioDto
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -80,9 +83,24 @@ interface ApiService {
     @GET("usuario-comunidad/comunidad/{comunidadId}")
     suspend fun usuariosDeComunidad(@Path("comunidadId") comunidadId: Long): List<UsuarioComunidadDto>
 
+    @GET("categorias")
+    suspend fun getCategorias(): List<CategoriaDto>
+
     @GET("productos")
     suspend fun getProductos(): List<ProductoDto>
 
     @GET("productos/{id}")
     suspend fun getProducto(@Path("id") id: Long): ProductoDto
+
+    @GET("retos")
+    suspend fun getRetos(): List<RetoDto>
+
+    @GET("retos/{id}")
+    suspend fun getReto(@Path("id") id: Long): RetoDto
+
+    @GET("usuarios/{usuarioId}/puntos/historial")
+    suspend fun getHistorialPuntos(@Path("usuarioId") usuarioId: Long): List<TransaccionPuntosDto>
+
+    @GET("usuarios/{usuarioId}/puntos/saldo")
+    suspend fun getSaldoPuntos(@Path("usuarioId") usuarioId: Long): Int
 }

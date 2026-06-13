@@ -26,7 +26,11 @@ class TiendaViewModel @Inject constructor(
     }
 
     fun onEvent(event: TiendaEvent) {
-        when (event) { else -> {} }
+        when (event) {
+            is TiendaEvent.SelectCategory -> {
+                _state.update { it.copy(selectedCategory = event.category) }
+            }
+        }
     }
 
     private fun cargarProductos() {
@@ -35,7 +39,16 @@ class TiendaViewModel @Inject constructor(
         }
         viewModelScope.launch {
             getProductosUseCase().collect { productos ->
-                _state.update { it.copy(productos = productos, isLoading = false) }
+                _state.update {
+                    it.copy(
+                        productos = productos,
+                        categorias = productos.map { p -> p.categoria }
+                            .filter { c -> c.isNotBlank() }
+                            .distinct()
+                            .sorted(),
+                        isLoading = false
+                    )
+                }
             }
         }
     }

@@ -13,6 +13,10 @@
         <vm:EditarAccesorioModalVM />
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
     <!--  Overlay oscuro que cubre toda la pantalla  -->
     <Grid>
 
@@ -96,6 +100,58 @@
                                 FontSize="14"
                                 Text="{Binding Precio, UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
+                    </StackPanel>
+
+                    <!--  CATEGORÍA  -->
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            Style="{StaticResource FormLabel}"
+                            Text="Categoría" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox
+                                Grid.Column="0"
+                                Margin="0,0,8,0"
+                                ItemsSource="{Binding Categorias}"
+                                SelectedItem="{Binding CategoriaSeleccionada, UpdateSourceTrigger=PropertyChanged}"
+                                DisplayMemberPath="Nombre"
+                                Style="{StaticResource FormComboBox}" />
+                            <Button
+                                Grid.Column="1"
+                                Style="{StaticResource FormAddButton}"
+                                Command="{Binding MostrarNuevaCategoriaCommand}" />
+                        </Grid>
+                        <!-- Inline add category panel -->
+                        <StackPanel
+                            Margin="0,8,0,0"
+                            Visibility="{Binding IsAddingCategoria, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border Style="{StaticResource FormInputBorder}">
+                                <TextBox
+                                    Height="38"
+                                    Padding="12,0"
+                                    VerticalContentAlignment="Center"
+                                    Style="{StaticResource FormTextBox}"
+                                    Text="{Binding NuevaCategoriaNombre, UpdateSourceTrigger=PropertyChanged}" />
+                            </Border>
+                            <StackPanel
+                                Margin="0,8,0,0"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    Style="{StaticResource FormImageSelectButton}"
+                                    Command="{Binding AgregarCategoriaCommand}"
+                                    Content="Añadir" />
+                                <Button
+                                    Style="{StaticResource FormCancelButton}"
+                                    Command="{Binding CancelarNuevaCategoriaCommand}"
+                                    Content="Cancelar" />
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
 
                     <!--  IMAGEN  -->

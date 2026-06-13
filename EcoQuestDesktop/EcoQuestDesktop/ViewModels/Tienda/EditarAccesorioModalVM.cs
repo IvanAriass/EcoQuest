@@ -3,28 +3,29 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using EcoQuestDesktop.Models;
 using EcoQuestDesktop.Services;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Media.Imaging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EcoQuestDesktop.ViewModels.Tienda
 {
     public partial class EditarAccesorioModalVM : ObservableObject
     {
-        // Evento que avisa al padre (ListadoAccesoriosVM) que se guardó
         public event Action? OnGuardar;
 
         private Producto? _productoOriginal;
 
-
         [ObservableProperty]
-        private string _nombreOriginal = string.Empty;  // Solo para el header del modal
+        private string _nombreOriginal = string.Empty;
 
         [ObservableProperty]
         private string _nombre = string.Empty;
 
         [ObservableProperty]
         private int _precio;
+
+        [ObservableProperty]
+        private Categoria? _categoriaSeleccionada;
 
         [ObservableProperty]
         private string _nombreArchivo = string.Empty;
@@ -35,12 +36,71 @@ namespace EcoQuestDesktop.ViewModels.Tienda
         [ObservableProperty]
         private string _rutaImagenCompleta = string.Empty;
 
+        [ObservableProperty]
+        private bool _isAddingCategoria;
+
+        [ObservableProperty]
+        private string _nuevaCategoriaNombre = string.Empty;
+
+        public ObservableCollection<Categoria> Categorias { get; } = new();
+
+        public EditarAccesorioModalVM()
+        {
+            CargarCategorias();
+        }
+
+        [RelayCommand]
+        private void MostrarNuevaCategoria()
+        {
+            NuevaCategoriaNombre = string.Empty;
+            IsAddingCategoria = true;
+        }
+
+        [RelayCommand]
+        private async Task AgregarCategoria()
+        {
+            var nombre = NuevaCategoriaNombre?.Trim();
+            if (string.IsNullOrWhiteSpace(nombre)) return;
+
+            var nueva = await ApiRestService.CrearCategoria(nombre);
+            if (nueva != null)
+            {
+                Categorias.Add(nueva);
+                CategoriaSeleccionada = nueva;
+                NuevaCategoriaNombre = string.Empty;
+                IsAddingCategoria = false;
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Error al crear la categoría", "Error",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+        [RelayCommand]
+        private void CancelarNuevaCategoria()
+        {
+            NuevaCategoriaNombre = string.Empty;
+            IsAddingCategoria = false;
+        }
+
+        private void CargarCategorias()
+        {
+            var categorias = ApiRestService.GetCategorias();
+            Categorias.Clear();
+            foreach (var cat in categorias)
+                Categorias.Add(cat);
+        }
+
         public void CargarProducto(Producto producto)
         {
             _productoOriginal = producto;
             NombreOriginal = producto.Nombre;
             Nombre = producto.Nombre;
             Precio = producto.Precio;
+            CategoriaSeleccionada = producto.Categoria != null
+                ? Categorias.FirstOrDefault(c => c.Id == producto.Categoria.Id)
+                : null;
             RutaImagenCompleta = producto.Imagen ?? string.Empty;
 
             if (!string.IsNullOrEmpty(producto.Imagen))
@@ -108,13 +168,15 @@ namespace EcoQuestDesktop.ViewModels.Tienda
                 _productoOriginal.Id,
                 Nombre,
                 Precio,
-                rutaLocal
+                rutaLocal,
+                CategoriaSeleccionada?.Id
             );
 
             if (productoActualizado != null)
             {
                 _productoOriginal.Nombre = productoActualizado.Nombre;
                 _productoOriginal.Precio = productoActualizado.Precio;
+                _productoOriginal.Categoria = productoActualizado.Categoria;
 
                 OnGuardar?.Invoke();
             }

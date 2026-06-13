@@ -100,7 +100,7 @@
                         </Border>
                     </StackPanel>
 
-                    <!--  Row 2: Email + Edad (3:1)  -->
+                    <!--  Row 2: Email + FechaNacimiento (3:1)  -->
                     <StackPanel
                         Grid.Row="2"
                         Grid.ColumnSpan="3"
@@ -131,15 +131,8 @@
                                 <TextBlock
                                     Margin="0,0,0,5"
                                     Style="{StaticResource FormLabel}"
-                                    Text="Edad" />
-                                <Border Style="{StaticResource FormInputBorder}">
-                                    <TextBox
-                                        Height="36"
-                                        Padding="12,0"
-                                        VerticalContentAlignment="Center"
-                                        Style="{StaticResource FormTextBox}"
-                                        Text="{Binding Edad, UpdateSourceTrigger=PropertyChanged}" />
-                                </Border>
+                                    Text="Fecha de nacimiento" />
+                                <DatePicker SelectedDate="{Binding FechaNacimiento, TargetNullValue={x:Null}}" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>

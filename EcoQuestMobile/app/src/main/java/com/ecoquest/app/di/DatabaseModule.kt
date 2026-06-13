@@ -6,6 +6,8 @@ import com.ecoquest.app.data.local.EcoQuestDatabase
 import com.ecoquest.app.data.local.dao.ComunidadDao
 import com.ecoquest.app.data.local.dao.EventoDao
 import com.ecoquest.app.data.local.dao.ProductoDao
+import com.ecoquest.app.data.local.dao.RetoDao
+import com.ecoquest.app.data.local.dao.TransaccionPuntosDao
 import com.ecoquest.app.data.local.dao.UsuarioComunidadDao
 import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.dao.UsuarioEventoDao
@@ -44,4 +46,10 @@ object DatabaseModule {
 
     @Provides
     fun provideUsuarioEventoDao(db: EcoQuestDatabase): UsuarioEventoDao = db.usuarioEventoDao()
+
+    @Provides
+    fun provideRetoDao(db: EcoQuestDatabase): RetoDao = db.retoDao()
+
+    @Provides
+    fun provideTransaccionPuntosDao(db: EcoQuestDatabase): TransaccionPuntosDao = db.transaccionPuntosDao()
 }

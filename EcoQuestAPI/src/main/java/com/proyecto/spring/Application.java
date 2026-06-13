@@ -1,5 +1,6 @@
 package com.proyecto.spring;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,14 +10,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.proyecto.spring.modelos.Categoria;
 import com.proyecto.spring.modelos.Comunidad;
 import com.proyecto.spring.modelos.Evento;
 import com.proyecto.spring.modelos.Producto;
+import com.proyecto.spring.modelos.Reto;
 import com.proyecto.spring.modelos.Usuario;
 import com.proyecto.spring.modelos.UsuarioComunidad;
+import com.proyecto.spring.repository.CategoriaRepository;
 import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.repository.EventoRepository;
 import com.proyecto.spring.repository.ProductoRepository;
+import com.proyecto.spring.repository.RetoRepository;
 import com.proyecto.spring.repository.UsuarioComunidadRepository;
 import com.proyecto.spring.repository.UsuarioRepository;
 import com.proyecto.spring.servicios.UsuarioService;
@@ -38,7 +43,9 @@ public class Application {
 			ComunidadRepository comunidadRepository,
 			EventoRepository eventoRepository,
 			ProductoRepository productoRepository,
-			UsuarioComunidadRepository usuarioComunidadRepository) {
+			CategoriaRepository categoriaRepository,
+			UsuarioComunidadRepository usuarioComunidadRepository,
+			RetoRepository retoRepository) {
 		return (args) -> {
 			if (comunidadRepository.count() > 0) {
 				System.out.println("********************************************************************************");
@@ -48,19 +55,19 @@ public class Application {
 			}
 
 			// Usuarios
-			Usuario u1 = new Usuario("juanito99", "1234", "Juan", "García", "Amante del deporte", 25,
+			Usuario u1 = new Usuario("juanito99", "1234", "Juan", "García", "Amante del deporte", LocalDate.of(2001, 1, 15),
 					"juan@email.com",
 					"ic-hombre.png");
-			Usuario u2 = new Usuario("maria_lp", "abcd", "María", "López", "Fotógrafa aficionada", 30,
+			Usuario u2 = new Usuario("maria_lp", "abcd", "María", "López", "Fotógrafa aficionada", LocalDate.of(1996, 3, 20),
 					"maria@email.com", "ic-mujer.webp");
-			Usuario u3 = new Usuario("admin_root", "admin123", "Carlos", "Martínez", "Administrador", 35,
+			Usuario u3 = new Usuario("admin_root", "admin123", "Carlos", "Martínez", "Administrador", LocalDate.of(1991, 5, 10),
 					"carlos@email.com", "ic-hombre.png");
-			Usuario u4 = new Usuario("laura_senderos", "pass123", "Laura", "Fernández", "Guía de montaña titulada", 28,
+			Usuario u4 = new Usuario("laura_senderos", "pass123", "Laura", "Fernández", "Guía de montaña titulada", LocalDate.of(1998, 7, 8),
 					"laura@email.com", "ic-mujer.webp");
 			Usuario u5 = new Usuario("eco_guerrero", "verde123", "Miguel", "Rodríguez",
-					"Activista medioambiental y reciclador", 42,
+					"Activista medioambiental y reciclador", LocalDate.of(1984, 2, 28),
 					"miguel@email.com", "ic-hombre.png");
-			Usuario u6 = new Usuario("pixel_art", "foto2026", "Ana", "Ruiz", "Fotógrafa profesional de naturaleza", 33,
+			Usuario u6 = new Usuario("pixel_art", "foto2026", "Ana", "Ruiz", "Fotógrafa profesional de naturaleza", LocalDate.of(1993, 9, 14),
 					"ana@email.com", "ic-mujer.webp");
 			usuarioService.crear(u1);
 			usuarioService.crear(u2);
@@ -169,13 +176,29 @@ public class Application {
 			usuarioRepository.save(u5);
 			usuarioRepository.save(u6);
 
+			// Categorías
+			Categoria catEscalada = categoriaRepository.save(new Categoria("Escalada"));
+			Categoria catFotografia = categoriaRepository.save(new Categoria("Fotografía"));
+			Categoria catSenderismo = categoriaRepository.save(new Categoria("Senderismo"));
+			Categoria catHidratacion = categoriaRepository.save(new Categoria("Hidratación"));
+			Categoria catIluminacion = categoriaRepository.save(new Categoria("Iluminación"));
+
 			// Productos
-			productoRepository.save(new Producto("Cuerda de Escalada", "cuerda.jpg", 89));
-			productoRepository.save(new Producto("Cámara Réflex", "camara.jpg", 450));
-			productoRepository.save(new Producto("Mochila Trail", "mochila.jpg", 65));
-			productoRepository.save(new Producto("Botella Reutilizable", "botella.jpg", 15));
-			productoRepository.save(new Producto("Prismáticos", "prismaticos.jpg", 120));
-			productoRepository.save(new Producto("Linterna Frontal LED", "linterna.jpg", 35));
+			productoRepository.save(new Producto("Cuerda de Escalada", "cuerda.jpg", 89, catEscalada));
+			productoRepository.save(new Producto("Cámara Réflex", "camara.jpg", 450, catFotografia));
+			productoRepository.save(new Producto("Mochila Trail", "mochila.jpg", 65, catSenderismo));
+			productoRepository.save(new Producto("Botella Reutilizable", "botella.jpg", 15, catHidratacion));
+			productoRepository.save(new Producto("Prismáticos", "prismaticos.jpg", 120, catSenderismo));
+			productoRepository.save(new Producto("Linterna Frontal LED", "linterna.jpg", 35, catIluminacion));
+
+			// Retos (desafios de puntos)
+			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));
+			retoRepository.save(new Reto("Escribir un comentario", "Escribe un comentario en una publicacion", 5, "COMENTARIO", 1, "ILIMITADA"));
+			retoRepository.save(new Reto("Unirse a un evento", "Apuntate a un evento de la comunidad", 50, "EVENTO", 1, "UNICA"));
+			retoRepository.save(new Reto("Unirse a una comunidad", "Forma parte de una nueva comunidad", 30, "COMUNIDAD", 1, "UNICA"));
+			retoRepository.save(new Reto("Crear un evento", "Crea y publica un nuevo evento", 100, "CREAR_EVENTO", 1, "UNICA"));
+			retoRepository.save(new Reto("Crear una comunidad", "Crea y publica una nueva comunidad", 80, "CREAR_COMUNIDAD", 1, "UNICA"));
+			retoRepository.save(new Reto("Participar en 3 eventos", "Completa la participacion en 3 eventos distintos", 200, "EVENTOS_3", 3, "UNICA"));
 
 			System.out.println("********************************************************************************");
 			System.out.println("Datos de ejemplo cargados correctamente");

@@ -35,11 +35,14 @@ import com.ecoquest.app.ui.feature.home.contenido.HomeContentEvent
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentScreen
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentViewModel
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
+import com.ecoquest.app.ui.feature.retos.RetosScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleScreen
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.EventosScreen
 import com.ecoquest.app.ui.feature.eventos.EventosViewModel
+import com.ecoquest.app.ui.feature.miembros.MiembrosScreen
+import com.ecoquest.app.ui.feature.miembros.MiembrosViewModel
 import com.ecoquest.app.ui.feature.perfil.PerfilEvent
 import com.ecoquest.app.ui.feature.perfil.PerfilScreen
 import com.ecoquest.app.ui.feature.perfil.PerfilViewModel
@@ -132,6 +135,12 @@ object Routes {
 
     @Serializable
     data object Ajustes
+
+    @Serializable
+    data class Miembros(val comunidadId: Long)
+
+    @Serializable
+    data object Retos
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -155,6 +164,7 @@ fun NavGraphBuilder.appNavGraph(
                     is HomeContentEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToEvento -> navController.navigate(Routes.Evento(event.eventoId))
                     is HomeContentEvent.OnNavigateToComunidad -> navController.navigate(Routes.ComunidadDentro(event.comunidadId.toInt()))
+                    is HomeContentEvent.OnNavigateToRetos -> navController.navigate(Routes.Retos) { launchSingleTop = true }
                 }
             }
         )
@@ -221,7 +231,8 @@ fun NavGraphBuilder.appNavGraph(
             comunidadId = route.comunidadId.toLong(),
             uiState = uiState,
             onEvent = { event -> vm.onEvent(event) },
-            onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) }
+            onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) },
+            onNavigateToMiembros = { navController.navigate(Routes.Miembros(route.comunidadId.toLong())) }
         )
     }
 
@@ -249,6 +260,11 @@ fun NavGraphBuilder.appNavGraph(
             onEvent = { event ->
                 when (event) {
                     is PerfilEvent.OnGoToAjustes -> navController.navigate(Routes.Ajustes)
+                    is PerfilEvent.OnGoToRetos -> navController.navigate(Routes.Retos) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
+                    is PerfilEvent.OnLogout -> onLogout()
                     else -> vm.onEvent(event)
                 }
             }
@@ -264,6 +280,32 @@ fun NavGraphBuilder.appNavGraph(
         val vm: AjustesViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         AjustesScreen(uiState = uiState, onEvent = { event -> vm.onEvent(event) }, onLogout = onLogout)
+    }
+
+    composable<Routes.Retos>(
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
+    ) {
+        RetosScreen()
+    }
+
+    composable<Routes.Miembros>(
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
+    ) { backStackEntry ->
+        val route = backStackEntry.toRoute<Routes.Miembros>()
+        val vm: MiembrosViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        LaunchedEffect(route) { vm.cargarMiembros(route.comunidadId) }
+        MiembrosScreen(
+            title = "Miembros",
+            onBack = { navController.popBackStack() },
+            miembros = uiState.miembros
+        )
     }
 }
 

@@ -1,6 +1,8 @@
 package com.ecoquest.app.ui.feature.home.contenido
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,8 +49,12 @@ import coil.compose.AsyncImage
 import com.ecoquest.app.R
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
+import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.ui.components.general.SectionHeaderWithAction
 import com.ecoquest.app.ui.components.general.StatusBadge
+import com.ecoquest.app.ui.theme.GradientEnd
+import com.ecoquest.app.ui.theme.GradientStart
+import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun HomeContentScreen(
@@ -68,14 +75,16 @@ fun HomeContentScreen(
 
         StatsRow(
             eventosCount = uiState.proximosEventos.size,
-            comunidadesCount = uiState.comunidades.size
+            comunidadesCount = uiState.comunidades.size,
+            saldoPuntos = uiState.saldoPuntos,
+            onPuntosClick = { onEvent(HomeContentEvent.OnNavigateToRetos) }
         )
 
         Spacer(modifier = Modifier.height(28.dp))
 
         if (uiState.proximosEventos.isNotEmpty()) {
             SectionHeaderWithAction(
-                title = "Tus próximos eventos",
+                title = "Tus pr\u00f3ximos eventos",
                 onAction = { onEvent(HomeContentEvent.OnNavigateToEventos) }
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -100,7 +109,7 @@ fun HomeContentScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             LazyRow(
-                modifier = Modifier.height(220.dp),
+                modifier = Modifier.height(230.dp),
                 contentPadding = PaddingValues(end = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -118,14 +127,14 @@ fun HomeContentScreen(
 }
 
 @Composable
-private fun HeaderSection(usuario: com.ecoquest.app.domain.model.Usuario) {
+private fun HeaderSection(usuario: Usuario) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -135,9 +144,13 @@ private fun HeaderSection(usuario: com.ecoquest.app.domain.model.Usuario) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(64.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary),
+                    .background(
+                        Brush.sweepGradient(
+                            colors = listOf(GradientStart, GradientEnd)
+                        )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 if (usuario.imagen.isNotEmpty()) {
@@ -159,17 +172,11 @@ private fun HeaderSection(usuario: com.ecoquest.app.domain.model.Usuario) {
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "¡Hola, ${usuario.nombre.takeIf { it.isNotBlank() } ?: usuario.nombreUsuario}!",
+                    text = "\u00a1Hola, ${usuario.nombre.takeIf { it.isNotBlank() } ?: usuario.nombreUsuario}!",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                Text(
-                    text = "Bienvenido a EcoQuest",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -193,7 +200,12 @@ private fun HeaderSection(usuario: com.ecoquest.app.domain.model.Usuario) {
 }
 
 @Composable
-private fun StatsRow(eventosCount: Int, comunidadesCount: Int) {
+private fun StatsRow(
+    eventosCount: Int,
+    comunidadesCount: Int,
+    saldoPuntos: Int,
+    onPuntosClick: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -216,11 +228,12 @@ private fun StatsRow(eventosCount: Int, comunidadesCount: Int) {
         )
         StatCard(
             icon = Icons.Filled.Eco,
-            value = "100",
+            value = "$saldoPuntos",
             label = "Puntos Eco",
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             iconTint = MaterialTheme.colorScheme.tertiary,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = onPuntosClick
         )
     }
 }
@@ -232,15 +245,20 @@ private fun StatCard(
     label: String,
     containerColor: Color,
     iconTint: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier,
+        modifier = if (onClick != null) modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick
+        ) else modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Column(
             modifier = Modifier
@@ -250,8 +268,8 @@ private fun StatCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(38.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(containerColor),
                 contentAlignment = Alignment.Center
             ) {
@@ -272,6 +290,7 @@ private fun StatCard(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
@@ -286,18 +305,18 @@ private fun EventoHorizontalCard(
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier.width(220.dp),
+        modifier = Modifier.width(240.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(110.dp)
+                    .height(120.dp)
             ) {
                 AsyncImage(
                     model = if (evento.imagen.isNotEmpty()) evento.imagen else R.drawable.iconoeco,
@@ -315,9 +334,7 @@ private fun EventoHorizontalCard(
                                 colors = listOf(
                                     Color.Transparent,
                                     Color.Black.copy(alpha = 0.5f)
-                                ),
-                                startY = Float.POSITIVE_INFINITY,
-                                endY = 0f
+                                )
                             )
                         )
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
@@ -325,11 +342,9 @@ private fun EventoHorizontalCard(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(8.dp)
-                        .background(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            RoundedCornerShape(8.dp)
-                        )
+                        .padding(10.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Row(
@@ -343,7 +358,7 @@ private fun EventoHorizontalCard(
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = evento.fechaHora,
+                            text = formatearFechaHoraCorta(evento.fechaHora),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary,
@@ -357,7 +372,7 @@ private fun EventoHorizontalCard(
                 Text(
                     text = evento.nombre,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -371,7 +386,7 @@ private fun EventoHorizontalCard(
                         Icon(
                             imageVector = Icons.Filled.LocationOn,
                             contentDescription = null,
-                            modifier = Modifier.size(14.dp),
+                            modifier = Modifier.size(13.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
@@ -384,7 +399,7 @@ private fun EventoHorizontalCard(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 StatusBadge(text = evento.estado)
             }
         }
@@ -400,7 +415,7 @@ private fun ComunidadHorizontalCard(
         onClick = onClick,
         modifier = Modifier
             .width(200.dp)
-            .height(220.dp),
+            .height(230.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -411,7 +426,7 @@ private fun ComunidadHorizontalCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
+                    .height(110.dp)
             ) {
                 if (comunidad.imagen.isNotEmpty()) {
                     AsyncImage(
@@ -453,9 +468,7 @@ private fun ComunidadHorizontalCard(
                                 colors = listOf(
                                     Color.Transparent,
                                     Color.Black.copy(alpha = 0.6f)
-                                ),
-                                startY = Float.POSITIVE_INFINITY,
-                                endY = 0f
+                                )
                             )
                         )
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
@@ -507,5 +520,3 @@ private fun ComunidadHorizontalCard(
         }
     }
 }
-
-

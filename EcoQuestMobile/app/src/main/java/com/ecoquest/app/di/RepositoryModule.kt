@@ -3,12 +3,16 @@ package com.ecoquest.app.di
 import com.ecoquest.app.data.repository.ComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.EventoRepositoryImpl
 import com.ecoquest.app.data.repository.ProductoRepositoryImpl
+import com.ecoquest.app.data.repository.RetoRepositoryImpl
+import com.ecoquest.app.data.repository.TransaccionPuntosRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioEventoRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioRepositoryImpl
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.ProductoRepository
+import com.ecoquest.app.domain.repository.RetoRepository
+import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
@@ -45,4 +49,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindProductoRepository(impl: ProductoRepositoryImpl): ProductoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRetoRepository(impl: RetoRepositoryImpl): RetoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTransaccionPuntosRepository(impl: TransaccionPuntosRepositoryImpl): TransaccionPuntosRepository
 }

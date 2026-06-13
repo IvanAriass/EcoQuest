@@ -1,6 +1,8 @@
 package com.proyecto.spring.servicios;
 
+import com.proyecto.spring.modelos.Categoria;
 import com.proyecto.spring.modelos.Producto;
+import com.proyecto.spring.repository.CategoriaRepository;
 import com.proyecto.spring.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +21,18 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
     @Value("${app.base.url}")
     private String baseUrl;
 
     public List<Producto> obtenerTodos() {
         return productoRepository.findAll().stream()
                 .map(p -> {
-                    p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    if (p.getImagen() != null && !p.getImagen().isBlank() && !p.getImagen().startsWith("http")) {
+                        p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    }
                     return p;
                 })
                 .toList();
@@ -33,28 +40,54 @@ public class ProductoService {
 
     public Optional<Producto> obtenerPorId(Long id) {
         return productoRepository.findById(id).map(p -> {
-            p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+            if (p.getImagen() != null && !p.getImagen().isBlank() && !p.getImagen().startsWith("http")) {
+                p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+            }
             return p;
         });
     }
 
     public Producto crear(Producto producto) {
+        resolverCategoria(producto);
         return productoRepository.save(producto);
     }
 
     public Optional<Producto> actualizar(Long id, Producto productoActualizado) {
-    return productoRepository.findById(id).map(producto -> {
-        producto.setNombre(productoActualizado.getNombre());
-        producto.setPrecio(productoActualizado.getPrecio());
+        return productoRepository.findById(id).map(producto -> {
+            producto.setNombre(productoActualizado.getNombre());
+            producto.setPrecio(productoActualizado.getPrecio());
 
-        // Solo actualiza la imagen si viene una nueva, si no conserva la anterior
-        if (productoActualizado.getImagen() != null && !productoActualizado.getImagen().isBlank()) {
-            producto.setImagen(productoActualizado.getImagen());
+            if (productoActualizado.getImagen() != null && !productoActualizado.getImagen().isBlank()) {
+                producto.setImagen(productoActualizado.getImagen());
+            }
+
+            resolverCategoria(producto, productoActualizado);
+
+            return productoRepository.save(producto);
+        });
+    }
+
+    private void resolverCategoria(Producto producto) {
+        resolverCategoria(producto, null);
+    }
+
+    private void resolverCategoria(Producto producto, Producto productoActualizado) {
+        Categoria categoria = productoActualizado != null
+                ? productoActualizado.getCategoria()
+                : producto.getCategoria();
+
+        if (categoria != null) {
+            if (categoria.getId() != null) {
+                categoriaRepository.findById(categoria.getId())
+                        .ifPresent(producto::setCategoria);
+            } else if (categoria.getNombre() != null && !categoria.getNombre().isBlank()) {
+                categoriaRepository.findByNombreIgnoreCase(categoria.getNombre())
+                        .ifPresent(producto::setCategoria);
+            }
+        } else if (productoActualizado != null) {
+            producto.setCategoria(null);
         }
-
-        return productoRepository.save(producto);
-    });
-}
+    }
 
     public boolean eliminar(Long id) {
         Optional<Producto> productoOpt = productoRepository.findById(id);
@@ -78,7 +111,9 @@ public class ProductoService {
     public List<Producto> buscarPorNombre(String nombre) {
         return productoRepository.findByNombreContainingIgnoreCase(nombre).stream()
                 .map(p -> {
-                    p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    if (p.getImagen() != null && !p.getImagen().isBlank() && !p.getImagen().startsWith("http")) {
+                        p.setImagen(baseUrl + "/api/productos/imagen/" + p.getImagen());
+                    }
                     return p;
                 })
                 .toList();

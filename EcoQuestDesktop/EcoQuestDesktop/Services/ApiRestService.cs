@@ -37,12 +37,21 @@ namespace EcoQuestDesktop.Services
             catch { return new(); }
         }
 
-        public static async Task<Producto?> CrearProductoConImagen(string nombre, int precio, string? rutaImagen)
+        public static async Task<Producto?> CrearProductoConImagen(string nombre, int precio, string? rutaImagen, int? categoriaId = null)
         {
             RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
             RestRequest request = new RestRequest("productos/con-imagen", Method.Post);
 
-            var productoJson = JsonConvert.SerializeObject(new { nombre, precio });
+            object categoriaData = categoriaId.HasValue
+                ? new { id = categoriaId.Value }
+                : null!;
+
+            var productoJson = JsonConvert.SerializeObject(new
+            {
+                nombre,
+                precio,
+                categoria = categoriaData
+            });
             request.AddParameter("producto", productoJson, ParameterType.GetOrPost);
 
             if (!string.IsNullOrEmpty(rutaImagen) && File.Exists(rutaImagen))
@@ -60,12 +69,21 @@ namespace EcoQuestDesktop.Services
             return null;
         }
 
-        public static async Task<Producto?> EditarProductoConImagen(int id, string nombre, int precio, string? rutaImagen)
+        public static async Task<Producto?> EditarProductoConImagen(int id, string nombre, int precio, string? rutaImagen, int? categoriaId = null)
         {
             RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
             RestRequest request = new RestRequest($"productos/{id}/con-imagen", Method.Put);
 
-            var productoJson = JsonConvert.SerializeObject(new { nombre, precio });
+            object categoriaData = categoriaId.HasValue
+                ? new { id = categoriaId.Value }
+                : null!;
+
+            var productoJson = JsonConvert.SerializeObject(new
+            {
+                nombre,
+                precio,
+                categoria = categoriaData
+            });
             request.AddParameter("producto", productoJson, ParameterType.GetOrPost);
 
             if (!string.IsNullOrEmpty(rutaImagen) && File.Exists(rutaImagen))
@@ -96,6 +114,34 @@ namespace EcoQuestDesktop.Services
             {
                 return false;
             }
+        }
+
+        public static List<Categoria> GetCategorias()
+        {
+            try
+            {
+                RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new RestRequest("categorias", Method.Get);
+                RestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<List<Categoria>>(response.Content) ?? new();
+            }
+            catch { return new(); }
+        }
+
+        public static async Task<Categoria?> CrearCategoria(string nombre)
+        {
+            try
+            {
+                RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new RestRequest("categorias", Method.Post);
+                var body = JsonConvert.SerializeObject(new { nombre });
+                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                RestResponse response = await client.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                    return JsonConvert.DeserializeObject<Categoria>(response.Content);
+                return null;
+            }
+            catch { return null; }
         }
 
         // ==================== USUARIOS ====================
@@ -137,7 +183,7 @@ namespace EcoQuestDesktop.Services
             catch { return new(); }
         }
 
-        public static async Task<Usuario?> CrearUsuarioConImagen(string nombreUsuario, string nombre, string apellido, string email, int edad, string descripcion, string contraseña, string? rutaImagen)
+        public static async Task<Usuario?> CrearUsuarioConImagen(string nombreUsuario, string nombre, string apellido, string email, DateTime? fechaNacimiento, string descripcion, string contraseña, string? rutaImagen)
         {
             RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
             RestRequest request = new RestRequest("usuarios/con-imagen", Method.Post);
@@ -148,7 +194,7 @@ namespace EcoQuestDesktop.Services
                 nombre,
                 apellido,
                 email,
-                edad,
+                fechaNacimiento,
                 descripcion,
                 contraseña
             });
@@ -169,7 +215,7 @@ namespace EcoQuestDesktop.Services
             return null;
         }
 
-        public static async Task<Usuario?> EditarUsuarioConImagen(int id, string nombreUsuario, string nombre, string apellido, string email, int edad, string descripcion, string? contraseña, string? rutaImagen)
+        public static async Task<Usuario?> EditarUsuarioConImagen(int id, string nombreUsuario, string nombre, string apellido, string email, DateTime? fechaNacimiento, string descripcion, string? contraseña, string? rutaImagen)
         {
             RestClient client = new RestClient(Properties.Settings.Default.ApiRestEndPoint);
             RestRequest request = new RestRequest($"usuarios/{id}/con-imagen", Method.Put);
@@ -180,7 +226,7 @@ namespace EcoQuestDesktop.Services
                 nombre,
                 apellido,
                 email,
-                edad,
+                fechaNacimiento,
                 descripcion,
                 contraseña
             });
@@ -571,6 +617,47 @@ namespace EcoQuestDesktop.Services
             {
                 return false;
             }
+        }
+    
+
+        // ==================== RETOS / PUNTOS ====================
+
+        public static List<Reto> GetRetos()
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new("retos", Method.Get);
+                RestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<List<Reto>>(response.Content) ?? new();
+            }
+            catch { return new(); }
+        }
+
+        public static List<TransaccionPuntos> GetHistorialPuntos(int usuarioId)
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new($"usuarios/{usuarioId}/puntos/historial", Method.Get);
+                RestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<List<TransaccionPuntos>>(response.Content) ?? new();
+            }
+            catch { return new(); }
+        }
+
+        public static int GetSaldoPuntos(int usuarioId)
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new($"usuarios/{usuarioId}/puntos/saldo", Method.Get);
+                RestResponse response = client.Execute(request);
+                if (response.IsSuccessful && int.TryParse(response.Content, out int saldo))
+                    return saldo;
+                return 0;
+            }
+            catch { return 0; }
         }
     }
 }

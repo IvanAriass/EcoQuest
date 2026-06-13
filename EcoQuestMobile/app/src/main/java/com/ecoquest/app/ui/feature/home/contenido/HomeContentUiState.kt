@@ -8,6 +8,7 @@ data class HomeContentUiState(
     val usuario: Usuario = Usuario(),
     val proximosEventos: List<Evento> = emptyList(),
     val comunidades: List<Comunidad> = emptyList(),
+    val saldoPuntos: Int = 0,
     val isLoading: Boolean = false,
     val error: String? = null
 )

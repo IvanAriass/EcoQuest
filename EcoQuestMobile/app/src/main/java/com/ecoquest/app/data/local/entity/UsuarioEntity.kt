@@ -11,7 +11,7 @@ data class UsuarioEntity(
     val nombre: String = "",
     val apellido: String = "",
     val descripcion: String = "",
-    val edad: Int = 0,
+    val fechaNacimiento: String? = null,
     val email: String = "",
     val imagen: String = ""
 )

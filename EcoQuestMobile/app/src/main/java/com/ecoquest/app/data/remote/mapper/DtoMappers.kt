@@ -3,10 +3,14 @@ package com.ecoquest.app.data.remote.mapper
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
+import com.ecoquest.app.data.remote.dto.RetoDto
+import com.ecoquest.app.data.remote.dto.TransaccionPuntosDto
 import com.ecoquest.app.data.remote.dto.UsuarioDto
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Producto
+import com.ecoquest.app.domain.model.Reto
+import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
 
 private const val API_BASE = "http://10.0.2.2:9000/api"
@@ -27,7 +31,7 @@ fun UsuarioDto.toDomain(): Usuario = Usuario(
     nombre = nombre,
     apellido = apellido,
     descripcion = descripcion,
-    edad = edad,
+    fechaNacimiento = fechaNacimiento,
     email = email,
     imagen = imagen.toImageUrl("usuarios/imagen")
 )
@@ -50,7 +54,8 @@ fun EventoDto.toDomain(): Evento = Evento(
     imagen = imagen.toImageUrl("eventos/imagen"),
     estado = estado,
     comunidadId = 0,
-    creadorId = 0
+    creadorId = 0,
+    nombreComunidad = nombreComunidad ?: ""
 )
 
 fun ProductoDto.toDomain(): Producto = Producto(
@@ -58,5 +63,25 @@ fun ProductoDto.toDomain(): Producto = Producto(
     nombre = nombre,
     descripcion = descripcion,
     imagen = imagen.toImageUrl("productos/imagen"),
-    precio = precio
+    precio = precio,
+    categoria = categoria?.nombre.orEmpty()
+)
+
+fun RetoDto.toDomain(): Reto = Reto(
+    id = id,
+    nombre = nombre,
+    descripcion = descripcion,
+    puntos = puntos,
+    tipo = tipo,
+    requisitoCantidad = requisitoCantidad,
+    frecuencia = frecuencia
+)
+
+fun TransaccionPuntosDto.toDomain(): TransaccionPuntos = TransaccionPuntos(
+    id = id,
+    puntos = puntos,
+    tipo = tipo,
+    concepto = concepto,
+    referenciaId = referenciaId,
+    fecha = fecha
 )

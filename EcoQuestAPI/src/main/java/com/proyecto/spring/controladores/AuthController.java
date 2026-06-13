@@ -7,6 +7,7 @@ import com.proyecto.spring.dto.auth.RegisterRequest;
 import com.proyecto.spring.modelos.Usuario;
 import com.proyecto.spring.repository.UsuarioRepository;
 import com.proyecto.spring.seguridad.JwtUtil;
+import com.proyecto.spring.servicios.PuntosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private PuntosService puntosService;
+
     @Value("${app.base.url}")
     private String baseUrl;
 
@@ -49,11 +53,12 @@ public class AuthController {
             return ResponseEntity.status(403).build();
         }
 
-        if (usuario.getImagen() != null && !usuario.getImagen().isBlank()) {
+        if (usuario.getImagen() != null && !usuario.getImagen().isBlank() && !usuario.getImagen().startsWith("http")) {
             usuario.setImagen(baseUrl + "/api/usuarios/imagen/" + usuario.getImagen());
         }
 
         String token = jwtUtil.generarToken(usuario.getEmail(), usuario.getId());
+        puntosService.verificarYOtorgarRetoLogin(usuario);
         return ResponseEntity.ok(new AuthResponse(token, new UsuarioDTO(usuario)));
     }
 
@@ -71,7 +76,7 @@ public class AuthController {
                 request.nombreUsuario,
                 request.password,
                 request.nombre != null ? request.nombre : request.nombreUsuario,
-                "", "", 0, request.email, ""
+                "", "", null, request.email, ""
         );
         usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
         usuario = usuarioRepository.save(usuario);

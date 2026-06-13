@@ -27,7 +27,7 @@ namespace EcoQuestDesktop.ViewModels.Usuarios
         private string _email = string.Empty;
 
         [ObservableProperty]
-        private int _edad;
+        private DateTime? _fechaNacimiento;
 
         [ObservableProperty]
         private string _descripcion = string.Empty;
@@ -69,7 +69,7 @@ namespace EcoQuestDesktop.ViewModels.Usuarios
             try
             {
                 var usuario = await ApiRestService.CrearUsuarioConImagen(
-                    NombreUsuario, Nombre, Apellido, Email, Edad, Descripcion, Contraseña, RutaImagenLocal);
+                    NombreUsuario, Nombre, Apellido, Email, FechaNacimiento, Descripcion, Contraseña, RutaImagenLocal);
 
                 if (usuario != null)
                 {
@@ -81,7 +81,7 @@ namespace EcoQuestDesktop.ViewModels.Usuarios
                     Nombre = string.Empty;
                     Apellido = string.Empty;
                     Email = string.Empty;
-                    Edad = 0;
+                    FechaNacimiento = null;
                     Descripcion = string.Empty;
                     Contraseña = string.Empty;
                     RutaImagenLocal = null;
