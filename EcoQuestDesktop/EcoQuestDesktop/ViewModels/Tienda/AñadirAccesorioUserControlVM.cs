@@ -3,12 +3,12 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using EcoQuestDesktop.Messages;
+using EcoQuestDesktop.Models;
 using EcoQuestDesktop.Services;
-using RestSharp;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EcoQuestDesktop.ViewModels.Tienda
 {
@@ -21,10 +21,69 @@ namespace EcoQuestDesktop.ViewModels.Tienda
         private int _precio;
 
         [ObservableProperty]
-        private string? _rutaImagenLocal;      
+        private Categoria? _categoriaSeleccionada;
+
+        [ObservableProperty]
+        private string? _rutaImagenLocal;
 
         [ObservableProperty]
         private BitmapImage? _previsualizacion;
+
+        [ObservableProperty]
+        private bool _isAddingCategoria;
+
+        [ObservableProperty]
+        private string _nuevaCategoriaNombre = string.Empty;
+
+        public ObservableCollection<Categoria> Categorias { get; } = new();
+
+        public AñadirAccesorioUserControlVM()
+        {
+            CargarCategorias();
+        }
+
+        private void CargarCategorias()
+        {
+            var categorias = ApiRestService.GetCategorias();
+            Categorias.Clear();
+            foreach (var cat in categorias)
+                Categorias.Add(cat);
+        }
+
+        [RelayCommand]
+        private void MostrarNuevaCategoria()
+        {
+            NuevaCategoriaNombre = string.Empty;
+            IsAddingCategoria = true;
+        }
+
+        [RelayCommand]
+        private async Task AgregarCategoria()
+        {
+            var nombre = NuevaCategoriaNombre?.Trim();
+            if (string.IsNullOrWhiteSpace(nombre)) return;
+
+            var nueva = await ApiRestService.CrearCategoria(nombre);
+            if (nueva != null)
+            {
+                Categorias.Add(nueva);
+                CategoriaSeleccionada = nueva;
+                NuevaCategoriaNombre = string.Empty;
+                IsAddingCategoria = false;
+            }
+            else
+            {
+                MessageBox.Show("Error al crear la categoría", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        [RelayCommand]
+        private void CancelarNuevaCategoria()
+        {
+            NuevaCategoriaNombre = string.Empty;
+            IsAddingCategoria = false;
+        }
 
         [RelayCommand]
         private void SeleccionarImagen()
@@ -53,7 +112,8 @@ namespace EcoQuestDesktop.ViewModels.Tienda
         {
             try
             {
-                var producto = await ApiRestService.CrearProductoConImagen(Nombre, Precio, RutaImagenLocal);
+                var producto = await ApiRestService.CrearProductoConImagen(
+                    Nombre, Precio, RutaImagenLocal, CategoriaSeleccionada?.Id);
 
                 if (producto != null)
                 {
@@ -61,6 +121,7 @@ namespace EcoQuestDesktop.ViewModels.Tienda
                     MessageBox.Show("Accesorio añadido correctamente", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     Nombre = string.Empty;
                     Precio = 0;
+                    CategoriaSeleccionada = null;
                     RutaImagenLocal = null;
                     Previsualizacion = null;
                 }

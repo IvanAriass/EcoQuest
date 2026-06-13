@@ -63,7 +63,8 @@ fun ProductoDto.toDomain(): Producto = Producto(
     nombre = nombre,
     descripcion = descripcion,
     imagen = imagen.toImageUrl("productos/imagen"),
-    precio = precio
+    precio = precio,
+    categoria = categoria?.nombre.orEmpty()
 )
 
 fun RetoDto.toDomain(): Reto = Reto(

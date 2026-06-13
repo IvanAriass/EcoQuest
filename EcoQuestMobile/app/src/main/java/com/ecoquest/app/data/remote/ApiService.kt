@@ -1,5 +1,6 @@
 package com.ecoquest.app.data.remote
 
+import com.ecoquest.app.data.remote.dto.CategoriaDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
@@ -81,6 +82,9 @@ interface ApiService {
 
     @GET("usuario-comunidad/comunidad/{comunidadId}")
     suspend fun usuariosDeComunidad(@Path("comunidadId") comunidadId: Long): List<UsuarioComunidadDto>
+
+    @GET("categorias")
+    suspend fun getCategorias(): List<CategoriaDto>
 
     @GET("productos")
     suspend fun getProductos(): List<ProductoDto>

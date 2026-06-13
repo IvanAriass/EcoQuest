@@ -10,12 +10,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.proyecto.spring.modelos.Categoria;
 import com.proyecto.spring.modelos.Comunidad;
 import com.proyecto.spring.modelos.Evento;
 import com.proyecto.spring.modelos.Producto;
 import com.proyecto.spring.modelos.Reto;
 import com.proyecto.spring.modelos.Usuario;
 import com.proyecto.spring.modelos.UsuarioComunidad;
+import com.proyecto.spring.repository.CategoriaRepository;
 import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.repository.EventoRepository;
 import com.proyecto.spring.repository.ProductoRepository;
@@ -41,6 +43,7 @@ public class Application {
 			ComunidadRepository comunidadRepository,
 			EventoRepository eventoRepository,
 			ProductoRepository productoRepository,
+			CategoriaRepository categoriaRepository,
 			UsuarioComunidadRepository usuarioComunidadRepository,
 			RetoRepository retoRepository) {
 		return (args) -> {
@@ -173,13 +176,20 @@ public class Application {
 			usuarioRepository.save(u5);
 			usuarioRepository.save(u6);
 
+			// Categorías
+			Categoria catEscalada = categoriaRepository.save(new Categoria("Escalada"));
+			Categoria catFotografia = categoriaRepository.save(new Categoria("Fotografía"));
+			Categoria catSenderismo = categoriaRepository.save(new Categoria("Senderismo"));
+			Categoria catHidratacion = categoriaRepository.save(new Categoria("Hidratación"));
+			Categoria catIluminacion = categoriaRepository.save(new Categoria("Iluminación"));
+
 			// Productos
-			productoRepository.save(new Producto("Cuerda de Escalada", "cuerda.jpg", 89));
-			productoRepository.save(new Producto("Cámara Réflex", "camara.jpg", 450));
-			productoRepository.save(new Producto("Mochila Trail", "mochila.jpg", 65));
-			productoRepository.save(new Producto("Botella Reutilizable", "botella.jpg", 15));
-			productoRepository.save(new Producto("Prismáticos", "prismaticos.jpg", 120));
-			productoRepository.save(new Producto("Linterna Frontal LED", "linterna.jpg", 35));
+			productoRepository.save(new Producto("Cuerda de Escalada", "cuerda.jpg", 89, catEscalada));
+			productoRepository.save(new Producto("Cámara Réflex", "camara.jpg", 450, catFotografia));
+			productoRepository.save(new Producto("Mochila Trail", "mochila.jpg", 65, catSenderismo));
+			productoRepository.save(new Producto("Botella Reutilizable", "botella.jpg", 15, catHidratacion));
+			productoRepository.save(new Producto("Prismáticos", "prismaticos.jpg", 120, catSenderismo));
+			productoRepository.save(new Producto("Linterna Frontal LED", "linterna.jpg", 35, catIluminacion));
 
 			// Retos (desafios de puntos)
 			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));

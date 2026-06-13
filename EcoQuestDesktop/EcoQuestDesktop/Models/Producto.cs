@@ -1,12 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EcoQuestDesktop.Models
 {
@@ -33,17 +27,23 @@ namespace EcoQuestDesktop.Models
         [DataMember]
         private int precio;
 
+        [ObservableProperty]
+        [JsonProperty("categoria")]
+        [DataMember]
+        private Categoria? categoria;
+
         public Producto() {
             Nombre = string.Empty;
             Imagen = string.Empty;
             Precio = 0;
         }
 
-        public Producto(string nombre, string imagen, int precio)
+        public Producto(string nombre, string imagen, int precio, Categoria? categoria = null)
         {
             Nombre = nombre;
             Imagen = imagen;
             Precio = precio;
+            Categoria = categoria;
         }
     }
 }

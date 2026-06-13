@@ -3,12 +3,15 @@ package com.proyecto.spring.modelos;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-@JsonPropertyOrder({ "id", "nombre", "imagen", "precio" })
+@JsonPropertyOrder({ "id", "nombre", "imagen", "precio", "categoria" })
 public class Producto {
     
     @Id
@@ -18,12 +21,23 @@ public class Producto {
     private String imagen;
     private int precio;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
     public Producto() {}
 
     public Producto(String nombre, String imagen, int precio) {
         this.nombre = nombre;
         this.imagen = imagen;
         this.precio = precio;
+    }
+
+    public Producto(String nombre, String imagen, int precio, Categoria categoria) {
+        this.nombre = nombre;
+        this.imagen = imagen;
+        this.precio = precio;
+        this.categoria = categoria;
     }
 
     public Long getId() {
@@ -56,6 +70,14 @@ public class Producto {
 
     public void setPrecio(int precio) {
         this.precio = precio;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     @Override

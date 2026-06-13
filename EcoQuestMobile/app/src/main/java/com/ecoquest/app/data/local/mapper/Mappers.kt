@@ -97,7 +97,8 @@ fun ProductoEntity.toDomain(): Producto = Producto(
     nombre = nombre,
     descripcion = descripcion,
     imagen = imagen.toImageUrl("productos/imagen"),
-    precio = precio
+    precio = precio,
+    categoria = categoria
 )
 
 fun Producto.toEntity(): ProductoEntity = ProductoEntity(
@@ -105,7 +106,8 @@ fun Producto.toEntity(): ProductoEntity = ProductoEntity(
     nombre = nombre,
     descripcion = descripcion,
     imagen = imagen,
-    precio = precio
+    precio = precio,
+    categoria = categoria
 )
 
 fun RetoEntity.toDomain(): Reto = Reto(
