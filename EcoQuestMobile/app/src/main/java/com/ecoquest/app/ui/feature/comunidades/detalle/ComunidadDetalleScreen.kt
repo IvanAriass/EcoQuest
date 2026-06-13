@@ -58,6 +58,7 @@ import com.ecoquest.app.domain.model.UsuarioComunidad
 import com.ecoquest.app.ui.components.evento.EventoDialog
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
+import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun ComunidadDetalleScreen(
@@ -473,7 +474,7 @@ private fun EventoCompactCard(evento: Evento, onClick: () -> Unit) {
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = evento.fechaHora,
+                            text = formatearFechaHoraCorta(evento.fechaHora),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.primary

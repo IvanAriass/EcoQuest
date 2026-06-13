@@ -56,6 +56,8 @@ import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
+import com.ecoquest.app.ui.util.formatearFechaHora
+import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun EventoDetalleScreen(
@@ -135,14 +137,11 @@ fun EventoDetalleScreen(
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             InfoItem(
                                 icon = Icons.Filled.CalendarMonth,
                                 label = "Fecha",
-                                value = evento.fechaHora
+                                value = formatearFechaHora(evento.fechaHora)
                             )
                             if (evento.ubicacion.isNotBlank()) {
                                 InfoItem(

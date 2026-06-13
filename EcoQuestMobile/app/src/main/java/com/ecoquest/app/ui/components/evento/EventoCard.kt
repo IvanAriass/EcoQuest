@@ -36,6 +36,7 @@ import com.ecoquest.app.R
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.ui.components.general.StatusBadge
 import com.ecoquest.app.ui.theme.GlassWhite
+import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun EventoCard(
@@ -96,7 +97,7 @@ fun EventoCard(
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = evento.fechaHora,
+                            text = formatearFechaHoraCorta(evento.fechaHora),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.primary

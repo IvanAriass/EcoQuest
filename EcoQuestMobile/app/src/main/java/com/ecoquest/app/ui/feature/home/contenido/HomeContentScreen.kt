@@ -54,6 +54,7 @@ import com.ecoquest.app.ui.components.general.SectionHeaderWithAction
 import com.ecoquest.app.ui.components.general.StatusBadge
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
+import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun HomeContentScreen(
@@ -357,7 +358,7 @@ private fun EventoHorizontalCard(
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = evento.fechaHora,
+                            text = formatearFechaHoraCorta(evento.fechaHora),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary,
