@@ -260,6 +260,11 @@ fun NavGraphBuilder.appNavGraph(
             onEvent = { event ->
                 when (event) {
                     is PerfilEvent.OnGoToAjustes -> navController.navigate(Routes.Ajustes)
+                    is PerfilEvent.OnGoToRetos -> navController.navigate(Routes.Retos) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
+                    is PerfilEvent.OnLogout -> onLogout()
                     else -> vm.onEvent(event)
                 }
             }

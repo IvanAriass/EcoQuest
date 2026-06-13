@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.RetoRepository
+import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
@@ -24,6 +26,8 @@ class PerfilViewModel @Inject constructor(
     private val eventoRepository: EventoRepository,
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
     private val usuarioEventoRepository: UsuarioEventoRepository,
+    private val transaccionPuntosRepository: TransaccionPuntosRepository,
+    private val retoRepository: RetoRepository,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -40,10 +44,16 @@ class PerfilViewModel @Inject constructor(
     fun onEvent(event: PerfilEvent) {
         when (event) {
             is PerfilEvent.OnToggleComunidades -> {
-                _state.update { it.copy(showComunidades = !it.showComunidades, showEventos = false) }
+                _state.update { it.copy(showComunidades = !it.showComunidades, showEventos = false, showRetos = false, showPuntos = false) }
             }
             is PerfilEvent.OnToggleEventos -> {
-                _state.update { it.copy(showEventos = !it.showEventos, showComunidades = false) }
+                _state.update { it.copy(showEventos = !it.showEventos, showComunidades = false, showRetos = false, showPuntos = false) }
+            }
+            is PerfilEvent.OnToggleRetos -> {
+                _state.update { it.copy(showRetos = !it.showRetos, showComunidades = false, showEventos = false, showPuntos = false) }
+            }
+            is PerfilEvent.OnTogglePuntos -> {
+                _state.update { it.copy(showPuntos = !it.showPuntos, showComunidades = false, showEventos = false, showRetos = false) }
             }
             is PerfilEvent.OnFotoSeleccionada -> {
                 _state.update { it.copy(usuario = it.usuario.copy(imagen = event.uri)) }
@@ -52,17 +62,24 @@ class PerfilViewModel @Inject constructor(
                 }
             }
             is PerfilEvent.OnGoToAjustes -> { }
+            is PerfilEvent.OnGoToRetos -> { }
+            is PerfilEvent.OnGoToTienda -> { }
+            is PerfilEvent.OnGoToEventos -> { }
+            is PerfilEvent.OnGoToComunidades -> { }
+            is PerfilEvent.OnLogout -> { }
         }
     }
 
     private fun cargarPerfil() {
         _state.update { it.copy(isLoading = true) }
+
         viewModelScope.launch {
             eventoRepository.refreshEventos()
         }
         viewModelScope.launch {
             comunidadRepository.refreshComunidades()
         }
+
         viewModelScope.launch {
             usuarioRepository.getById(usuarioId).collect { usuario ->
                 _state.update { it.copy(usuario = usuario ?: Usuario(), isLoading = false) }
@@ -76,6 +93,20 @@ class PerfilViewModel @Inject constructor(
         viewModelScope.launch {
             usuarioEventoRepository.getEventosByUsuario(usuarioId).collect { eventos ->
                 _state.update { it.copy(eventos = eventos) }
+            }
+        }
+        viewModelScope.launch {
+            retoRepository.getAll().collect { retos ->
+                _state.update { it.copy(retos = retos) }
+            }
+        }
+        viewModelScope.launch {
+            val saldo = transaccionPuntosRepository.getSaldo(usuarioId)
+            _state.update { it.copy(saldoPuntos = saldo) }
+        }
+        viewModelScope.launch {
+            transaccionPuntosRepository.getByUsuario(usuarioId).collect { transacciones ->
+                _state.update { it.copy(transacciones = transacciones) }
             }
         }
     }

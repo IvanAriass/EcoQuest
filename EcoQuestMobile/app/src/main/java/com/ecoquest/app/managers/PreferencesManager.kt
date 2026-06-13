@@ -20,6 +20,9 @@ class PreferencesManager @Inject constructor(
     private val _language = MutableStateFlow(prefs.getString(KEY_LANGUAGE, "es") ?: "es")
     val language: StateFlow<String> = _language.asStateFlow()
 
+    private val _notificaciones = MutableStateFlow(prefs.getBoolean(KEY_NOTIFICACIONES, true))
+    val notificaciones: StateFlow<Boolean> = _notificaciones.asStateFlow()
+
     fun setDarkTheme(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_DARK_THEME, enabled).apply()
         _isDarkTheme.value = enabled
@@ -30,9 +33,15 @@ class PreferencesManager @Inject constructor(
         _language.value = lang
     }
 
+    fun setNotificaciones(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_NOTIFICACIONES, enabled).apply()
+        _notificaciones.value = enabled
+    }
+
     companion object {
         private const val PREFS_NAME = "ecoquest_prefs"
         private const val KEY_DARK_THEME = "dark_theme"
         private const val KEY_LANGUAGE = "language"
+        private const val KEY_NOTIFICACIONES = "notificaciones"
     }
 }
