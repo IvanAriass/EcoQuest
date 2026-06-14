@@ -34,6 +34,11 @@ import com.ecoquest.app.ui.feature.comunidades.ComunidadesViewModel
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentEvent
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentScreen
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentViewModel
+import com.ecoquest.app.ui.feature.juegos.AhorraEnergiaScreen
+import com.ecoquest.app.ui.feature.juegos.EcoQuizScreen
+import com.ecoquest.app.ui.feature.juegos.JuegosScreen
+import com.ecoquest.app.ui.feature.juegos.MemoramaScreen
+import com.ecoquest.app.ui.feature.juegos.WordleEcoScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
 import com.ecoquest.app.ui.feature.retos.RetosScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
@@ -136,6 +141,21 @@ object Routes {
     data object Perfil
 
     @Serializable
+    data object Juegos
+
+    @Serializable
+    data object EcoQuiz
+
+    @Serializable
+    data object Memorama
+
+    @Serializable
+    data object AhorraEnergia
+
+    @Serializable
+    data object WordleEco
+
+    @Serializable
     data object Ajustes
 
     @Serializable
@@ -165,6 +185,17 @@ fun NavGraphBuilder.appNavGraph(
             onEvent = { event ->
                 when (event) {
                     is HomeContentEvent.OnNavigateToPerfil -> navController.navigate(Routes.Perfil) { launchSingleTop = true }
+                    is HomeContentEvent.OnNavigateToJuegos -> navController.navigate(Routes.Juegos)
+                    is HomeContentEvent.OnNavigateToJuego -> {
+                        val ruta = when (event.juegoId) {
+                            1L -> Routes.EcoQuiz
+                            2L -> Routes.Memorama
+                            3L -> Routes.AhorraEnergia
+                            4L -> Routes.WordleEco
+                            else -> Routes.Juegos
+                        }
+                        navController.navigate(ruta)
+                    }
                     is HomeContentEvent.OnNavigateToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
@@ -272,6 +303,67 @@ fun NavGraphBuilder.appNavGraph(
                     is PerfilEvent.OnGoToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
                     is PerfilEvent.OnLogout -> onLogout()
                     else -> vm.onEvent(event)
+                }
+            }
+        )
+    }
+
+    composable<Routes.Juegos>(
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
+    ) {
+        JuegosScreen(
+            onBack = { navController.popBackStack() },
+            onNavigateToJuego = { juegoId ->
+                when (juegoId) {
+                    1L -> navController.navigate(Routes.EcoQuiz)
+                    2L -> navController.navigate(Routes.Memorama)
+                    3L -> navController.navigate(Routes.AhorraEnergia)
+                    4L -> navController.navigate(Routes.WordleEco)
+                }
+            }
+        )
+    }
+
+    composable<Routes.EcoQuiz>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        EcoQuizScreen(onBack = { navController.popBackStack() })
+    }
+
+    composable<Routes.Memorama>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        MemoramaScreen(onBack = { navController.popBackStack() })
+    }
+
+    composable<Routes.AhorraEnergia>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        AhorraEnergiaScreen(onBack = { navController.popBackStack() })
+    }
+
+    composable<Routes.WordleEco>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        WordleEcoScreen(
+            onBack = {
+                navController.navigate(Routes.Juegos) {
+                    popUpTo(Routes.Home) { inclusive = false }
                 }
             }
         )

@@ -24,9 +24,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -49,6 +54,7 @@ import coil.compose.AsyncImage
 import com.ecoquest.app.R
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
+import com.ecoquest.app.domain.model.Juego
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.ui.components.general.SectionHeaderWithAction
 import com.ecoquest.app.ui.components.general.StatusBadge
@@ -125,8 +131,115 @@ fun HomeContentScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(28.dp))
+
+        SectionHeaderWithAction(
+            title = "Mini juegos",
+            onAction = { onEvent(HomeContentEvent.OnNavigateToJuegos) }
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        JuegosHorizontalRow(
+            onJuegoClick = { juegoId -> onEvent(HomeContentEvent.OnNavigateToJuego(juegoId)) }
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
     }
+}
+
+@Composable
+private fun JuegosHorizontalRow(onJuegoClick: (Long) -> Unit) {
+    val juegos = listOf(
+        Juego(
+            id = 1, nombre = "Eco-Quiz",
+            descripcion = "Preguntas sobre el medio ambiente",
+            icono = "Quiz", colorHex = "#4CAF50"
+        ),
+        Juego(
+            id = 2, nombre = "Memorama Verde",
+            descripcion = "Encuentra los pares ecol\u00f3gicos",
+            icono = "Extension", colorHex = "#FF9800"
+        ),
+        Juego(
+            id = 3, nombre = "Ahorra Energ\u00eda",
+            descripcion = "H\u00e1bitos sostenibles en tu hogar",
+            icono = "SmartToy", colorHex = "#2196F3"
+        ),
+        Juego(
+            id = 4, nombre = "Eco-Wordle",
+            descripcion = "Adivina la palabra ecol\u00f3gica",
+            icono = "Edit", colorHex = "#9C27B0"
+        ),
+    )
+
+    LazyRow(
+        contentPadding = PaddingValues(end = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(juegos, key = { it.id }) { juego ->
+            JuegoHorizontalCard(juego = juego, onClick = { onJuegoClick(juego.id) })
+        }
+    }
+}
+
+@Composable
+private fun JuegoHorizontalCard(juego: Juego, onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.width(200.dp).height(160.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor(juego.colorHex)).copy(alpha = 0.15f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = iconoJuego(juego.icono),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = Color(android.graphics.Color.parseColor(juego.colorHex))
+                )
+            }
+            Column {
+                Text(
+                    text = juego.nombre,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = juego.descripcion,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+private fun iconoJuego(icono: String): ImageVector = when (icono) {
+    "Quiz" -> Icons.Filled.Quiz
+    "Extension" -> Icons.Filled.Extension
+    "SmartToy" -> Icons.Filled.SmartToy
+    "Edit" -> Icons.Filled.Edit
+    else -> Icons.Filled.Star
 }
 
 @Composable
