@@ -69,7 +69,10 @@ fun HomeContentScreen(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        HeaderSection(usuario = uiState.usuario)
+        HeaderSection(
+            usuario = uiState.usuario,
+            onClick = { onEvent(HomeContentEvent.OnNavigateToPerfil) }
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -127,8 +130,9 @@ fun HomeContentScreen(
 }
 
 @Composable
-private fun HeaderSection(usuario: Usuario) {
+private fun HeaderSection(usuario: Usuario, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(

@@ -164,6 +164,7 @@ fun NavGraphBuilder.appNavGraph(
             uiState = uiState,
             onEvent = { event ->
                 when (event) {
+                    is HomeContentEvent.OnNavigateToPerfil -> navController.navigate(Routes.Perfil) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
