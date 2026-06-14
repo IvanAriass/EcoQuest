@@ -46,6 +46,8 @@ import com.ecoquest.app.ui.feature.miembros.MiembrosViewModel
 import com.ecoquest.app.ui.feature.perfil.PerfilEvent
 import com.ecoquest.app.ui.feature.perfil.PerfilScreen
 import com.ecoquest.app.ui.feature.perfil.PerfilViewModel
+import com.ecoquest.app.ui.feature.perfil.PerfilUsuarioScreen
+import com.ecoquest.app.ui.feature.perfil.PerfilUsuarioViewModel
 import com.ecoquest.app.ui.feature.tienda.TiendaScreen
 import com.ecoquest.app.ui.feature.tienda.TiendaViewModel
 import kotlinx.serialization.Serializable
@@ -141,6 +143,9 @@ object Routes {
 
     @Serializable
     data object Retos
+
+    @Serializable
+    data class PerfilUsuario(val usuarioId: Long)
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -304,7 +309,28 @@ fun NavGraphBuilder.appNavGraph(
         MiembrosScreen(
             title = "Miembros",
             onBack = { navController.popBackStack() },
-            miembros = uiState.miembros
+            miembros = uiState.miembros,
+            onNavigateToPerfilUsuario = { usuarioId -> navController.navigate(Routes.PerfilUsuario(usuarioId)) }
+        )
+    }
+
+    composable<Routes.PerfilUsuario>(
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
+    ) { backStackEntry ->
+        val route = backStackEntry.toRoute<Routes.PerfilUsuario>()
+        val vm: PerfilUsuarioViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        LaunchedEffect(route) { vm.cargarPerfil(route.usuarioId) }
+        PerfilUsuarioScreen(
+            uiState = uiState,
+            onBack = { navController.popBackStack() },
+            onToggleComunidades = { vm.onToggleComunidades() },
+            onToggleEventos = { vm.onToggleEventos() },
+            onToggleRetos = { vm.onToggleRetos() },
+            onTogglePuntos = { vm.onTogglePuntos() }
         )
     }
 }
