@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -32,13 +34,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +86,18 @@ fun BottomNavBar(
         else -> 0
     }
 
+    val density = LocalDensity.current
+    var rowWidth by remember { mutableStateOf(0.dp) }
+
+    val animatedOffset by animateFloatAsState(
+        targetValue = selectedIndex.toFloat(),
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "tabOffset"
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -94,8 +112,24 @@ fun BottomNavBar(
                 .background(Green30)
                 .padding(horizontal = 4.dp, vertical = 4.dp)
         ) {
+            if (rowWidth > 0.dp) {
+                val tabWidth = rowWidth / BottomNavTab.entries.size
+                Box(
+                    modifier = Modifier
+                        .offset(x = tabWidth * animatedOffset)
+                        .width(tabWidth)
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color.White.copy(alpha = 0.18f))
+                )
+            }
+
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        rowWidth = with(density) { coordinates.size.width.toDp() }
+                    },
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -103,14 +137,6 @@ fun BottomNavBar(
                     val isSelected = index == selectedIndex
                     val icons = iconMap[tab]!!
 
-                    val bgAlpha by animateFloatAsState(
-                        targetValue = if (isSelected) 1f else 0f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessLow
-                        ),
-                        label = "bgAlpha"
-                    )
                     val textAlpha by animateFloatAsState(
                         targetValue = if (isSelected) 1f else 0.6f,
                         animationSpec = spring(
@@ -142,12 +168,6 @@ fun BottomNavBar(
                             .height(56.dp)
                             .scale(scale)
                             .clip(RoundedCornerShape(18.dp))
-                            .then(
-                                if (bgAlpha > 0.01f) Modifier.background(
-                                    Color.White.copy(alpha = 0.18f * bgAlpha)
-                                )
-                                else Modifier
-                            )
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null

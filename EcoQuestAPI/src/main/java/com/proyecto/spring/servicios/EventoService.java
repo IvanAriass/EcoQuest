@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.proyecto.spring.dto.EventoDTO;
 import com.proyecto.spring.modelos.Evento;
 import com.proyecto.spring.modelos.Usuario;
+import com.proyecto.spring.repository.ComentarioRepository;
 import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.repository.EventoRepository;
 import com.proyecto.spring.repository.UsuarioRepository;
@@ -35,6 +36,9 @@ public class EventoService {
 
     @Autowired
     private PuntosService puntosService;
+
+    @Autowired
+    private ComentarioRepository comentarioRepository;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -160,6 +164,8 @@ public class EventoService {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
         if (eventoOpt.isEmpty())
             return false;
+
+        comentarioRepository.deleteByEventoId(id);
 
         String nombreImagen = eventoOpt.get().getImagen();
         if (nombreImagen != null && !nombreImagen.isBlank()) {

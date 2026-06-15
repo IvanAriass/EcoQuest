@@ -1,10 +1,6 @@
 package com.ecoquest.app.ui.feature.perfil
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -13,7 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,245 +25,207 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
-import com.ecoquest.app.ui.components.comunidad.ComunidadCard
-import com.ecoquest.app.ui.components.evento.EventoCard
-import com.ecoquest.app.ui.theme.EcoQuestMobileTheme
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PerfilScreen(
-    uiState: PerfilUiState,
-    onEvent: (PerfilEvent) -> Unit
+fun PerfilUsuarioScreen(
+    uiState: PerfilUsuarioUiState,
+    onBack: () -> Unit,
+    onToggleComunidades: () -> Unit,
+    onToggleEventos: () -> Unit,
+    onToggleRetos: () -> Unit,
+    onTogglePuntos: () -> Unit
 ) {
-    val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            onEvent(PerfilEvent.OnFotoSeleccionada(uri.toString()))
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMediumLow
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Perfil",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ProfileHeader(
-            usuario = uiState.usuario,
-            onFotoClick = {
-                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        StatsGrid(
-            saldoPuntos = uiState.saldoPuntos,
-            comunidadesCount = uiState.comunidades.size,
-            eventosCount = uiState.eventos.size,
-            retosCount = uiState.retos.size
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        ExpandableSection(
-            label = "Comunidades",
-            icon = Icons.Filled.Groups,
-            count = uiState.comunidades.size,
-            isExpanded = uiState.showComunidades,
-            onClick = { onEvent(PerfilEvent.OnToggleComunidades) }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (uiState.comunidades.isEmpty()) {
-                Text(
-                    text = "No perteneces a ninguna comunidad",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            } else {
-                uiState.comunidades.forEach { comunidad ->
-                    ComunidadCard(comunidad = comunidad, onClick = { })
-                }
-            }
-        }
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
+            PerfilUsuarioHeader(usuario = uiState.usuario)
 
-        ExpandableSection(
-            label = "Eventos",
-            icon = Icons.Filled.Event,
-            count = uiState.eventos.size,
-            isExpanded = uiState.showEventos,
-            onClick = { onEvent(PerfilEvent.OnToggleEventos) }
-        ) {
-            if (uiState.eventos.isEmpty()) {
-                Text(
-                    text = "No participas en ning\u00fan evento",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            } else {
-                uiState.eventos.forEach { evento ->
-                    EventoCard(evento = evento, onClick = { })
-                }
-            }
-        }
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
+            StatsGrid(
+                saldoPuntos = uiState.saldoPuntos,
+                comunidadesCount = uiState.comunidades.size,
+                eventosCount = uiState.eventos.size,
+                retosCount = uiState.retos.size
+            )
 
-        ExpandableSection(
-            label = "Mis Retos",
-            icon = Icons.Filled.Star,
-            count = uiState.retos.size,
-            isExpanded = uiState.showRetos,
-            onClick = { onEvent(PerfilEvent.OnToggleRetos) }
-        ) {
-            if (uiState.retos.isEmpty()) {
-                Text(
-                    text = "No hay retos disponibles",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            } else {
-                uiState.retos.forEach { reto ->
-                    RetoCompactRow(reto = reto)
-                }
-            }
-        }
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        ExpandableSection(
-            label = "Historial de Puntos",
-            icon = Icons.Filled.History,
-            count = uiState.transacciones.size,
-            isExpanded = uiState.showPuntos,
-            onClick = { onEvent(PerfilEvent.OnTogglePuntos) }
-        ) {
-            if (uiState.transacciones.isEmpty()) {
-                Text(
-                    text = "No hay transacciones registradas",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            } else {
-                uiState.transacciones.take(10).forEach { transaccion ->
-                    TransaccionRow(transaccion = transaccion)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        NavActionCard(
-            label = "Tienda",
-            icon = Icons.Filled.Store,
-            onClick = { onEvent(PerfilEvent.OnGoToTienda) }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        NavActionCard(
-            label = "Ajustes",
-            icon = Icons.Filled.Settings,
-            onClick = { onEvent(PerfilEvent.OnGoToAjustes) }
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            onClick = { onEvent(PerfilEvent.OnLogout) }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            ExpandableSection(
+                label = "Comunidades",
+                icon = Icons.Filled.Groups,
+                count = uiState.comunidades.size,
+                isExpanded = uiState.showComunidades,
+                onClick = onToggleComunidades
             ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onErrorContainer,
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "Cerrar sesi\u00f3n",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
+                if (uiState.comunidades.isEmpty()) {
+                    Text(
+                        text = "No pertenece a ninguna comunidad",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                } else {
+                    uiState.comunidades.forEach { comunidad ->
+                        Text(
+                            text = comunidad.nombre,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        )
+                    }
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ExpandableSection(
+                label = "Eventos",
+                icon = Icons.Filled.Event,
+                count = uiState.eventos.size,
+                isExpanded = uiState.showEventos,
+                onClick = onToggleEventos
+            ) {
+                if (uiState.eventos.isEmpty()) {
+                    Text(
+                        text = "No participa en ning\u00fan evento",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                } else {
+                    uiState.eventos.forEach { evento ->
+                        Text(
+                            text = evento.nombre,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ExpandableSection(
+                label = "Retos Completados",
+                icon = Icons.Filled.Star,
+                count = uiState.retos.size,
+                isExpanded = uiState.showRetos,
+                onClick = onToggleRetos
+            ) {
+                if (uiState.retos.isEmpty()) {
+                    Text(
+                        text = "No hay retos disponibles",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                } else {
+                    uiState.retos.forEach { reto ->
+                        RetoCompactRow(reto = reto)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ExpandableSection(
+                label = "Historial de Puntos",
+                icon = Icons.Filled.History,
+                count = uiState.transacciones.size,
+                isExpanded = uiState.showPuntos,
+                onClick = onTogglePuntos
+            ) {
+                if (uiState.transacciones.isEmpty()) {
+                    Text(
+                        text = "No hay transacciones registradas",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                } else {
+                    uiState.transacciones.take(10).forEach { transaccion ->
+                        TransaccionRow(transaccion = transaccion)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 
 @Composable
-private fun ProfileHeader(
-    usuario: Usuario,
-    onFotoClick: () -> Unit
-) {
+private fun PerfilUsuarioHeader(usuario: Usuario) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -288,12 +245,11 @@ private fun ProfileHeader(
                     .size(120.dp)
                     .clip(CircleShape)
                     .background(
-                        Brush.sweepGradient(
+                        androidx.compose.ui.graphics.Brush.sweepGradient(
                             colors = listOf(GradientStart, GradientEnd)
                         )
                     )
-                    .padding(4.dp)
-                    .clickable(onClick = onFotoClick),
+                    .padding(4.dp),
                 contentAlignment = Alignment.Center
             ) {
                 if (usuario.imagen.isNotEmpty()) {
@@ -679,82 +635,6 @@ private fun TransaccionRow(transaccion: TransaccionPuntos) {
                 MaterialTheme.colorScheme.primary
             else
                 MaterialTheme.colorScheme.error
-        )
-    }
-}
-
-@Composable
-private fun NavActionCard(
-    label: String,
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = onClick
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(14.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = Icons.Filled.ChevronRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PerfilScreenPreview() {
-    val fakeUsuario = Usuario(
-        id = 1L,
-        nombreUsuario = "manolo99",
-        nombre = "Manolo",
-        apellido = "Martinez Alvarez",
-        descripcion = "Amante de la naturaleza y el reciclaje",
-        email = "manolo@ecoquest.com"
-    )
-    EcoQuestMobileTheme {
-        PerfilScreen(
-            uiState = PerfilUiState(
-                usuario = fakeUsuario,
-                retos = emptyList(),
-                transacciones = emptyList()
-            ),
-            onEvent = {}
         )
     }
 }

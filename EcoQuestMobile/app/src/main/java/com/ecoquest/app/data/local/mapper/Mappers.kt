@@ -1,11 +1,13 @@
 package com.ecoquest.app.data.local.mapper
 
+import com.ecoquest.app.data.local.entity.ComentarioEntity
 import com.ecoquest.app.data.local.entity.ComunidadEntity
 import com.ecoquest.app.data.local.entity.EventoEntity
 import com.ecoquest.app.data.local.entity.ProductoEntity
 import com.ecoquest.app.data.local.entity.RetoEntity
 import com.ecoquest.app.data.local.entity.TransaccionPuntosEntity
 import com.ecoquest.app.data.local.entity.UsuarioEntity
+import com.ecoquest.app.domain.model.Comentario
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Producto
@@ -118,6 +120,31 @@ fun RetoEntity.toDomain(): Reto = Reto(
     tipo = tipo,
     requisitoCantidad = requisitoCantidad,
     frecuencia = frecuencia
+)
+
+fun ComentarioEntity.toDomain(): Comentario = Comentario(
+    id = id,
+    usuarioNombre = usuarioNombre,
+    usuarioNombreUsuario = usuarioNombreUsuario.ifBlank { usuarioNombre },
+    usuarioImagen = usuarioImagen.toImageUrl("usuarios/imagen"),
+    usuarioId = usuarioId,
+    texto = texto,
+    fechaHora = fechaHora,
+    comentarioPadreId = comentarioPadreId,
+    cantidadRespuestas = cantidadRespuestas
+)
+
+fun Comentario.toEntity(eventoId: Long): ComentarioEntity = ComentarioEntity(
+    id = id,
+    eventoId = eventoId,
+    usuarioId = usuarioId,
+    usuarioNombre = usuarioNombre,
+    usuarioNombreUsuario = usuarioNombreUsuario,
+    usuarioImagen = usuarioImagen,
+    texto = texto,
+    fechaHora = fechaHora,
+    comentarioPadreId = comentarioPadreId,
+    cantidadRespuestas = cantidadRespuestas
 )
 
 fun TransaccionPuntosEntity.toDomain(): TransaccionPuntos = TransaccionPuntos(

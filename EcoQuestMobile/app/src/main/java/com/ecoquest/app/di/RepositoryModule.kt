@@ -1,5 +1,6 @@
 package com.ecoquest.app.di
 
+import com.ecoquest.app.data.repository.ComentarioRepositoryImpl
 import com.ecoquest.app.data.repository.ComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.EventoRepositoryImpl
 import com.ecoquest.app.data.repository.ProductoRepositoryImpl
@@ -8,6 +9,7 @@ import com.ecoquest.app.data.repository.TransaccionPuntosRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioEventoRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioRepositoryImpl
+import com.ecoquest.app.domain.repository.ComentarioRepository
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.ProductoRepository
@@ -25,6 +27,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindComentarioRepository(impl: ComentarioRepositoryImpl): ComentarioRepository
 
     @Binds
     @Singleton

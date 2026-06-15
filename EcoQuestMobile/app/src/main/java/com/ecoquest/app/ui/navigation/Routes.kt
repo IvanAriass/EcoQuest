@@ -34,9 +34,15 @@ import com.ecoquest.app.ui.feature.comunidades.ComunidadesViewModel
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentEvent
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentScreen
 import com.ecoquest.app.ui.feature.home.contenido.HomeContentViewModel
+import com.ecoquest.app.ui.feature.juegos.AhorraEnergiaScreen
+import com.ecoquest.app.ui.feature.juegos.EcoQuizScreen
+import com.ecoquest.app.ui.feature.juegos.JuegosScreen
+import com.ecoquest.app.ui.feature.juegos.MemoramaScreen
+import com.ecoquest.app.ui.feature.juegos.WordleEcoScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
 import com.ecoquest.app.ui.feature.retos.RetosScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
+import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleEvent
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleScreen
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.EventosScreen
@@ -46,6 +52,8 @@ import com.ecoquest.app.ui.feature.miembros.MiembrosViewModel
 import com.ecoquest.app.ui.feature.perfil.PerfilEvent
 import com.ecoquest.app.ui.feature.perfil.PerfilScreen
 import com.ecoquest.app.ui.feature.perfil.PerfilViewModel
+import com.ecoquest.app.ui.feature.perfil.PerfilUsuarioScreen
+import com.ecoquest.app.ui.feature.perfil.PerfilUsuarioViewModel
 import com.ecoquest.app.ui.feature.tienda.TiendaScreen
 import com.ecoquest.app.ui.feature.tienda.TiendaViewModel
 import kotlinx.serialization.Serializable
@@ -134,6 +142,21 @@ object Routes {
     data object Perfil
 
     @Serializable
+    data object Juegos
+
+    @Serializable
+    data object EcoQuiz
+
+    @Serializable
+    data object Memorama
+
+    @Serializable
+    data object AhorraEnergia
+
+    @Serializable
+    data object WordleEco
+
+    @Serializable
     data object Ajustes
 
     @Serializable
@@ -141,6 +164,9 @@ object Routes {
 
     @Serializable
     data object Retos
+
+    @Serializable
+    data class PerfilUsuario(val usuarioId: Long)
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -159,6 +185,18 @@ fun NavGraphBuilder.appNavGraph(
             uiState = uiState,
             onEvent = { event ->
                 when (event) {
+                    is HomeContentEvent.OnNavigateToPerfil -> navController.navigate(Routes.Perfil) { launchSingleTop = true }
+                    is HomeContentEvent.OnNavigateToJuegos -> navController.navigate(Routes.Juegos)
+                    is HomeContentEvent.OnNavigateToJuego -> {
+                        val ruta = when (event.juegoId) {
+                            1L -> Routes.EcoQuiz
+                            2L -> Routes.Memorama
+                            3L -> Routes.AhorraEnergia
+                            4L -> Routes.WordleEco
+                            else -> Routes.Juegos
+                        }
+                        navController.navigate(ruta)
+                    }
                     is HomeContentEvent.OnNavigateToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
                     is HomeContentEvent.OnNavigateToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
@@ -195,7 +233,13 @@ fun NavGraphBuilder.appNavGraph(
         val vm: EventoDetalleViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         LaunchedEffect(route) { vm.cargarEvento(route.eventoId) }
-        EventoDetalleScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event -> vm.onEvent(event) })
+        EventoDetalleScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event ->
+            when (event) {
+                is EventoDetalleEvent.OnNavigateToPerfilUsuario ->
+                    navController.navigate(Routes.PerfilUsuario(event.usuarioId))
+                else -> vm.onEvent(event)
+            }
+        })
     }
 
     composable<Routes.Comunidades>(
@@ -271,6 +315,67 @@ fun NavGraphBuilder.appNavGraph(
         )
     }
 
+    composable<Routes.Juegos>(
+        enterTransition = { scaleFadeIn() },
+        exitTransition = { scaleFadeOut() },
+        popEnterTransition = { scaleFadeIn() },
+        popExitTransition = { scaleFadeOut() }
+    ) {
+        JuegosScreen(
+            onBack = { navController.popBackStack() },
+            onNavigateToJuego = { juegoId ->
+                when (juegoId) {
+                    1L -> navController.navigate(Routes.EcoQuiz)
+                    2L -> navController.navigate(Routes.Memorama)
+                    3L -> navController.navigate(Routes.AhorraEnergia)
+                    4L -> navController.navigate(Routes.WordleEco)
+                }
+            }
+        )
+    }
+
+    composable<Routes.EcoQuiz>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        EcoQuizScreen(onBack = { navController.popBackStack() })
+    }
+
+    composable<Routes.Memorama>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        MemoramaScreen(onBack = { navController.popBackStack() })
+    }
+
+    composable<Routes.AhorraEnergia>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        AhorraEnergiaScreen(onBack = { navController.popBackStack() })
+    }
+
+    composable<Routes.WordleEco>(
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() }
+    ) {
+        WordleEcoScreen(
+            onBack = {
+                navController.navigate(Routes.Juegos) {
+                    popUpTo(Routes.Home) { inclusive = false }
+                }
+            }
+        )
+    }
+
     composable<Routes.Ajustes>(
         enterTransition = { slideInRight() },
         exitTransition = { slideOutLeft() },
@@ -304,7 +409,28 @@ fun NavGraphBuilder.appNavGraph(
         MiembrosScreen(
             title = "Miembros",
             onBack = { navController.popBackStack() },
-            miembros = uiState.miembros
+            miembros = uiState.miembros,
+            onNavigateToPerfilUsuario = { usuarioId -> navController.navigate(Routes.PerfilUsuario(usuarioId)) }
+        )
+    }
+
+    composable<Routes.PerfilUsuario>(
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
+    ) { backStackEntry ->
+        val route = backStackEntry.toRoute<Routes.PerfilUsuario>()
+        val vm: PerfilUsuarioViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        LaunchedEffect(route) { vm.cargarPerfil(route.usuarioId) }
+        PerfilUsuarioScreen(
+            uiState = uiState,
+            onBack = { navController.popBackStack() },
+            onToggleComunidades = { vm.onToggleComunidades() },
+            onToggleEventos = { vm.onToggleEventos() },
+            onToggleRetos = { vm.onToggleRetos() },
+            onTogglePuntos = { vm.onTogglePuntos() }
         )
     }
 }

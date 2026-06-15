@@ -10,7 +10,7 @@
 
     <Border
         Width="480"
-        MaxHeight="620"
+        MaxHeight="750"
         Background="White"
         BorderBrush="#E0E0E0"
         BorderThickness="1"
@@ -113,6 +113,113 @@
                                 Text="{Binding Evento.Descripcion}"
                                 TextWrapping="Wrap" />
                         </Border>
+
+                        <TextBlock
+                            Margin="0,20,0,8"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="#222"
+                            Text="Comentarios" />
+
+                        <ItemsControl ItemsSource="{Binding Comentarios}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Margin="0,0,0,8"
+                                        Padding="10"
+                                        Background="#F5F5F5"
+                                        BorderBrush="#E0E0E0"
+                                        BorderThickness="1"
+                                        CornerRadius="8">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border
+                                                    Width="24"
+                                                    Height="24"
+                                                    Margin="0,0,8,0"
+                                                    Background="#DDD"
+                                                    CornerRadius="12">
+                                                    <Border.Clip>
+                                                        <EllipseGeometry Center="12,12" RadiusX="12" RadiusY="12" />
+                                                    </Border.Clip>
+                                                    <Image
+                                                        Source="{Binding UrlUsuarioImagen}"
+                                                        Stretch="UniformToFill" />
+                                                </Border>
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Foreground="#333"
+                                                    Text="{Binding NombreMostrar}" />
+                                                <TextBlock
+                                                    Margin="8,0,0,0"
+                                                    FontSize="11"
+                                                    Foreground="#999"
+                                                    Text="{Binding FechaHora}" />
+                                            </StackPanel>
+                                            <TextBlock
+                                                Margin="0,4,0,0"
+                                                FontSize="13"
+                                                Foreground="#444"
+                                                Text="{Binding Texto}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <StackPanel
+                            Margin="0,8,0,0"
+                            Orientation="Horizontal">
+                            <TextBox
+                                Width="300"
+                                Height="30"
+                                Padding="8,0"
+                                VerticalContentAlignment="Center"
+                                BorderBrush="#CCC"
+                                BorderThickness="1"
+                                FontSize="13"
+                                Text="{Binding NuevoComentario, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button
+                                Width="70"
+                                Height="30"
+                                Margin="8,0,0,0"
+                                Command="{Binding EnviarComentarioCommand}"
+                                Content="Enviar"
+                                Cursor="Hand"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="White">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="#2ECC71" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border
+                                                        Padding="{TemplateBinding Padding}"
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderThickness="0"
+                                                        CornerRadius="6">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#27AE60" />
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#1E8449" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
 
                         <Button
                             Height="36"

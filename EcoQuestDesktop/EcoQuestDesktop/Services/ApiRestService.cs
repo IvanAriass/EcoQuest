@@ -620,6 +620,36 @@ namespace EcoQuestDesktop.Services
         }
     
 
+        // ==================== COMENTARIOS ====================
+
+        public static List<Comentario> GetComentarios(int eventoId)
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new($"eventos/{eventoId}/comentarios", Method.Get);
+                RestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<List<Comentario>>(response.Content) ?? new();
+            }
+            catch { return new(); }
+        }
+
+        public static async Task<Comentario?> CrearComentario(int eventoId, int usuarioId, string texto)
+        {
+            try
+            {
+                RestClient client = new(Properties.Settings.Default.ApiRestEndPoint);
+                RestRequest request = new($"eventos/{eventoId}/comentarios", Method.Post);
+                var body = JsonConvert.SerializeObject(new { usuarioId, texto });
+                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                RestResponse response = await client.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                    return JsonConvert.DeserializeObject<Comentario>(response.Content);
+                return null;
+            }
+            catch { return null; }
+        }
+
         // ==================== RETOS / PUNTOS ====================
 
         public static List<Reto> GetRetos()

@@ -3,6 +3,7 @@ package com.ecoquest.app.di
 import android.content.Context
 import androidx.room.Room
 import com.ecoquest.app.data.local.EcoQuestDatabase
+import com.ecoquest.app.data.local.dao.ComentarioDao
 import com.ecoquest.app.data.local.dao.ComunidadDao
 import com.ecoquest.app.data.local.dao.EventoDao
 import com.ecoquest.app.data.local.dao.ProductoDao
@@ -28,6 +29,9 @@ object DatabaseModule {
         Room.databaseBuilder(context, EcoQuestDatabase::class.java, "ecoquest.db")
             .fallbackToDestructiveMigration()
             .build()
+
+    @Provides
+    fun provideComentarioDao(db: EcoQuestDatabase): ComentarioDao = db.comentarioDao()
 
     @Provides
     fun provideComunidadDao(db: EcoQuestDatabase): ComunidadDao = db.comunidadDao()
