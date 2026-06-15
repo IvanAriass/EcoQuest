@@ -430,7 +430,10 @@ fun NavGraphBuilder.appNavGraph(
             onToggleComunidades = { vm.onToggleComunidades() },
             onToggleEventos = { vm.onToggleEventos() },
             onToggleRetos = { vm.onToggleRetos() },
-            onTogglePuntos = { vm.onTogglePuntos() }
+            onTogglePuntos = { vm.onTogglePuntos() },
+            onNavigateToEventos = { navController.navigate(Routes.Eventos) { launchSingleTop = true } },
+            onNavigateToComunidades = { navController.navigate(Routes.Comunidades) { launchSingleTop = true } },
+            onNavigateToRetos = { navController.navigate(Routes.Retos) { launchSingleTop = true } }
         )
     }
 }

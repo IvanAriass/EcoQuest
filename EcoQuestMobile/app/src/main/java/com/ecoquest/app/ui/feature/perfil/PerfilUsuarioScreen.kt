@@ -74,7 +74,10 @@ fun PerfilUsuarioScreen(
     onToggleComunidades: () -> Unit,
     onToggleEventos: () -> Unit,
     onToggleRetos: () -> Unit,
-    onTogglePuntos: () -> Unit
+    onTogglePuntos: () -> Unit,
+    onNavigateToEventos: () -> Unit = {},
+    onNavigateToComunidades: () -> Unit = {},
+    onNavigateToRetos: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -116,7 +119,11 @@ fun PerfilUsuarioScreen(
                 saldoPuntos = uiState.saldoPuntos,
                 comunidadesCount = uiState.comunidades.size,
                 eventosCount = uiState.eventos.size,
-                retosCount = uiState.retos.size
+                retosCount = uiState.retos.size,
+                onPuntosClick = onNavigateToRetos,
+                onComunidadesClick = onNavigateToComunidades,
+                onEventosClick = onNavigateToEventos,
+                onRetosClick = onNavigateToRetos
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -336,7 +343,11 @@ private fun StatsGrid(
     saldoPuntos: Int,
     comunidadesCount: Int,
     eventosCount: Int,
-    retosCount: Int
+    retosCount: Int,
+    onPuntosClick: () -> Unit = {},
+    onComunidadesClick: () -> Unit = {},
+    onEventosClick: () -> Unit = {},
+    onRetosClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -352,7 +363,8 @@ private fun StatsGrid(
                 label = "Puntos Eco",
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 iconTint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onPuntosClick
             )
             StatCard(
                 icon = Icons.Filled.Groups,
@@ -360,7 +372,8 @@ private fun StatsGrid(
                 label = "Comunidades",
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconTint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onComunidadesClick
             )
         }
         Row(
@@ -373,7 +386,8 @@ private fun StatsGrid(
                 label = "Eventos",
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onEventosClick
             )
             StatCard(
                 icon = Icons.Filled.Star,
@@ -381,7 +395,8 @@ private fun StatsGrid(
                 label = "Retos",
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 iconTint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onRetosClick
             )
         }
     }
@@ -394,9 +409,11 @@ private fun StatCard(
     label: String,
     containerColor: Color,
     iconTint: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
