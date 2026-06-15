@@ -42,6 +42,7 @@ import com.ecoquest.app.ui.feature.juegos.WordleEcoScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
 import com.ecoquest.app.ui.feature.retos.RetosScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
+import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleEvent
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleScreen
 import com.ecoquest.app.ui.feature.eventos.detalle.EventoDetalleViewModel
 import com.ecoquest.app.ui.feature.eventos.EventosScreen
@@ -232,7 +233,13 @@ fun NavGraphBuilder.appNavGraph(
         val vm: EventoDetalleViewModel = hiltViewModel()
         val uiState by vm.state.collectAsState()
         LaunchedEffect(route) { vm.cargarEvento(route.eventoId) }
-        EventoDetalleScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event -> vm.onEvent(event) })
+        EventoDetalleScreen(eventoId = route.eventoId, uiState = uiState, onEvent = { event ->
+            when (event) {
+                is EventoDetalleEvent.OnNavigateToPerfilUsuario ->
+                    navController.navigate(Routes.PerfilUsuario(event.usuarioId))
+                else -> vm.onEvent(event)
+            }
+        })
     }
 
     composable<Routes.Comunidades>(

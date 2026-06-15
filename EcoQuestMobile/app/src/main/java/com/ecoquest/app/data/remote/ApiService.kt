@@ -1,6 +1,7 @@
 package com.ecoquest.app.data.remote
 
 import com.ecoquest.app.data.remote.dto.CategoriaDto
+import com.ecoquest.app.data.remote.dto.ComentarioDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
@@ -103,4 +104,19 @@ interface ApiService {
 
     @GET("usuarios/{usuarioId}/puntos/saldo")
     suspend fun getSaldoPuntos(@Path("usuarioId") usuarioId: Long): Int
+
+    @GET("eventos/{eventoId}/comentarios")
+    suspend fun getComentarios(@Path("eventoId") eventoId: Long): List<ComentarioDto>
+
+    @POST("eventos/{eventoId}/comentarios")
+    suspend fun crearComentario(
+        @Path("eventoId") eventoId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): ComentarioDto
+
+    @GET("eventos/{eventoId}/comentarios/{comentarioId}/respuestas")
+    suspend fun getRespuestas(
+        @Path("eventoId") eventoId: Long,
+        @Path("comentarioId") comentarioId: Long
+    ): List<ComentarioDto>
 }

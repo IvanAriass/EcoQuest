@@ -1,11 +1,13 @@
 package com.ecoquest.app.data.remote.mapper
 
+import com.ecoquest.app.data.remote.dto.ComentarioDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
 import com.ecoquest.app.data.remote.dto.RetoDto
 import com.ecoquest.app.data.remote.dto.TransaccionPuntosDto
 import com.ecoquest.app.data.remote.dto.UsuarioDto
+import com.ecoquest.app.domain.model.Comentario
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Producto
@@ -75,6 +77,20 @@ fun RetoDto.toDomain(): Reto = Reto(
     tipo = tipo,
     requisitoCantidad = requisitoCantidad,
     frecuencia = frecuencia
+)
+
+fun ComentarioDto.toDomain(): Comentario = Comentario(
+    id = id,
+    usuarioNombre = usuarioNombre,
+    usuarioNombreUsuario = usuarioNombreUsuario.ifBlank { usuarioNombre },
+    usuarioImagen = usuarioImagen?.let { img ->
+        if (img.isBlank()) "" else img.toImageUrl("usuarios/imagen")
+    } ?: "",
+    usuarioId = usuarioId,
+    texto = texto,
+    fechaHora = fechaHora,
+    comentarioPadreId = comentarioPadreId,
+    cantidadRespuestas = cantidadRespuestas
 )
 
 fun TransaccionPuntosDto.toDomain(): TransaccionPuntos = TransaccionPuntos(
