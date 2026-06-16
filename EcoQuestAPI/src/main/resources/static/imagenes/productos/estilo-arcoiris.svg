@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF0000"/>
+      <stop offset="16%" stop-color="#FF7F00"/>
+      <stop offset="33%" stop-color="#FFFF00"/>
+      <stop offset="50%" stop-color="#00FF00"/>
+      <stop offset="66%" stop-color="#0000FF"/>
+      <stop offset="83%" stop-color="#4B0082"/>
+      <stop offset="100%" stop-color="#8F00FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="20" fill="#1A1A2E"/>
+  <text x="100" y="100" text-anchor="middle" font-family="Arial" font-size="28" font-weight="bold" fill="url(#g)">@usuario</text>
+  <text x="100" y="140" text-anchor="middle" font-family="Arial" font-size="14" fill="#888">Estilo Arcoíris</text>
+</svg>

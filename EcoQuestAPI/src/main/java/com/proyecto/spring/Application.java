@@ -186,31 +186,31 @@ public class Application {
 			// Productos (cosméticos para personalización del perfil)
 			productoRepository.save(new Producto(
 				"Marco Dorado", "Un elegante marco dorado para tu foto de perfil",
-				"", 80, "MARCO", catMarcos));
+				"marco-dorado.svg", 80, "MARCO", catMarcos));
 			productoRepository.save(new Producto(
 				"Marco Premium", "Marco exclusivo con detalles brillantes para destacar",
-				"", 200, "MARCO", catMarcos));
+				"marco-premium.svg", 200, "MARCO", catMarcos));
 			productoRepository.save(new Producto(
 				"Tema Bosque", "Tema de perfil con tonos verdes y naturales",
-				"", 120, "TEMA", catTemas));
+				"tema-bosque.svg", 120, "TEMA", catTemas));
 			productoRepository.save(new Producto(
 				"Tema Atardecer", "Tema con degradado naranja y púrpura para tu perfil",
-				"", 150, "TEMA", catTemas));
+				"tema-atardecer.svg", 150, "TEMA", catTemas));
 			productoRepository.save(new Producto(
 				"Insignia EcoGuerrero", "Una insignia especial para los verdaderos guerreros ecológicos",
-				"", 50, "INSIGNIA", catInsignias));
+				"insignia-ecoguerrero.svg", 50, "INSIGNIA", catInsignias));
 			productoRepository.save(new Producto(
 				"Estilo Arcoíris", "Nombre de usuario con colores arcoíris",
-				"", 100, "ESTILO_NOMBRE", catEstilos));
+				"estilo-arcoiris.svg", 100, "ESTILO_NOMBRE", catEstilos));
 			productoRepository.save(new Producto(
 				"Tema Océano", "Sumérgete en un tema azul profundo con reflejos marinos",
-				"", 120, "TEMA", catTemas));
+				"tema-oceano.svg", 120, "TEMA", catTemas));
 			productoRepository.save(new Producto(
 				"Tema Noche", "Un tema oscuro y elegante con tonos índigo y púrpura",
-				"", 120, "TEMA", catTemas));
+				"tema-noche.svg", 120, "TEMA", catTemas));
 			productoRepository.save(new Producto(
 				"Tema Flora", "Un tema primaveral con tonos rosas y verdes suaves",
-				"", 120, "TEMA", catTemas));
+				"tema-flora.svg", 120, "TEMA", catTemas));
 
 			// Retos (desafios de puntos)
 			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));

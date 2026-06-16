@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#FF6B6B"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="url(#g)" stroke-width="18" filter="url(#glow)"/>
+  <circle cx="100" cy="100" r="81" fill="#FFF0E0"/>
+  <text x="100" y="104" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#C0392B">Premium</text>
+  <text x="100" y="122" text-anchor="middle" font-family="Arial" font-size="12" fill="#E67E22">★</text>
+</svg>
