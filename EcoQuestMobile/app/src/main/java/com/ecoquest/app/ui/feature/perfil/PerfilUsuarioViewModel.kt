@@ -7,9 +7,11 @@ import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.domain.model.UsuarioCosmetico
 import com.ecoquest.app.domain.repository.RetoRepository
 import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
+import com.ecoquest.app.domain.repository.UsuarioCosmeticoRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +28,7 @@ data class PerfilUsuarioUiState(
     val eventos: List<Evento> = emptyList(),
     val retos: List<Reto> = emptyList(),
     val transacciones: List<TransaccionPuntos> = emptyList(),
+    val cosmeticos: List<UsuarioCosmetico> = emptyList(),
     val saldoPuntos: Int = 0,
     val showComunidades: Boolean = false,
     val showEventos: Boolean = false,
@@ -41,7 +44,8 @@ class PerfilUsuarioViewModel @Inject constructor(
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
     private val usuarioEventoRepository: UsuarioEventoRepository,
     private val transaccionPuntosRepository: TransaccionPuntosRepository,
-    private val retoRepository: RetoRepository
+    private val retoRepository: RetoRepository,
+    private val usuarioCosmeticoRepository: UsuarioCosmeticoRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PerfilUsuarioUiState())
@@ -93,6 +97,11 @@ class PerfilUsuarioViewModel @Inject constructor(
         viewModelScope.launch {
             transaccionPuntosRepository.getByUsuario(usuarioId).collect { transacciones ->
                 _state.update { it.copy(transacciones = transacciones) }
+            }
+        }
+        viewModelScope.launch {
+            usuarioCosmeticoRepository.getByUsuario(usuarioId).collect { cosmeticos ->
+                _state.update { it.copy(cosmeticos = cosmeticos) }
             }
         }
     }

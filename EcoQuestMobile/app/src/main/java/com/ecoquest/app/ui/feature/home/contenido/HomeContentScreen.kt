@@ -86,6 +86,8 @@ fun HomeContentScreen(
             eventosCount = uiState.proximosEventos.size,
             comunidadesCount = uiState.comunidades.size,
             saldoPuntos = uiState.saldoPuntos,
+            onEventosClick = { onEvent(HomeContentEvent.OnNavigateToEventos) },
+            onComunidadesClick = { onEvent(HomeContentEvent.OnNavigateToComunidades) },
             onPuntosClick = { onEvent(HomeContentEvent.OnNavigateToRetos) }
         )
 
@@ -321,6 +323,8 @@ private fun StatsRow(
     eventosCount: Int,
     comunidadesCount: Int,
     saldoPuntos: Int,
+    onEventosClick: () -> Unit,
+    onComunidadesClick: () -> Unit,
     onPuntosClick: () -> Unit
 ) {
     Row(
@@ -333,7 +337,8 @@ private fun StatsRow(
             label = "Eventos",
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             iconTint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = onEventosClick
         )
         StatCard(
             icon = Icons.Filled.Groups,
@@ -341,7 +346,8 @@ private fun StatsRow(
             label = "Comunidades",
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             iconTint = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = onComunidadesClick
         )
         StatCard(
             icon = Icons.Filled.Eco,

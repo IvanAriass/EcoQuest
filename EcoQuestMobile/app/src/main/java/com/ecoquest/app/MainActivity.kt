@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
             val navigationVm: NavigationViewModel = hiltViewModel()
             val isAuthenticated by navigationVm.isAuthenticated.collectAsState()
             val isDarkTheme by preferencesManager.isDarkTheme.collectAsState()
+            val themeName by preferencesManager.themeName.collectAsState()
             val authNavController = rememberNavController()
 
             var currentToast by remember { mutableStateOf<ToastData?>(null) }
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            EcoQuestMobileTheme(darkTheme = isDarkTheme) {
+            EcoQuestMobileTheme(darkTheme = isDarkTheme, themeName = themeName) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Crossfade(
                         targetState = isAuthenticated,

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -103,6 +104,57 @@ fun AjustesScreen(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary
                             )
                         )
+                    }
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+
+                SettingsRow(
+                    icon = Icons.Filled.Palette,
+                    title = "Tema de colores",
+                    subtitle = "Personaliza los colores de la app",
+                    trailing = {
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            ThemeChip(
+                                label = "Verde",
+                                color = MaterialTheme.colorScheme.primary,
+                                selected = uiState.temaPersonalizado == "default",
+                                onClick = { onEvent(AjustesEvent.OnSeleccionarTemaPersonalizado("default")) }
+                            )
+                            ThemeChip(
+                                label = "Bosque",
+                                color = MaterialTheme.colorScheme.primary,
+                                selected = uiState.temaPersonalizado == "bosque",
+                                onClick = { onEvent(AjustesEvent.OnSeleccionarTemaPersonalizado("bosque")) }
+                            )
+                            ThemeChip(
+                                label = "Atardecer",
+                                color = MaterialTheme.colorScheme.primary,
+                                selected = uiState.temaPersonalizado == "atardecer",
+                                onClick = { onEvent(AjustesEvent.OnSeleccionarTemaPersonalizado("atardecer")) }
+                            )
+                            ThemeChip(
+                                label = "Océano",
+                                color = MaterialTheme.colorScheme.primary,
+                                selected = uiState.temaPersonalizado == "oceano",
+                                onClick = { onEvent(AjustesEvent.OnSeleccionarTemaPersonalizado("oceano")) }
+                            )
+                            ThemeChip(
+                                label = "Noche",
+                                color = MaterialTheme.colorScheme.primary,
+                                selected = uiState.temaPersonalizado == "noche",
+                                onClick = { onEvent(AjustesEvent.OnSeleccionarTemaPersonalizado("noche")) }
+                            )
+                            ThemeChip(
+                                label = "Flora",
+                                color = MaterialTheme.colorScheme.primary,
+                                selected = uiState.temaPersonalizado == "flora",
+                                onClick = { onEvent(AjustesEvent.OnSeleccionarTemaPersonalizado("flora")) }
+                            )
+                        }
                     }
                 )
 
@@ -375,4 +427,36 @@ private fun SettingsRow(
         Spacer(modifier = Modifier.width(12.dp))
         trailing()
     }
+}
+
+@Composable
+private fun ThemeChip(
+    label: String,
+    color: Color,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val bg = if (selected) color.copy(alpha = 0.15f) else Color.Transparent
+    val border = if (selected) color else Color.Transparent
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+            )
+        },
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = bg,
+            selectedLabelColor = color
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            borderColor = MaterialTheme.colorScheme.outline,
+            selectedBorderColor = color,
+            enabled = true,
+            selected = selected
+        )
+    )
 }

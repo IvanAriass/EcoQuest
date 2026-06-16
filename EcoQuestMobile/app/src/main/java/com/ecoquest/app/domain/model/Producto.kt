@@ -6,5 +6,18 @@ data class Producto(
     val descripcion: String = "",
     val imagen: String = "",
     val precio: Int = 0,
+    val tipo: String = "",
     val categoria: String = ""
-)
+) {
+    val tipoLabel: String
+        get() = when (tipo) {
+            "MARCO" -> "Marco"
+            "TEMA" -> "Tema"
+            "INSIGNIA" -> "Insignia"
+            "ESTILO_NOMBRE" -> "Estilo de Nombre"
+            else -> categoria
+        }
+
+    val tipoIcon: String
+        get() = tipo
+}

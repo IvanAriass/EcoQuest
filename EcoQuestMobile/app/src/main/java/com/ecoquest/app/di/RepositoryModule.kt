@@ -7,6 +7,7 @@ import com.ecoquest.app.data.repository.ProductoRepositoryImpl
 import com.ecoquest.app.data.repository.RetoRepositoryImpl
 import com.ecoquest.app.data.repository.TransaccionPuntosRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioComunidadRepositoryImpl
+import com.ecoquest.app.data.repository.UsuarioCosmeticoRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioEventoRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioRepositoryImpl
 import com.ecoquest.app.domain.repository.ComentarioRepository
@@ -16,6 +17,7 @@ import com.ecoquest.app.domain.repository.ProductoRepository
 import com.ecoquest.app.domain.repository.RetoRepository
 import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
+import com.ecoquest.app.domain.repository.UsuarioCosmeticoRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
 import dagger.Binds
@@ -63,4 +65,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTransaccionPuntosRepository(impl: TransaccionPuntosRepositoryImpl): TransaccionPuntosRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUsuarioCosmeticoRepository(impl: UsuarioCosmeticoRepositoryImpl): UsuarioCosmeticoRepository
 }

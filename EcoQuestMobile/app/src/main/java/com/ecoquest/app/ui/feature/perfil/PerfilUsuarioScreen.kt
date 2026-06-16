@@ -48,10 +48,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -63,6 +65,7 @@ import coil.compose.AsyncImage
 import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.domain.model.UsuarioCosmetico
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
 
@@ -74,7 +77,10 @@ fun PerfilUsuarioScreen(
     onToggleComunidades: () -> Unit,
     onToggleEventos: () -> Unit,
     onToggleRetos: () -> Unit,
-    onTogglePuntos: () -> Unit
+    onTogglePuntos: () -> Unit,
+    onNavigateToEventos: () -> Unit = {},
+    onNavigateToComunidades: () -> Unit = {},
+    onNavigateToRetos: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +114,12 @@ fun PerfilUsuarioScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            PerfilUsuarioHeader(usuario = uiState.usuario)
+            val cosmeticosAplicados = uiState.cosmeticos.filter { it.aplicado }
+
+            PerfilUsuarioHeader(
+                usuario = uiState.usuario,
+                cosmeticosAplicados = cosmeticosAplicados
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -116,7 +127,11 @@ fun PerfilUsuarioScreen(
                 saldoPuntos = uiState.saldoPuntos,
                 comunidadesCount = uiState.comunidades.size,
                 eventosCount = uiState.eventos.size,
-                retosCount = uiState.retos.size
+                retosCount = uiState.retos.size,
+                onPuntosClick = onNavigateToRetos,
+                onComunidadesClick = onNavigateToComunidades,
+                onEventosClick = onNavigateToEventos,
+                onRetosClick = onNavigateToRetos
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -225,106 +240,181 @@ fun PerfilUsuarioScreen(
 }
 
 @Composable
-private fun PerfilUsuarioHeader(usuario: Usuario) {
+private fun PerfilUsuarioHeader(
+    usuario: Usuario,
+    cosmeticosAplicados: List<UsuarioCosmetico> = emptyList()
+) {
+    val marcoCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "MARCO" }
+    val temaCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "TEMA" }
+    val insigniaCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "INSIGNIA" }
+    val estiloCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "ESTILO_NOMBRE" }
+
+    val marcoVisual = remember(marcoCosmetico) { marcoCosmetico?.let { getCosmeticoVisual(it.productoId).marco } }
+    val temaVisual = remember(temaCosmetico) { temaCosmetico?.let { getCosmeticoVisual(it.productoId).tema } }
+    val insigniaVisual = remember(insigniaCosmetico) { insigniaCosmetico?.let { getCosmeticoVisual(it.productoId).insignia } }
+    val estiloVisual = remember(estiloCosmetico) { estiloCosmetico?.let { getCosmeticoVisual(it.productoId).estiloNombre } }
+
+    val cardBrush = remember(temaVisual) {
+        temaVisual?.let { Brush.verticalGradient(it.gradient) }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
+        colors = if (cardBrush == null) CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
+        ) else CardDefaults.cardColors(
+            containerColor = Color.Transparent
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .then(
+                    if (cardBrush != null) Modifier.background(cardBrush, RoundedCornerShape(24.dp))
+                    else Modifier
+                )
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(
-                        androidx.compose.ui.graphics.Brush.sweepGradient(
-                            colors = listOf(GradientStart, GradientEnd)
-                        )
-                    )
-                    .padding(4.dp),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (usuario.imagen.isNotEmpty()) {
-                    AsyncImage(
-                        model = usuario.imagen,
-                        contentDescription = "Foto de perfil",
+                Box(
+                    modifier = Modifier
+                        .size(if (marcoVisual != null) 120.dp + marcoVisual.borderWidth * 2 else 120.dp)
+                        .clip(CircleShape)
+                        .then(
+                            if (marcoVisual != null) Modifier.background(
+                                Brush.sweepGradient(colors = marcoVisual.colors)
+                            )
+                            else Modifier.background(
+                                Brush.sweepGradient(colors = listOf(GradientStart, GradientEnd))
+                            )
+                        )
+                        .padding(if (marcoVisual != null) marcoVisual.borderWidth else 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
+                            .clip(CircleShape)
+                            .background(
+                                Brush.sweepGradient(colors = listOf(GradientStart, GradientEnd))
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (usuario.imagen.isNotEmpty()) {
+                            AsyncImage(
+                                model = usuario.imagen,
+                                contentDescription = "Foto de perfil",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Text(
+                                text = usuario.nombreUsuario.take(1).uppercase(),
+                                style = MaterialTheme.typography.displayLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "${usuario.nombre} ${usuario.apellido}",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer
+                        else Color.White
+                    )
+                    if (insigniaVisual != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
+                                .background(insigniaVisual.backgroundColor),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = insigniaVisual.icono,
+                                contentDescription = "Insignia",
+                                modifier = Modifier.size(16.dp),
+                                tint = insigniaVisual.iconTint
+                            )
+                        }
+                    }
+                }
+
+                if (estiloVisual?.brush != null) {
+                    Text(
+                        text = "@${usuario.nombreUsuario}",
+                        style = MaterialTheme.typography.bodyMedium.copy(brush = estiloVisual.brush)
                     )
                 } else {
                     Text(
-                        text = usuario.nombreUsuario.take(1).uppercase(),
-                        style = MaterialTheme.typography.displayLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        text = "@${usuario.nombreUsuario}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                        else Color.White.copy(alpha = 0.85f)
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "${usuario.nombre} ${usuario.apellido}",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-
-            Text(
-                text = "@${usuario.nombreUsuario}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-            )
-
-            if (usuario.descripcion.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Info,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = usuario.descripcion,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                if (usuario.descripcion.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Info,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                            else Color.White.copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = usuario.descripcion,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            else Color.White.copy(alpha = 0.9f),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
-            }
 
-            if (usuario.email.isNotBlank()) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Email,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = usuario.email,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                    )
+                if (usuario.email.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Email,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                            else Color.White.copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = usuario.email,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            else Color.White.copy(alpha = 0.9f)
+                        )
+                    }
                 }
             }
         }
@@ -336,7 +426,11 @@ private fun StatsGrid(
     saldoPuntos: Int,
     comunidadesCount: Int,
     eventosCount: Int,
-    retosCount: Int
+    retosCount: Int,
+    onPuntosClick: () -> Unit = {},
+    onComunidadesClick: () -> Unit = {},
+    onEventosClick: () -> Unit = {},
+    onRetosClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -352,7 +446,8 @@ private fun StatsGrid(
                 label = "Puntos Eco",
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 iconTint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onPuntosClick
             )
             StatCard(
                 icon = Icons.Filled.Groups,
@@ -360,7 +455,8 @@ private fun StatsGrid(
                 label = "Comunidades",
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconTint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onComunidadesClick
             )
         }
         Row(
@@ -373,7 +469,8 @@ private fun StatsGrid(
                 label = "Eventos",
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onEventosClick
             )
             StatCard(
                 icon = Icons.Filled.Star,
@@ -381,7 +478,8 @@ private fun StatsGrid(
                 label = "Retos",
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 iconTint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onRetosClick
             )
         }
     }
@@ -394,9 +492,11 @@ private fun StatCard(
     label: String,
     containerColor: Color,
     iconTint: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(

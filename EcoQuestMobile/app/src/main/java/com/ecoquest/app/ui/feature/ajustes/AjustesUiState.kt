@@ -4,6 +4,7 @@ import com.ecoquest.app.domain.model.Usuario
 
 data class AjustesUiState(
     val temaOscuro: Boolean = false,
+    val temaPersonalizado: String = "default",
     val notificaciones: Boolean = true,
     val idioma: String = "es",
     val usuario: Usuario? = null,

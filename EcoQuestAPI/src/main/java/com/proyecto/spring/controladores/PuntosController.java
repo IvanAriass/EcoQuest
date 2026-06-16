@@ -16,6 +16,7 @@ import com.proyecto.spring.modelos.ProgresoReto;
 import com.proyecto.spring.modelos.Reto;
 import com.proyecto.spring.modelos.TransaccionPuntos;
 import com.proyecto.spring.servicios.PuntosService;
+import com.proyecto.spring.servicios.ResultadoCanje;
 
 @RestController
 @RequestMapping("/api")
@@ -63,11 +64,13 @@ public class PuntosController {
     public ResponseEntity<String> canjearProducto(
             @PathVariable Long usuarioId,
             @PathVariable Long productoId) {
-        boolean resultado = puntosService.canjearProducto(usuarioId, productoId);
-        if (resultado) {
-            return ResponseEntity.ok("Producto canjeado correctamente");
-        }
-        return ResponseEntity.badRequest().body("No se pudo canjear el producto. Saldo insuficiente o datos invalidos.");
+        ResultadoCanje resultado = puntosService.canjearProducto(usuarioId, productoId);
+        return switch (resultado) {
+            case EXITO -> ResponseEntity.ok("Producto canjeado correctamente");
+            case SALDO_INSUFICIENTE -> ResponseEntity.badRequest().body("Saldo insuficiente");
+            case PRODUCTO_YA_CANJEADO -> ResponseEntity.badRequest().body("Ya tienes este producto");
+            case DATOS_INVALIDOS -> ResponseEntity.badRequest().body("Datos invalidos");
+        };
     }
 
     @GetMapping("/usuarios/{usuarioId}/canjes")

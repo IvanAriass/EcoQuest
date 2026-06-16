@@ -66,6 +66,7 @@ fun ProductoDto.toDomain(): Producto = Producto(
     descripcion = descripcion,
     imagen = imagen.toImageUrl("productos/imagen"),
     precio = precio,
+    tipo = tipo,
     categoria = categoria?.nombre.orEmpty()
 )
 

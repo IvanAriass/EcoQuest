@@ -10,5 +10,6 @@ data class ProductoEntity(
     val descripcion: String = "",
     val imagen: String = "",
     val precio: Int = 0,
+    val tipo: String = "",
     val categoria: String = ""
 )

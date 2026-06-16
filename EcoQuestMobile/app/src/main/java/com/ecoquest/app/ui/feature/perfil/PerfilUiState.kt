@@ -5,6 +5,7 @@ import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.domain.model.UsuarioCosmetico
 
 data class PerfilUiState(
     val usuario: Usuario = Usuario(),
@@ -12,11 +13,13 @@ data class PerfilUiState(
     val eventos: List<Evento> = emptyList(),
     val retos: List<Reto> = emptyList(),
     val transacciones: List<TransaccionPuntos> = emptyList(),
+    val cosmeticos: List<UsuarioCosmetico> = emptyList(),
     val saldoPuntos: Int = 0,
     val showComunidades: Boolean = false,
     val showEventos: Boolean = false,
     val showRetos: Boolean = false,
     val showPuntos: Boolean = false,
+    val showCosmeticos: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null
 )

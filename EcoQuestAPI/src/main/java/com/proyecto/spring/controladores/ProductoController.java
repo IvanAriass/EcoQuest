@@ -77,6 +77,8 @@ public class ProductoController {
             return "image/webp";
         if (nombre.endsWith(".bmp"))
             return "image/bmp";
+        if (nombre.endsWith(".svg"))
+            return "image/svg+xml";
         return "application/octet-stream";
     }
 

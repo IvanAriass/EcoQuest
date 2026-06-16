@@ -100,6 +100,7 @@ fun ProductoEntity.toDomain(): Producto = Producto(
     descripcion = descripcion,
     imagen = imagen.toImageUrl("productos/imagen"),
     precio = precio,
+    tipo = tipo,
     categoria = categoria
 )
 
@@ -109,6 +110,7 @@ fun Producto.toEntity(): ProductoEntity = ProductoEntity(
     descripcion = descripcion,
     imagen = imagen,
     precio = precio,
+    tipo = tipo,
     categoria = categoria
 )
 

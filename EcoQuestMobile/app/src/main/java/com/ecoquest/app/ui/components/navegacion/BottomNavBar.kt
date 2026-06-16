@@ -31,6 +31,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,13 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ecoquest.app.ui.theme.Green30
 
 enum class BottomNavTab(val label: String, val routePrefix: String) {
     HOME("Home", "Home"),
@@ -89,6 +90,11 @@ fun BottomNavBar(
     val density = LocalDensity.current
     var rowWidth by remember { mutableStateOf(0.dp) }
 
+    val navBackground = MaterialTheme.colorScheme.primary
+    val isNavDark = remember(navBackground) { navBackground.luminance() < 0.5f }
+    val navContentColor = if (isNavDark) Color.White else Color(0xFF1C1B1F)
+    val highlightAlpha = if (isNavDark) 0.18f else 0.12f
+
     val animatedOffset by animateFloatAsState(
         targetValue = selectedIndex.toFloat(),
         animationSpec = spring(
@@ -101,7 +107,7 @@ fun BottomNavBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
             .padding(bottom = 12.dp)
     ) {
         Box(
@@ -109,7 +115,7 @@ fun BottomNavBar(
                 .fillMaxWidth()
                 .height(64.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(Green30)
+                .background(navBackground)
                 .padding(horizontal = 4.dp, vertical = 4.dp)
         ) {
             if (rowWidth > 0.dp) {
@@ -120,7 +126,7 @@ fun BottomNavBar(
                         .width(tabWidth)
                         .height(56.dp)
                         .clip(RoundedCornerShape(18.dp))
-                        .background(Color.White.copy(alpha = 0.18f))
+                        .background(navContentColor.copy(alpha = highlightAlpha))
                 )
             }
 
@@ -154,7 +160,7 @@ fun BottomNavBar(
                         label = "scale"
                     )
                     val iconTint by animateColorAsState(
-                        targetValue = Color.White,
+                        targetValue = navContentColor,
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioMediumBouncy,
                             stiffness = Spring.StiffnessLow
@@ -189,7 +195,7 @@ fun BottomNavBar(
                                 text = tab.label,
                                 fontSize = 10.sp,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                                color = Color.White.copy(alpha = textAlpha)
+                                color = navContentColor.copy(alpha = textAlpha)
                             )
                         }
                     }

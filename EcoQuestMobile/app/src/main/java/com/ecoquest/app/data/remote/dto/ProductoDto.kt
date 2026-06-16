@@ -13,5 +13,6 @@ data class ProductoDto(
     @SerializedName("descripcion") val descripcion: String = "",
     @SerializedName("imagen")      val imagen: String = "",
     @SerializedName("precio")      val precio: Int = 0,
+    @SerializedName("tipo")        val tipo: String = "",
     @SerializedName("categoria")   val categoria: CategoriaDto? = null
 )

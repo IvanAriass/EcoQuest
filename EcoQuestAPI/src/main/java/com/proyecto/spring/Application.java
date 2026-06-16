@@ -177,19 +177,67 @@ public class Application {
 			usuarioRepository.save(u6);
 
 			// Categorías
-			Categoria catEscalada = categoriaRepository.save(new Categoria("Escalada"));
-			Categoria catFotografia = categoriaRepository.save(new Categoria("Fotografía"));
-			Categoria catSenderismo = categoriaRepository.save(new Categoria("Senderismo"));
-			Categoria catHidratacion = categoriaRepository.save(new Categoria("Hidratación"));
-			Categoria catIluminacion = categoriaRepository.save(new Categoria("Iluminación"));
+			Categoria catCosmeticos = categoriaRepository.save(new Categoria("Cosméticos"));
+			Categoria catMarcos = categoriaRepository.save(new Categoria("Marcos"));
+			Categoria catTemas = categoriaRepository.save(new Categoria("Temas"));
+			Categoria catInsignias = categoriaRepository.save(new Categoria("Insignias"));
+			Categoria catEstilos = categoriaRepository.save(new Categoria("Estilos de Nombre"));
 
-			// Productos
-			productoRepository.save(new Producto("Cuerda de Escalada", "cuerda.jpg", 89, catEscalada));
-			productoRepository.save(new Producto("Cámara Réflex", "camara.jpg", 450, catFotografia));
-			productoRepository.save(new Producto("Mochila Trail", "mochila.jpg", 65, catSenderismo));
-			productoRepository.save(new Producto("Botella Reutilizable", "botella.jpg", 15, catHidratacion));
-			productoRepository.save(new Producto("Prismáticos", "prismaticos.jpg", 120, catSenderismo));
-			productoRepository.save(new Producto("Linterna Frontal LED", "linterna.jpg", 35, catIluminacion));
+			// Productos (cosméticos para personalización del perfil)
+			productoRepository.save(new Producto(
+				"Marco Dorado", "Un elegante marco dorado para tu foto de perfil",
+				"marco-dorado.svg", 80, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Marco Premium", "Marco exclusivo con detalles brillantes para destacar",
+				"marco-premium.svg", 200, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Tema Bosque", "Tema de perfil con tonos verdes y naturales",
+				"tema-bosque.svg", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Tema Atardecer", "Tema con degradado naranja y púrpura para tu perfil",
+				"tema-atardecer.svg", 150, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Insignia EcoGuerrero", "Una insignia especial para los verdaderos guerreros ecológicos",
+				"insignia-ecoguerrero.svg", 50, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Estilo Arcoíris", "Nombre de usuario con colores arcoíris",
+				"estilo-arcoiris.svg", 100, "ESTILO_NOMBRE", catEstilos));
+			productoRepository.save(new Producto(
+				"Tema Océano", "Sumérgete en un tema azul profundo con reflejos marinos",
+				"tema-oceano.svg", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Tema Noche", "Un tema oscuro y elegante con tonos índigo y púrpura",
+				"tema-noche.svg", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Tema Flora", "Un tema primaveral con tonos rosas y verdes suaves",
+				"tema-flora.svg", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Marco Esmeralda", "Marco verde esmeralda con reflejos brillantes",
+				"marco-esmeralda.svg", 100, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Marco Zafiro", "Marco azul zafiro con destellos elegantes",
+				"marco-zafiro.svg", 130, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Marco Rubí", "Marco rojo rubí intenso y llamativo",
+				"marco-rubi.svg", 150, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Insignia Naturaleza", "Insignia con dos hojas que simbolizan la naturaleza",
+				"insignia-naturaleza.svg", 60, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Insignia Reciclaje", "Insignia con el símbolo de reciclaje",
+				"insignia-reciclaje.svg", 60, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Insignia Estrella", "Insignia con una estrella brillante",
+				"insignia-estrella.svg", 80, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Estilo Fuego", "Nombre con degradado de llamas anaranjadas",
+				"estilo-fuego.svg", 100, "ESTILO_NOMBRE", catEstilos));
+			productoRepository.save(new Producto(
+				"Estilo Hielo", "Nombre con degradado de tonos azules helados",
+				"estilo-hielo.svg", 100, "ESTILO_NOMBRE", catEstilos));
+			productoRepository.save(new Producto(
+				"Estilo Neón", "Nombre con colores neón brillantes",
+				"estilo-neon.svg", 100, "ESTILO_NOMBRE", catEstilos));
 
 			// Retos (desafios de puntos)
 			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));
