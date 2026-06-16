@@ -6,7 +6,7 @@ import javax.inject.Inject
 class JoinComunidadUseCase @Inject constructor(
     private val usuarioComunidadRepository: UsuarioComunidadRepository
 ) {
-    suspend operator fun invoke(usuarioId: Long, comunidadId: Long, rol: String = "miembro") {
+    suspend operator fun invoke(usuarioId: Long, comunidadId: Long, rol: String = "SEMILLA") {
         usuarioComunidadRepository.unirse(usuarioId, comunidadId, rol)
     }
 }

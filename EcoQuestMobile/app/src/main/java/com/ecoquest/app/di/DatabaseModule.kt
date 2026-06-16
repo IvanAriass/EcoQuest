@@ -6,6 +6,7 @@ import com.ecoquest.app.data.local.EcoQuestDatabase
 import com.ecoquest.app.data.local.dao.ComentarioDao
 import com.ecoquest.app.data.local.dao.ComunidadDao
 import com.ecoquest.app.data.local.dao.EventoDao
+import com.ecoquest.app.data.local.dao.MensajeDao
 import com.ecoquest.app.data.local.dao.ProductoDao
 import com.ecoquest.app.data.local.dao.RetoDao
 import com.ecoquest.app.data.local.dao.TransaccionPuntosDao
@@ -60,4 +61,7 @@ object DatabaseModule {
 
     @Provides
     fun provideUsuarioCosmeticoDao(db: EcoQuestDatabase): UsuarioCosmeticoDao = db.usuarioCosmeticoDao()
+
+    @Provides
+    fun provideMensajeDao(db: EcoQuestDatabase): MensajeDao = db.mensajeDao()
 }

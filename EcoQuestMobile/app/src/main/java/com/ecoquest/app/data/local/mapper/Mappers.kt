@@ -3,6 +3,7 @@ package com.ecoquest.app.data.local.mapper
 import com.ecoquest.app.data.local.entity.ComentarioEntity
 import com.ecoquest.app.data.local.entity.ComunidadEntity
 import com.ecoquest.app.data.local.entity.EventoEntity
+import com.ecoquest.app.data.local.entity.MensajeEntity
 import com.ecoquest.app.data.local.entity.ProductoEntity
 import com.ecoquest.app.data.local.entity.RetoEntity
 import com.ecoquest.app.data.local.entity.TransaccionPuntosEntity
@@ -10,6 +11,7 @@ import com.ecoquest.app.data.local.entity.UsuarioEntity
 import com.ecoquest.app.domain.model.Comentario
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
+import com.ecoquest.app.domain.model.Mensaje
 import com.ecoquest.app.domain.model.Producto
 import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
@@ -156,4 +158,26 @@ fun TransaccionPuntosEntity.toDomain(): TransaccionPuntos = TransaccionPuntos(
     concepto = concepto,
     referenciaId = referenciaId,
     fecha = fecha
+)
+
+fun MensajeEntity.toDomain(): Mensaje = Mensaje(
+    id = id,
+    texto = texto,
+    fechaHora = fechaHora,
+    usuarioId = usuarioId,
+    usuarioNombre = usuarioNombre,
+    usuarioNombreUsuario = usuarioNombreUsuario,
+    usuarioImagen = usuarioImagen.toImageUrl("usuarios/imagen"),
+    comunidadId = comunidadId
+)
+
+fun Mensaje.toEntity(): MensajeEntity = MensajeEntity(
+    id = id,
+    texto = texto,
+    fechaHora = fechaHora,
+    usuarioId = usuarioId,
+    usuarioNombre = usuarioNombre,
+    usuarioNombreUsuario = usuarioNombreUsuario,
+    usuarioImagen = usuarioImagen,
+    comunidadId = comunidadId
 )

@@ -12,13 +12,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.proyecto.spring.modelos.Comunidad;
+import com.proyecto.spring.modelos.Usuario;
+import com.proyecto.spring.modelos.UsuarioComunidad;
 import com.proyecto.spring.repository.ComunidadRepository;
+import com.proyecto.spring.repository.UsuarioComunidadRepository;
+import com.proyecto.spring.repository.UsuarioRepository;
 
 @Service
 public class ComunidadService {
 
     @Autowired
     private ComunidadRepository comunidadRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioComunidadRepository usuarioComunidadRepository;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -45,6 +55,17 @@ public class ComunidadService {
 
     public Comunidad crear(Comunidad comunidad) {
         return comunidadRepository.save(comunidad);
+    }
+
+    public Comunidad crearConCreador(Comunidad comunidad, Long creadorId) {
+        Comunidad guardada = comunidadRepository.save(comunidad);
+        if (creadorId != null && creadorId > 0) {
+            usuarioRepository.findById(creadorId).ifPresent(usuario -> {
+                UsuarioComunidad relacion = new UsuarioComunidad(usuario, guardada, "FUNDADOR");
+                usuarioComunidadRepository.save(relacion);
+            });
+        }
+        return guardada;
     }
 
     public Optional<Comunidad> actualizar(Long id, Comunidad comunidadActualizada) {

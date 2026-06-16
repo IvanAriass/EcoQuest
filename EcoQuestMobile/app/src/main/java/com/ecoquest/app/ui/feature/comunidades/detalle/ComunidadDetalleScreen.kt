@@ -26,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.People
@@ -55,6 +56,7 @@ import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.model.UsuarioComunidad
+import com.ecoquest.app.ui.components.common.RolBadge
 import com.ecoquest.app.ui.components.evento.EventoDialog
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
@@ -66,7 +68,8 @@ fun ComunidadDetalleScreen(
     uiState: ComunidadDetalleUiState,
     onEvent: (ComunidadDetalleEvent) -> Unit,
     onNavigateToEvento: (Long) -> Unit,
-    onNavigateToMiembros: () -> Unit = {}
+    onNavigateToMiembros: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -161,9 +164,22 @@ fun ComunidadDetalleScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
                         if (uiState.esMiembro) {
+                            uiState.miRolInfo?.let { rol ->
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "Tu rol:",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    RolBadge(rolInfo = rol)
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+
                             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                 Button(
                                     onClick = { onEvent(ComunidadDetalleEvent.OnAbandonar) },
@@ -190,10 +206,10 @@ fun ComunidadDetalleScreen(
                                     )
                                 }
                                 Button(
-                                    onClick = { onEvent(ComunidadDetalleEvent.OnMostrarCrearEvento) },
+                                    onClick = onNavigateToChat,
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary
+                                        containerColor = MaterialTheme.colorScheme.tertiary
                                     ),
                                     modifier = Modifier
                                         .height(44.dp)
@@ -202,10 +218,32 @@ fun ComunidadDetalleScreen(
                                     contentPadding = PaddingValues(0.dp)
                                 ) {
                                     Icon(
-                                        Icons.Filled.Add,
-                                        contentDescription = "Crear evento",
-                                        modifier = Modifier.size(22.dp)
+                                        Icons.AutoMirrored.Filled.Chat,
+                                        contentDescription = "Chat",
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.onTertiary
                                     )
+                                }
+                                if (uiState.puedeCrearEventos) {
+                                    Spacer(modifier = Modifier.width(0.dp))
+                                    Button(
+                                        onClick = { onEvent(ComunidadDetalleEvent.OnMostrarCrearEvento) },
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.primary
+                                        ),
+                                        modifier = Modifier
+                                            .height(44.dp)
+                                            .width(44.dp),
+                                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
+                                        contentPadding = PaddingValues(0.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.Add,
+                                            contentDescription = "Crear evento",
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -531,7 +569,8 @@ private fun ComunidadDetallePreview() {
         uiState = sampleState,
         onEvent = {},
         onNavigateToEvento = {},
-        onNavigateToMiembros = {}
+        onNavigateToMiembros = {},
+        onNavigateToChat = {}
     )
 }
 
@@ -556,6 +595,7 @@ private fun ComunidadDetalleNoMemberPreview() {
         uiState = sampleState,
         onEvent = {},
         onNavigateToEvento = {},
-        onNavigateToMiembros = {}
+        onNavigateToMiembros = {},
+        onNavigateToChat = {}
     )
 }

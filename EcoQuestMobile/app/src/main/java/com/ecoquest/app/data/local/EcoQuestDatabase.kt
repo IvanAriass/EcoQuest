@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import com.ecoquest.app.data.local.dao.ComentarioDao
 import com.ecoquest.app.data.local.dao.ComunidadDao
 import com.ecoquest.app.data.local.dao.EventoDao
+import com.ecoquest.app.data.local.dao.MensajeDao
 import com.ecoquest.app.data.local.dao.ProductoDao
 import com.ecoquest.app.data.local.dao.RetoDao
 import com.ecoquest.app.data.local.dao.TransaccionPuntosDao
@@ -15,6 +16,7 @@ import com.ecoquest.app.data.local.dao.UsuarioEventoDao
 import com.ecoquest.app.data.local.entity.ComentarioEntity
 import com.ecoquest.app.data.local.entity.ComunidadEntity
 import com.ecoquest.app.data.local.entity.EventoEntity
+import com.ecoquest.app.data.local.entity.MensajeEntity
 import com.ecoquest.app.data.local.entity.ProductoEntity
 import com.ecoquest.app.data.local.entity.RetoEntity
 import com.ecoquest.app.data.local.entity.TransaccionPuntosEntity
@@ -28,6 +30,7 @@ import com.ecoquest.app.data.local.entity.UsuarioEventoEntity
         ComentarioEntity::class,
         ComunidadEntity::class,
         EventoEntity::class,
+        MensajeEntity::class,
         ProductoEntity::class,
         UsuarioEntity::class,
         UsuarioComunidadEntity::class,
@@ -36,7 +39,7 @@ import com.ecoquest.app.data.local.entity.UsuarioEventoEntity
         TransaccionPuntosEntity::class,
         UsuarioCosmeticoEntity::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = false
 )
 abstract class EcoQuestDatabase : RoomDatabase() {
@@ -50,4 +53,5 @@ abstract class EcoQuestDatabase : RoomDatabase() {
     abstract fun retoDao(): RetoDao
     abstract fun transaccionPuntosDao(): TransaccionPuntosDao
     abstract fun usuarioCosmeticoDao(): UsuarioCosmeticoDao
+    abstract fun mensajeDao(): MensajeDao
 }

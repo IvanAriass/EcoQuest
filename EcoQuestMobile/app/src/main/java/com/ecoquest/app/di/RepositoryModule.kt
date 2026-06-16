@@ -3,8 +3,10 @@ package com.ecoquest.app.di
 import com.ecoquest.app.data.repository.ComentarioRepositoryImpl
 import com.ecoquest.app.data.repository.ComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.EventoRepositoryImpl
+import com.ecoquest.app.data.repository.MensajeRepositoryImpl
 import com.ecoquest.app.data.repository.ProductoRepositoryImpl
 import com.ecoquest.app.data.repository.RetoRepositoryImpl
+import com.ecoquest.app.data.repository.RolRepositoryImpl
 import com.ecoquest.app.data.repository.TransaccionPuntosRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioComunidadRepositoryImpl
 import com.ecoquest.app.data.repository.UsuarioCosmeticoRepositoryImpl
@@ -13,8 +15,10 @@ import com.ecoquest.app.data.repository.UsuarioRepositoryImpl
 import com.ecoquest.app.domain.repository.ComentarioRepository
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.MensajeRepository
 import com.ecoquest.app.domain.repository.ProductoRepository
 import com.ecoquest.app.domain.repository.RetoRepository
+import com.ecoquest.app.domain.repository.RolRepository
 import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioCosmeticoRepository
@@ -69,4 +73,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUsuarioCosmeticoRepository(impl: UsuarioCosmeticoRepositoryImpl): UsuarioCosmeticoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMensajeRepository(impl: MensajeRepositoryImpl): MensajeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRolRepository(impl: RolRepositoryImpl): RolRepository
 }

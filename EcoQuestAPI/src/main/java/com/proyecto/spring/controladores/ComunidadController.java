@@ -100,9 +100,13 @@ public class ComunidadController {
     }
 
     @PostMapping
-    public Comunidad crear(@RequestBody Comunidad comunidad) {
+    public Comunidad crear(@RequestBody Comunidad comunidad,
+                           @RequestParam(required = false) Long creadorId) {
         if (comunidad.getEstado() == null) {
             comunidad.setEstado("ACTIVO");
+        }
+        if (creadorId != null && creadorId > 0) {
+            return comunidadService.crearConCreador(comunidad, creadorId);
         }
         return comunidadService.crear(comunidad);
     }

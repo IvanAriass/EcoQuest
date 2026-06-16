@@ -15,6 +15,8 @@ import com.proyecto.spring.modelos.Comunidad;
 import com.proyecto.spring.modelos.Evento;
 import com.proyecto.spring.modelos.Producto;
 import com.proyecto.spring.modelos.Reto;
+import com.proyecto.spring.modelos.Rol;
+import com.proyecto.spring.modelos.RolPermiso;
 import com.proyecto.spring.modelos.Usuario;
 import com.proyecto.spring.modelos.UsuarioComunidad;
 import com.proyecto.spring.repository.CategoriaRepository;
@@ -22,6 +24,7 @@ import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.repository.EventoRepository;
 import com.proyecto.spring.repository.ProductoRepository;
 import com.proyecto.spring.repository.RetoRepository;
+import com.proyecto.spring.repository.RolRepository;
 import com.proyecto.spring.repository.UsuarioComunidadRepository;
 import com.proyecto.spring.repository.UsuarioRepository;
 import com.proyecto.spring.servicios.UsuarioService;
@@ -45,7 +48,8 @@ public class Application {
 			ProductoRepository productoRepository,
 			CategoriaRepository categoriaRepository,
 			UsuarioComunidadRepository usuarioComunidadRepository,
-			RetoRepository retoRepository) {
+			RetoRepository retoRepository,
+			RolRepository rolRepository) {
 		return (args) -> {
 			if (comunidadRepository.count() > 0) {
 				System.out.println("********************************************************************************");
@@ -75,6 +79,26 @@ public class Application {
 			usuarioService.crear(u4);
 			usuarioService.crear(u5);
 			usuarioService.crear(u6);
+
+			// Roles y permisos (base del sistema de progresión eco-themed)
+			Rol rHuevo = rolRepository.save(crarRolConPermisos("HUEVO", 0, "\uD83E\uDD5A",
+				"Acabas de llegar. Solo puedes observar y aprender.",
+				List.of("LEER_MENSAJES")));
+			rolRepository.save(crarRolConPermisos("SEMILLA", 1, "\uD83C\uDF31",
+				"Empiezas a brotar. Ya puedes participar en el chat.",
+				List.of("LEER_MENSAJES", "ESCRIBIR_MENSAJES")));
+			rolRepository.save(crarRolConPermisos("PLANTA", 2, "\uD83C\uDF3F",
+				"Ya tienes ra\u00EDces. Puedes crear eventos en la comunidad.",
+				List.of("LEER_MENSAJES", "ESCRIBIR_MENSAJES", "CREAR_EVENTOS")));
+			rolRepository.save(crarRolConPermisos("ARBOL", 3, "\uD83C\uDF33",
+				"S\u00F3lido y firme. Puedes moderar el chat.",
+				List.of("LEER_MENSAJES", "ESCRIBIR_MENSAJES", "CREAR_EVENTOS", "MODERAR_CHAT")));
+			rolRepository.save(crarRolConPermisos("BUHO", 4, "\uD83E\uDD89",
+				"Sabio guardi\u00E1n. Puedes gestionar miembros y roles.",
+				List.of("LEER_MENSAJES", "ESCRIBIR_MENSAJES", "CREAR_EVENTOS", "MODERAR_CHAT", "GESTIONAR_MIEMBROS")));
+			rolRepository.save(crarRolConPermisos("FUNDADOR", 5, "\uD83D\uDC51",
+				"El origen de todo. Tienes control total sobre la comunidad.",
+				List.of("LEER_MENSAJES", "ESCRIBIR_MENSAJES", "CREAR_EVENTOS", "MODERAR_CHAT", "GESTIONAR_MIEMBROS", "ADMINISTRAR")));
 
 			// Comunidades
 			Comunidad c1 = new Comunidad("Deportes Extremos", "Comunidad para amantes del deporte extremo",
@@ -109,26 +133,29 @@ public class Application {
 			comunidadRepository.save(c7);
 			comunidadRepository.save(c8);
 
-			// Usuarios en comunidades con roles
-			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c1, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c1, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c2, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c2, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c3, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c3, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c4, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c5, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c5, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u4, c4, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u4, c6, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c6, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u5, c3, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u5, c7, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u6, c2, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u6, c7, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c8, "ADMIN"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c8, "MIEMBRO"));
-			usuarioComunidadRepository.save(new UsuarioComunidad(u4, c8, "MIEMBRO"));
+			// Usuarios en comunidades — espectro completo de roles eco-themed:
+			// FUNDADOR(5) > BUHO(4) > ARBOL(3) > PLANTA(2) > SEMILLA(1) > HUEVO(0)
+			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c1, "FUNDADOR"));  // Juan creó Deportes Extremos
+			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c1, "PLANTA"));    // María puede crear eventos en c1
+			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c1, "HUEVO"));     // Carlos recién unido, solo lectura
+			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c2, "FUNDADOR"));  // María creó Fotografía Urbana
+			usuarioComunidadRepository.save(new UsuarioComunidad(u6, c2, "BUHO"));      // Ana co-admin — gestiona miembros
+			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c2, "HUEVO"));     // Carlos recién unido, solo lectura
+			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c3, "FUNDADOR"));  // Juan creó Eco Guerreros
+			usuarioComunidadRepository.save(new UsuarioComunidad(u5, c3, "BUHO"));      // Miguel co-admin
+			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c3, "ARBOL"));     // Carlos puede moderar el chat
+			usuarioComunidadRepository.save(new UsuarioComunidad(u4, c4, "FUNDADOR"));  // Laura creó Senderistas del Norte
+			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c4, "BUHO"));      // María co-admin
+			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c5, "FUNDADOR"));  // Juan creó Huertos Urbanos
+			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c5, "SEMILLA"));   // María puede escribir en el chat
+			usuarioComunidadRepository.save(new UsuarioComunidad(u6, c5, "SEMILLA"));   // Ana puede escribir en el chat
+			usuarioComunidadRepository.save(new UsuarioComunidad(u4, c6, "FUNDADOR"));  // Laura creó Buceo y Snorkel
+			usuarioComunidadRepository.save(new UsuarioComunidad(u1, c6, "HUEVO"));     // Juan recién unido, solo lectura
+			usuarioComunidadRepository.save(new UsuarioComunidad(u5, c7, "FUNDADOR"));  // Miguel creó Club de Lectura Verde
+			usuarioComunidadRepository.save(new UsuarioComunidad(u6, c7, "PLANTA"));    // Ana puede crear eventos en c7
+			usuarioComunidadRepository.save(new UsuarioComunidad(u3, c8, "FUNDADOR"));  // Carlos creó Running Nocturno
+			usuarioComunidadRepository.save(new UsuarioComunidad(u2, c8, "SEMILLA"));   // María puede escribir en el chat
+			usuarioComunidadRepository.save(new UsuarioComunidad(u4, c8, "PLANTA"));    // Laura puede crear eventos en c8
 
 			// Eventos
 			Evento e1 = new Evento("Carrera de Montaña", "Ruta de 20km por la sierra",
@@ -252,5 +279,15 @@ public class Application {
 			System.out.println("Datos de ejemplo cargados correctamente");
 			System.out.println("********************************************************************************");
 		};
+	}
+
+	private static Rol crarRolConPermisos(String nombre, int nivel, String emoji,
+										   String descripcion, List<String> permisos) {
+		Rol rol = new Rol(nombre, nivel, emoji, descripcion);
+		rol.setPermisos(new ArrayList<>());
+		for (String p : permisos) {
+			rol.getPermisos().add(new RolPermiso(rol, p));
+		}
+		return rol;
 	}
 }

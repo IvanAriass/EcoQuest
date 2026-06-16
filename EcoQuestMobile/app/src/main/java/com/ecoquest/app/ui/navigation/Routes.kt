@@ -39,6 +39,8 @@ import com.ecoquest.app.ui.feature.juegos.EcoQuizScreen
 import com.ecoquest.app.ui.feature.juegos.JuegosScreen
 import com.ecoquest.app.ui.feature.juegos.MemoramaScreen
 import com.ecoquest.app.ui.feature.juegos.WordleEcoScreen
+import com.ecoquest.app.ui.feature.chat.ChatScreen
+import com.ecoquest.app.ui.feature.chat.ChatViewModel
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleScreen
 import com.ecoquest.app.ui.feature.retos.RetosScreen
 import com.ecoquest.app.ui.feature.comunidades.detalle.ComunidadDetalleViewModel
@@ -167,6 +169,9 @@ object Routes {
 
     @Serializable
     data class PerfilUsuario(val usuarioId: Long)
+
+    @Serializable
+    data class Chat(val comunidadId: Int)
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -276,7 +281,8 @@ fun NavGraphBuilder.appNavGraph(
             uiState = uiState,
             onEvent = { event -> vm.onEvent(event) },
             onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) },
-            onNavigateToMiembros = { navController.navigate(Routes.Miembros(route.comunidadId.toLong())) }
+            onNavigateToMiembros = { navController.navigate(Routes.Miembros(route.comunidadId.toLong())) },
+            onNavigateToChat = { navController.navigate(Routes.Chat(route.comunidadId)) }
         )
     }
 
@@ -410,6 +416,25 @@ fun NavGraphBuilder.appNavGraph(
             title = "Miembros",
             onBack = { navController.popBackStack() },
             miembros = uiState.miembros,
+            onNavigateToPerfilUsuario = { usuarioId -> navController.navigate(Routes.PerfilUsuario(usuarioId)) }
+        )
+    }
+
+    composable<Routes.Chat>(
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
+    ) { backStackEntry ->
+        val route = backStackEntry.toRoute<Routes.Chat>()
+        val vm: ChatViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        LaunchedEffect(route) { vm.cargarChat(route.comunidadId.toLong()) }
+        ChatScreen(
+            uiState = uiState,
+            onBack = { navController.popBackStack() },
+            onTextoCambiado = { vm.onTextoCambiado(it) },
+            onEnviarMensaje = { vm.onEnviarMensaje() },
             onNavigateToPerfilUsuario = { usuarioId -> navController.navigate(Routes.PerfilUsuario(usuarioId)) }
         )
     }

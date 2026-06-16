@@ -2,9 +2,11 @@ package com.ecoquest.app.ui.feature.comunidades.detalle
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ecoquest.app.data.local.dao.UsuarioComunidadDao
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.repository.EventoRepository
+import com.ecoquest.app.domain.repository.RolRepository
 import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.usecase.comunidades.JoinComunidadUseCase
@@ -25,7 +27,9 @@ class ComunidadDetalleViewModel @Inject constructor(
     private val usuarioComunidadRepository: UsuarioComunidadRepository,
     private val joinComunidadUseCase: JoinComunidadUseCase,
     private val tokenManager: TokenManager,
-    private val transaccionPuntosRepository: TransaccionPuntosRepository
+    private val transaccionPuntosRepository: TransaccionPuntosRepository,
+    private val usuarioComunidadDao: UsuarioComunidadDao,
+    private val rolRepository: RolRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ComunidadDetalleUiState())
@@ -66,6 +70,18 @@ class ComunidadDetalleViewModel @Inject constructor(
                 _state.update { it.copy(miembros = miembros, esMiembro = esMiembro) }
             }
         }
+        viewModelScope.launch {
+            rolRepository.refreshRoles()
+            usuarioComunidadDao.getByComunidad(id).collect { relaciones ->
+                val miRelacion = relaciones.find { it.usuarioId == usuarioId }
+                val rolId = miRelacion?.rol?.ifBlank { "SEMILLA" } ?: "SEMILLA"
+                val rolInfo = rolRepository.getRolById(rolId)
+                _state.update { it.copy(
+                    miRolInfo = rolInfo,
+                    puedeCrearEventos = rolInfo.nivel >= 2
+                )}
+            }
+        }
     }
 
     fun onEvent(event: ComunidadDetalleEvent) {
@@ -97,7 +113,7 @@ class ComunidadDetalleViewModel @Inject constructor(
             }
             is ComunidadDetalleEvent.OnUnirse -> {
                 viewModelScope.launch {
-                    joinComunidadUseCase(usuarioId, comunidadId, "MIEMBRO")
+                    joinComunidadUseCase(usuarioId, comunidadId, "SEMILLA")
                     _state.update { it.copy(esMiembro = true) }
                     transaccionPuntosRepository.refresh(usuarioId, notifyNew = true)
                 }

@@ -8,6 +8,7 @@ interface ComunidadRepository {
     fun getById(id: Long): Flow<Comunidad?>
     suspend fun refreshComunidades()
     suspend fun upsert(comunidad: Comunidad)
+    suspend fun crearEnServidor(comunidad: Comunidad, creadorId: Long)
     suspend fun delete(comunidad: Comunidad)
     suspend fun deleteAll()
 }
