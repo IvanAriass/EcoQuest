@@ -202,6 +202,15 @@ public class Application {
 			productoRepository.save(new Producto(
 				"Estilo Arcoíris", "Nombre de usuario con colores arcoíris",
 				"", 100, "ESTILO_NOMBRE", catEstilos));
+			productoRepository.save(new Producto(
+				"Tema Océano", "Sumérgete en un tema azul profundo con reflejos marinos",
+				"", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Tema Noche", "Un tema oscuro y elegante con tonos índigo y púrpura",
+				"", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Tema Flora", "Un tema primaveral con tonos rosas y verdes suaves",
+				"", 120, "TEMA", catTemas));
 
 			// Retos (desafios de puntos)
 			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));

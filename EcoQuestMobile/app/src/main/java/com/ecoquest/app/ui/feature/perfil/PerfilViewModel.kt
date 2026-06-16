@@ -11,6 +11,7 @@ import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
 import com.ecoquest.app.domain.repository.UsuarioCosmeticoRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
+import com.ecoquest.app.managers.PreferencesManager
 import com.ecoquest.app.managers.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ class PerfilViewModel @Inject constructor(
     private val transaccionPuntosRepository: TransaccionPuntosRepository,
     private val retoRepository: RetoRepository,
     private val usuarioCosmeticoRepository: UsuarioCosmeticoRepository,
+    private val preferencesManager: PreferencesManager,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -66,11 +68,19 @@ class PerfilViewModel @Inject constructor(
             is PerfilEvent.OnAplicarCosmetico -> {
                 viewModelScope.launch {
                     usuarioCosmeticoRepository.aplicarCosmetico(usuarioId, event.productoId)
+                    productoIdToThemeName(event.productoId)?.let { preferencesManager.setThemeName(it) }
                 }
             }
             is PerfilEvent.OnDesaplicarCosmetico -> {
                 viewModelScope.launch {
                     usuarioCosmeticoRepository.desaplicarCosmetico(usuarioId, event.productoId)
+                    val current = _state.value.cosmeticos
+                    val stillApplied = current.firstOrNull {
+                        it.productoTipo == "TEMA" && it.aplicado && it.productoId != event.productoId
+                    }
+                    preferencesManager.setThemeName(
+                        stillApplied?.let { productoIdToThemeName(it.productoId) } ?: "default"
+                    )
                 }
             }
             is PerfilEvent.OnToggleCosmeticos -> {
@@ -83,6 +93,15 @@ class PerfilViewModel @Inject constructor(
             is PerfilEvent.OnGoToComunidades -> { }
             is PerfilEvent.OnLogout -> { }
         }
+    }
+
+    private fun productoIdToThemeName(productoId: Long): String? = when (productoId) {
+        3L -> "bosque"
+        4L -> "atardecer"
+        7L -> "oceano"
+        8L -> "noche"
+        9L -> "flora"
+        else -> null
     }
 
     private fun cargarPerfil() {

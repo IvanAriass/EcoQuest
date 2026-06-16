@@ -11,6 +11,12 @@ private val Orange = Color(0xFFFF6B35)
 private val Purple = Color(0xFF9C27B0)
 private val Green = Color(0xFF0D6B43)
 private val GreenAccent = Color(0xFF4CAF50)
+private val Teal = Color(0xFF00695C)
+private val TealLight = Color(0xFF4DB6AC)
+private val Indigo = Color(0xFF3F51B5)
+private val IndigoLight = Color(0xFF9FA8DA)
+private val Rose = Color(0xFFAD1457)
+private val RoseLight = Color(0xFFF06292)
 private val RainbowColors = listOf(
     Color(0xFFFF0000), Color(0xFFFF7F00), Color(0xFFFFFF00),
     Color(0xFF00FF00), Color(0xFF0000FF), Color(0xFF4B0082), Color(0xFF8F00FF)
@@ -59,6 +65,15 @@ private val cosmeticosMap = mapOf(
     ),
     6L to CosmeticoVisual(
         estiloNombre = EstiloNombreVisual(brush = Brush.horizontalGradient(RainbowColors))
+    ),
+    7L to CosmeticoVisual(
+        tema = TemaVisual(gradient = listOf(Teal, TealLight))
+    ),
+    8L to CosmeticoVisual(
+        tema = TemaVisual(gradient = listOf(Indigo, IndigoLight))
+    ),
+    9L to CosmeticoVisual(
+        tema = TemaVisual(gradient = listOf(Rose, RoseLight))
     )
 )
 

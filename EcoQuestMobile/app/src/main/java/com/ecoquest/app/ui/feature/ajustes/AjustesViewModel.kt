@@ -47,6 +47,9 @@ class AjustesViewModel @Inject constructor(
             is AjustesEvent.OnSeleccionarIdioma -> {
                 preferencesManager.setLanguage(event.idioma)
             }
+            is AjustesEvent.OnSeleccionarTemaPersonalizado -> {
+                preferencesManager.setThemeName(event.tema)
+            }
             is AjustesEvent.OnCerrarSesion -> { }
         }
     }
@@ -57,12 +60,14 @@ class AjustesViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 preferencesManager.isDarkTheme,
+                preferencesManager.themeName,
                 preferencesManager.notificaciones,
                 preferencesManager.language,
                 usuarioRepository.getById(usuarioId)
-            ) { tema, notif, lang, usuario ->
+            ) { tema, temaPers, notif, lang, usuario ->
                 AjustesUiState(
                     temaOscuro = tema,
+                    temaPersonalizado = temaPers,
                     notificaciones = notif,
                     idioma = lang,
                     usuario = usuario,
