@@ -66,6 +66,15 @@ fun ProductoCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (producto.tipo.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = producto.tipoLabel,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                        maxLines = 1
+                    )
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = producto.descripcion,

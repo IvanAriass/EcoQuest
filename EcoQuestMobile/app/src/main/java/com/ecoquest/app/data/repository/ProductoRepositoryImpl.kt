@@ -30,4 +30,12 @@ class ProductoRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun canjearProducto(usuarioId: Long, productoId: Long): String? {
+        return runCatching {
+            val response = apiService.canjearProducto(usuarioId, productoId)
+            if (response.isSuccessful) null
+            else response.errorBody()?.string() ?: "Error desconocido"
+        }.getOrDefault("Error de conexion")
+    }
 }

@@ -11,15 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-@JsonPropertyOrder({ "id", "nombre", "imagen", "precio", "categoria" })
+@JsonPropertyOrder({ "id", "nombre", "imagen", "precio", "tipo", "categoria" })
 public class Producto {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    private String descripcion;
     private String imagen;
     private int precio;
+    private String tipo;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
@@ -40,6 +42,15 @@ public class Producto {
         this.categoria = categoria;
     }
 
+    public Producto(String nombre, String descripcion, String imagen, int precio, String tipo, Categoria categoria) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.imagen = imagen;
+        this.precio = precio;
+        this.tipo = tipo;
+        this.categoria = categoria;
+    }
+
     public Long getId() {
         return id;
     }
@@ -54,6 +65,14 @@ public class Producto {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getImagen() {
@@ -72,6 +91,14 @@ public class Producto {
         this.precio = precio;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     public Categoria getCategoria() {
         return categoria;
     }
@@ -86,8 +113,10 @@ public class Producto {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+        result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
         result = prime * result + ((imagen == null) ? 0 : imagen.hashCode());
         result = prime * result + precio;
+        result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
         return result;
     }
 
@@ -110,6 +139,11 @@ public class Producto {
                 return false;
         } else if (!nombre.equals(other.nombre))
             return false;
+        if (descripcion == null) {
+            if (other.descripcion != null)
+                return false;
+        } else if (!descripcion.equals(other.descripcion))
+            return false;
         if (imagen == null) {
             if (other.imagen != null)
                 return false;
@@ -117,13 +151,18 @@ public class Producto {
             return false;
         if (precio != other.precio)
             return false;
+        if (tipo == null) {
+            if (other.tipo != null)
+                return false;
+        } else if (!tipo.equals(other.tipo))
+            return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "Producto [id=" + id + ", nombre=" + nombre + ", imagen=" + imagen + ", precio=" + precio
-                + "]";
+        return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", imagen=" + imagen
+                + ", precio=" + precio + ", tipo=" + tipo + "]";
     }
 
 }

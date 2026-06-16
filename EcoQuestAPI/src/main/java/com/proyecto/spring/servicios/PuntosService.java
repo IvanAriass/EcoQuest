@@ -2,7 +2,6 @@ package com.proyecto.spring.servicios;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +15,13 @@ import com.proyecto.spring.modelos.ProgresoReto;
 import com.proyecto.spring.modelos.Reto;
 import com.proyecto.spring.modelos.TransaccionPuntos;
 import com.proyecto.spring.modelos.Usuario;
+import com.proyecto.spring.modelos.UsuarioCosmetico;
 import com.proyecto.spring.repository.CanjeProductoRepository;
 import com.proyecto.spring.repository.ProductoRepository;
 import com.proyecto.spring.repository.ProgresoRetoRepository;
 import com.proyecto.spring.repository.RetoRepository;
 import com.proyecto.spring.repository.TransaccionPuntosRepository;
+import com.proyecto.spring.repository.UsuarioCosmeticoRepository;
 import com.proyecto.spring.repository.UsuarioRepository;
 
 @Service
@@ -43,6 +44,9 @@ public class PuntosService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private UsuarioCosmeticoRepository usuarioCosmeticoRepository;
 
     // --- Retos ---
 
@@ -73,7 +77,7 @@ public class PuntosService {
     public int calcularSaldo(Long usuarioId) {
         int ganados = transaccionPuntosRepository.totalGanadosByUsuarioId(usuarioId);
         int canjeados = transaccionPuntosRepository.totalCanjeadosByUsuarioId(usuarioId);
-        return ganados - canjeados;
+        return ganados + canjeados;
     }
 
     // --- Canjes ---
@@ -151,23 +155,34 @@ public class PuntosService {
     }
 
     @Transactional
-    public boolean canjearProducto(Long usuarioId, Long productoId) {
+    public ResultadoCanje canjearProducto(Long usuarioId, Long productoId) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
         Optional<Producto> productoOpt = productoRepository.findById(productoId);
 
-        if (usuarioOpt.isEmpty() || productoOpt.isEmpty()) return false;
+        if (usuarioOpt.isEmpty() || productoOpt.isEmpty()) return ResultadoCanje.DATOS_INVALIDOS;
 
         Usuario usuario = usuarioOpt.get();
         Producto producto = productoOpt.get();
+
+        if (producto.getTipo() != null && !producto.getTipo().isBlank()
+                && usuarioCosmeticoRepository.existsByUsuarioIdAndProductoId(usuarioId, productoId)) {
+            return ResultadoCanje.PRODUCTO_YA_CANJEADO;
+        }
+
         int saldo = calcularSaldo(usuarioId);
 
-        if (saldo < producto.getPrecio()) return false;
+        if (saldo < producto.getPrecio()) return ResultadoCanje.SALDO_INSUFICIENTE;
 
         otorgarPuntos(usuario, -producto.getPrecio(), "Canje: " + producto.getNombre(), "CANJEADO", productoId);
 
         CanjeProducto canje = new CanjeProducto(usuario, producto, producto.getPrecio());
         canjeProductoRepository.save(canje);
 
-        return true;
+        if (producto.getTipo() != null && !producto.getTipo().isBlank()) {
+            UsuarioCosmetico cosmetico = new UsuarioCosmetico(usuario, producto, LocalDateTime.now());
+            usuarioCosmeticoRepository.save(cosmetico);
+        }
+
+        return ResultadoCanje.EXITO;
     }
 }

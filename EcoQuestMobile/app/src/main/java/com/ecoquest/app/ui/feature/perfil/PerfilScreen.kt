@@ -32,6 +32,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -47,9 +48,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,6 +72,7 @@ import coil.compose.AsyncImage
 import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.domain.model.UsuarioCosmetico
 import com.ecoquest.app.ui.components.comunidad.ComunidadCard
 import com.ecoquest.app.ui.components.evento.EventoCard
 import com.ecoquest.app.ui.theme.EcoQuestMobileTheme
@@ -102,8 +107,11 @@ fun PerfilScreen(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
+        val cosmeticosAplicados = uiState.cosmeticos.filter { it.aplicado }
+
         ProfileHeader(
             usuario = uiState.usuario,
+            cosmeticosAplicados = cosmeticosAplicados,
             onFotoClick = {
                 launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
@@ -214,6 +222,38 @@ fun PerfilScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ExpandableSection(
+            label = "Mis Cosméticos",
+            icon = Icons.Filled.Favorite,
+            count = uiState.cosmeticos.size,
+            isExpanded = uiState.showCosmeticos,
+            onClick = { onEvent(PerfilEvent.OnToggleCosmeticos) }
+        ) {
+            if (uiState.cosmeticos.isEmpty()) {
+                Text(
+                    text = "No tienes cosméticos. Consíguelos en la Tienda.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            } else {
+                uiState.cosmeticos.forEach { cosmetico ->
+                    CosmeticoRow(
+                        cosmetico = cosmetico,
+                        onToggle = {
+                            if (cosmetico.aplicado) {
+                                onEvent(PerfilEvent.OnDesaplicarCosmetico(cosmetico.productoId))
+                            } else {
+                                onEvent(PerfilEvent.OnAplicarCosmetico(cosmetico.productoId))
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         NavActionCard(
@@ -271,108 +311,181 @@ fun PerfilScreen(
 @Composable
 private fun ProfileHeader(
     usuario: Usuario,
+    cosmeticosAplicados: List<UsuarioCosmetico>,
     onFotoClick: () -> Unit
 ) {
+    val marcoCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "MARCO" }
+    val temaCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "TEMA" }
+    val insigniaCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "INSIGNIA" }
+    val estiloCosmetico = cosmeticosAplicados.firstOrNull { it.productoTipo == "ESTILO_NOMBRE" }
+
+    val marcoVisual = remember(marcoCosmetico) { marcoCosmetico?.let { getCosmeticoVisual(it.productoId).marco } }
+    val temaVisual = remember(temaCosmetico) { temaCosmetico?.let { getCosmeticoVisual(it.productoId).tema } }
+    val insigniaVisual = remember(insigniaCosmetico) { insigniaCosmetico?.let { getCosmeticoVisual(it.productoId).insignia } }
+    val estiloVisual = remember(estiloCosmetico) { estiloCosmetico?.let { getCosmeticoVisual(it.productoId).estiloNombre } }
+
+    val cardBrush = remember(temaVisual) {
+        temaVisual?.let { Brush.verticalGradient(it.gradient) }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
+        colors = if (cardBrush == null) CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
+        ) else CardDefaults.cardColors(
+            containerColor = Color.Transparent
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .then(
+                    if (cardBrush != null) Modifier.background(cardBrush, RoundedCornerShape(24.dp))
+                    else Modifier
+                )
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(
-                        Brush.sweepGradient(
-                            colors = listOf(GradientStart, GradientEnd)
-                        )
-                    )
-                    .padding(4.dp)
-                    .clickable(onClick = onFotoClick),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (usuario.imagen.isNotEmpty()) {
-                    AsyncImage(
-                        model = usuario.imagen,
-                        contentDescription = "Foto de perfil",
+                Box(
+                    modifier = Modifier
+                        .size(if (marcoVisual != null) 120.dp + marcoVisual.borderWidth * 2 else 120.dp)
+                        .clip(CircleShape)
+                        .then(
+                            if (marcoVisual != null) Modifier.background(
+                                Brush.sweepGradient(colors = marcoVisual.colors)
+                            )
+                            else Modifier.background(
+                                Brush.sweepGradient(colors = listOf(GradientStart, GradientEnd))
+                            )
+                        )
+                        .padding(if (marcoVisual != null) marcoVisual.borderWidth else 4.dp)
+                        .clickable(onClick = onFotoClick),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
+                            .clip(CircleShape)
+                            .background(
+                                Brush.sweepGradient(colors = listOf(GradientStart, GradientEnd))
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (usuario.imagen.isNotEmpty()) {
+                            AsyncImage(
+                                model = usuario.imagen,
+                                contentDescription = "Foto de perfil",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Text(
+                                text = usuario.nombreUsuario.take(1).uppercase(),
+                                style = MaterialTheme.typography.displayLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "${usuario.nombre} ${usuario.apellido}",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer
+                        else Color.White
+                    )
+                    if (insigniaVisual != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
+                                .background(insigniaVisual.backgroundColor),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Eco,
+                                contentDescription = "Insignia",
+                                modifier = Modifier.size(16.dp),
+                                tint = insigniaVisual.iconTint
+                            )
+                        }
+                    }
+                }
+
+                if (estiloVisual?.brush != null) {
+                    Text(
+                        text = "@${usuario.nombreUsuario}",
+                        style = MaterialTheme.typography.bodyMedium.copy(brush = estiloVisual.brush)
                     )
                 } else {
                     Text(
-                        text = usuario.nombreUsuario.take(1).uppercase(),
-                        style = MaterialTheme.typography.displayLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        text = "@${usuario.nombreUsuario}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                        else Color.White.copy(alpha = 0.85f)
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "${usuario.nombre} ${usuario.apellido}",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-
-            Text(
-                text = "@${usuario.nombreUsuario}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-            )
-
-            if (usuario.descripcion.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Info,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = usuario.descripcion,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                if (usuario.descripcion.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Info,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                            else Color.White.copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = usuario.descripcion,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            else Color.White.copy(alpha = 0.9f),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
-            }
 
-            if (usuario.email.isNotBlank()) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Email,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = usuario.email,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                    )
+                if (usuario.email.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Email,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                            else Color.White.copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = usuario.email,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (cardBrush == null) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            else Color.White.copy(alpha = 0.9f)
+                        )
+                    }
                 }
             }
         }
@@ -615,6 +728,60 @@ private fun ExpandableSection(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CosmeticoRow(
+    cosmetico: UsuarioCosmetico,
+    onToggle: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    if (cosmetico.aplicado) MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.surfaceVariant
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Favorite,
+                contentDescription = null,
+                tint = if (cosmetico.aplicado) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = cosmetico.productoNombre,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = cosmetico.tipoLabel,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Switch(
+            checked = cosmetico.aplicado,
+            onCheckedChange = { onToggle() },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        )
     }
 }
 

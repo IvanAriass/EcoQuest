@@ -1,5 +1,6 @@
 package com.ecoquest.app.data.remote
 
+import com.ecoquest.app.data.remote.dto.CanjeProductoDto
 import com.ecoquest.app.data.remote.dto.CategoriaDto
 import com.ecoquest.app.data.remote.dto.ComentarioDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
@@ -8,6 +9,7 @@ import com.ecoquest.app.data.remote.dto.ProductoDto
 import com.ecoquest.app.data.remote.dto.RetoDto
 import com.ecoquest.app.data.remote.dto.TransaccionPuntosDto
 import com.ecoquest.app.data.remote.dto.UsuarioComunidadDto
+import com.ecoquest.app.data.remote.dto.UsuarioCosmeticoDto
 import com.ecoquest.app.data.remote.dto.UsuarioDto
 import retrofit2.Response
 import retrofit2.http.*
@@ -119,4 +121,35 @@ interface ApiService {
         @Path("eventoId") eventoId: Long,
         @Path("comentarioId") comentarioId: Long
     ): List<ComentarioDto>
+
+    // --- Canje de productos ---
+
+    @POST("usuarios/{usuarioId}/canjear/{productoId}")
+    suspend fun canjearProducto(
+        @Path("usuarioId") usuarioId: Long,
+        @Path("productoId") productoId: Long
+    ): Response<Unit>
+
+    @GET("usuarios/{usuarioId}/canjes")
+    suspend fun getCanjes(@Path("usuarioId") usuarioId: Long): List<CanjeProductoDto>
+
+    // --- Cosméticos ---
+
+    @GET("usuarios/{usuarioId}/cosmeticos")
+    suspend fun getCosmeticos(@Path("usuarioId") usuarioId: Long): List<UsuarioCosmeticoDto>
+
+    @GET("usuarios/{usuarioId}/cosmeticos/aplicados")
+    suspend fun getCosmeticosAplicados(@Path("usuarioId") usuarioId: Long): List<UsuarioCosmeticoDto>
+
+    @POST("usuarios/{usuarioId}/cosmeticos/{productoId}/aplicar")
+    suspend fun aplicarCosmetico(
+        @Path("usuarioId") usuarioId: Long,
+        @Path("productoId") productoId: Long
+    ): Response<Void>
+
+    @POST("usuarios/{usuarioId}/cosmeticos/{productoId}/desaplicar")
+    suspend fun desaplicarCosmetico(
+        @Path("usuarioId") usuarioId: Long,
+        @Path("productoId") productoId: Long
+    ): Response<Void>
 }

@@ -8,6 +8,7 @@ import com.ecoquest.app.domain.repository.EventoRepository
 import com.ecoquest.app.domain.repository.RetoRepository
 import com.ecoquest.app.domain.repository.TransaccionPuntosRepository
 import com.ecoquest.app.domain.repository.UsuarioComunidadRepository
+import com.ecoquest.app.domain.repository.UsuarioCosmeticoRepository
 import com.ecoquest.app.domain.repository.UsuarioEventoRepository
 import com.ecoquest.app.domain.repository.UsuarioRepository
 import com.ecoquest.app.managers.TokenManager
@@ -28,6 +29,7 @@ class PerfilViewModel @Inject constructor(
     private val usuarioEventoRepository: UsuarioEventoRepository,
     private val transaccionPuntosRepository: TransaccionPuntosRepository,
     private val retoRepository: RetoRepository,
+    private val usuarioCosmeticoRepository: UsuarioCosmeticoRepository,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -60,6 +62,19 @@ class PerfilViewModel @Inject constructor(
                 viewModelScope.launch {
                     usuarioRepository.upsert(_state.value.usuario.copy(imagen = event.uri))
                 }
+            }
+            is PerfilEvent.OnAplicarCosmetico -> {
+                viewModelScope.launch {
+                    usuarioCosmeticoRepository.aplicarCosmetico(usuarioId, event.productoId)
+                }
+            }
+            is PerfilEvent.OnDesaplicarCosmetico -> {
+                viewModelScope.launch {
+                    usuarioCosmeticoRepository.desaplicarCosmetico(usuarioId, event.productoId)
+                }
+            }
+            is PerfilEvent.OnToggleCosmeticos -> {
+                _state.update { it.copy(showCosmeticos = !it.showCosmeticos, showComunidades = false, showEventos = false, showRetos = false, showPuntos = false) }
             }
             is PerfilEvent.OnGoToAjustes -> { }
             is PerfilEvent.OnGoToRetos -> { }
@@ -107,6 +122,14 @@ class PerfilViewModel @Inject constructor(
         viewModelScope.launch {
             transaccionPuntosRepository.getByUsuario(usuarioId).collect { transacciones ->
                 _state.update { it.copy(transacciones = transacciones) }
+            }
+        }
+        viewModelScope.launch {
+            usuarioCosmeticoRepository.refresh(usuarioId)
+        }
+        viewModelScope.launch {
+            usuarioCosmeticoRepository.getByUsuario(usuarioId).collect { cosmeticos ->
+                _state.update { it.copy(cosmeticos = cosmeticos) }
             }
         }
     }

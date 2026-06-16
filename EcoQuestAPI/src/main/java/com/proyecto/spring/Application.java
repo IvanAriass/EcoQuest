@@ -177,19 +177,31 @@ public class Application {
 			usuarioRepository.save(u6);
 
 			// Categorías
-			Categoria catEscalada = categoriaRepository.save(new Categoria("Escalada"));
-			Categoria catFotografia = categoriaRepository.save(new Categoria("Fotografía"));
-			Categoria catSenderismo = categoriaRepository.save(new Categoria("Senderismo"));
-			Categoria catHidratacion = categoriaRepository.save(new Categoria("Hidratación"));
-			Categoria catIluminacion = categoriaRepository.save(new Categoria("Iluminación"));
+			Categoria catCosmeticos = categoriaRepository.save(new Categoria("Cosméticos"));
+			Categoria catMarcos = categoriaRepository.save(new Categoria("Marcos"));
+			Categoria catTemas = categoriaRepository.save(new Categoria("Temas"));
+			Categoria catInsignias = categoriaRepository.save(new Categoria("Insignias"));
+			Categoria catEstilos = categoriaRepository.save(new Categoria("Estilos de Nombre"));
 
-			// Productos
-			productoRepository.save(new Producto("Cuerda de Escalada", "cuerda.jpg", 89, catEscalada));
-			productoRepository.save(new Producto("Cámara Réflex", "camara.jpg", 450, catFotografia));
-			productoRepository.save(new Producto("Mochila Trail", "mochila.jpg", 65, catSenderismo));
-			productoRepository.save(new Producto("Botella Reutilizable", "botella.jpg", 15, catHidratacion));
-			productoRepository.save(new Producto("Prismáticos", "prismaticos.jpg", 120, catSenderismo));
-			productoRepository.save(new Producto("Linterna Frontal LED", "linterna.jpg", 35, catIluminacion));
+			// Productos (cosméticos para personalización del perfil)
+			productoRepository.save(new Producto(
+				"Marco Dorado", "Un elegante marco dorado para tu foto de perfil",
+				"", 80, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Marco Premium", "Marco exclusivo con detalles brillantes para destacar",
+				"", 200, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Tema Bosque", "Tema de perfil con tonos verdes y naturales",
+				"", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Tema Atardecer", "Tema con degradado naranja y púrpura para tu perfil",
+				"", 150, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Insignia EcoGuerrero", "Una insignia especial para los verdaderos guerreros ecológicos",
+				"", 50, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Estilo Arcoíris", "Nombre de usuario con colores arcoíris",
+				"", 100, "ESTILO_NOMBRE", catEstilos));
 
 			// Retos (desafios de puntos)
 			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));

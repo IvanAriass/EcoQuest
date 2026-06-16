@@ -9,6 +9,7 @@ import com.ecoquest.app.data.local.dao.ProductoDao
 import com.ecoquest.app.data.local.dao.RetoDao
 import com.ecoquest.app.data.local.dao.TransaccionPuntosDao
 import com.ecoquest.app.data.local.dao.UsuarioComunidadDao
+import com.ecoquest.app.data.local.dao.UsuarioCosmeticoDao
 import com.ecoquest.app.data.local.dao.UsuarioDao
 import com.ecoquest.app.data.local.dao.UsuarioEventoDao
 import com.ecoquest.app.data.local.entity.ComentarioEntity
@@ -18,6 +19,7 @@ import com.ecoquest.app.data.local.entity.ProductoEntity
 import com.ecoquest.app.data.local.entity.RetoEntity
 import com.ecoquest.app.data.local.entity.TransaccionPuntosEntity
 import com.ecoquest.app.data.local.entity.UsuarioComunidadEntity
+import com.ecoquest.app.data.local.entity.UsuarioCosmeticoEntity
 import com.ecoquest.app.data.local.entity.UsuarioEntity
 import com.ecoquest.app.data.local.entity.UsuarioEventoEntity
 
@@ -31,9 +33,10 @@ import com.ecoquest.app.data.local.entity.UsuarioEventoEntity
         UsuarioComunidadEntity::class,
         UsuarioEventoEntity::class,
         RetoEntity::class,
-        TransaccionPuntosEntity::class
+        TransaccionPuntosEntity::class,
+        UsuarioCosmeticoEntity::class
     ],
-    version = 14,
+    version = 15,
     exportSchema = false
 )
 abstract class EcoQuestDatabase : RoomDatabase() {
@@ -46,4 +49,5 @@ abstract class EcoQuestDatabase : RoomDatabase() {
     abstract fun usuarioEventoDao(): UsuarioEventoDao
     abstract fun retoDao(): RetoDao
     abstract fun transaccionPuntosDao(): TransaccionPuntosDao
+    abstract fun usuarioCosmeticoDao(): UsuarioCosmeticoDao
 }
