@@ -179,6 +179,38 @@ fun PerfilScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         ExpandableSection(
+            label = "Mis Cosméticos",
+            icon = Icons.Filled.Favorite,
+            count = uiState.cosmeticos.size,
+            isExpanded = uiState.showCosmeticos,
+            onClick = { onEvent(PerfilEvent.OnToggleCosmeticos) }
+        ) {
+            if (uiState.cosmeticos.isEmpty()) {
+                Text(
+                    text = "No tienes cosméticos. Consíguelos en la Tienda.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            } else {
+                uiState.cosmeticos.forEach { cosmetico ->
+                    CosmeticoRow(
+                        cosmetico = cosmetico,
+                        onToggle = {
+                            if (cosmetico.aplicado) {
+                                onEvent(PerfilEvent.OnDesaplicarCosmetico(cosmetico.productoId))
+                            } else {
+                                onEvent(PerfilEvent.OnAplicarCosmetico(cosmetico.productoId))
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ExpandableSection(
             label = "Mis Retos",
             icon = Icons.Filled.Star,
             count = uiState.retos.size,
@@ -218,38 +250,6 @@ fun PerfilScreen(
             } else {
                 uiState.transacciones.take(10).forEach { transaccion ->
                     TransaccionRow(transaccion = transaccion)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        ExpandableSection(
-            label = "Mis Cosméticos",
-            icon = Icons.Filled.Favorite,
-            count = uiState.cosmeticos.size,
-            isExpanded = uiState.showCosmeticos,
-            onClick = { onEvent(PerfilEvent.OnToggleCosmeticos) }
-        ) {
-            if (uiState.cosmeticos.isEmpty()) {
-                Text(
-                    text = "No tienes cosméticos. Consíguelos en la Tienda.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            } else {
-                uiState.cosmeticos.forEach { cosmetico ->
-                    CosmeticoRow(
-                        cosmetico = cosmetico,
-                        onToggle = {
-                            if (cosmetico.aplicado) {
-                                onEvent(PerfilEvent.OnDesaplicarCosmetico(cosmetico.productoId))
-                            } else {
-                                onEvent(PerfilEvent.OnAplicarCosmetico(cosmetico.productoId))
-                            }
-                        }
-                    )
                 }
             }
         }
