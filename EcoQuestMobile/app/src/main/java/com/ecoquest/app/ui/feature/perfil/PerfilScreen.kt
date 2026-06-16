@@ -419,7 +419,7 @@ private fun ProfileHeader(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Eco,
+                                imageVector = insigniaVisual.icono,
                                 contentDescription = "Insignia",
                                 modifier = Modifier.size(16.dp),
                                 tint = insigniaVisual.iconTint

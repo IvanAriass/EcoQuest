@@ -211,6 +211,33 @@ public class Application {
 			productoRepository.save(new Producto(
 				"Tema Flora", "Un tema primaveral con tonos rosas y verdes suaves",
 				"tema-flora.svg", 120, "TEMA", catTemas));
+			productoRepository.save(new Producto(
+				"Marco Esmeralda", "Marco verde esmeralda con reflejos brillantes",
+				"marco-esmeralda.svg", 100, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Marco Zafiro", "Marco azul zafiro con destellos elegantes",
+				"marco-zafiro.svg", 130, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Marco Rubí", "Marco rojo rubí intenso y llamativo",
+				"marco-rubi.svg", 150, "MARCO", catMarcos));
+			productoRepository.save(new Producto(
+				"Insignia Naturaleza", "Insignia con dos hojas que simbolizan la naturaleza",
+				"insignia-naturaleza.svg", 60, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Insignia Reciclaje", "Insignia con el símbolo de reciclaje",
+				"insignia-reciclaje.svg", 60, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Insignia Estrella", "Insignia con una estrella brillante",
+				"insignia-estrella.svg", 80, "INSIGNIA", catInsignias));
+			productoRepository.save(new Producto(
+				"Estilo Fuego", "Nombre con degradado de llamas anaranjadas",
+				"estilo-fuego.svg", 100, "ESTILO_NOMBRE", catEstilos));
+			productoRepository.save(new Producto(
+				"Estilo Hielo", "Nombre con degradado de tonos azules helados",
+				"estilo-hielo.svg", 100, "ESTILO_NOMBRE", catEstilos));
+			productoRepository.save(new Producto(
+				"Estilo Neón", "Nombre con colores neón brillantes",
+				"estilo-neon.svg", 100, "ESTILO_NOMBRE", catEstilos));
 
 			// Retos (desafios de puntos)
 			retoRepository.save(new Reto("Inicio de sesion diario", "Inicia sesion una vez al dia", 10, "LOGIN", 1, "DIARIA"));
