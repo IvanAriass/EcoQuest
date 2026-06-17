@@ -78,7 +78,8 @@ class ComunidadDetalleViewModel @Inject constructor(
                 val rolInfo = rolRepository.getRolById(rolId)
                 _state.update { it.copy(
                     miRolInfo = rolInfo,
-                    puedeCrearEventos = rolInfo.nivel >= 2
+                    puedeCrearEventos = rolInfo.nivel >= 2,
+                    puedeGestionar = rolInfo.nivel >= 5
                 )}
             }
         }

@@ -28,6 +28,8 @@ import com.ecoquest.app.ui.feature.acceso.AccesoEvent
 import com.ecoquest.app.ui.feature.acceso.AccesoViewModel
 import com.ecoquest.app.ui.feature.acceso.InicioSesionScreen
 import com.ecoquest.app.ui.feature.acceso.RegistroScreen
+import com.ecoquest.app.ui.feature.gestion.GestionComunidadScreen
+import com.ecoquest.app.ui.feature.gestion.GestionComunidadViewModel
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesEvent
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesScreen
 import com.ecoquest.app.ui.feature.comunidades.ComunidadesViewModel
@@ -172,6 +174,9 @@ object Routes {
 
     @Serializable
     data class Chat(val comunidadId: Int)
+
+    @Serializable
+    data class GestionComunidad(val comunidadId: Int)
 }
 
 fun NavGraphBuilder.appNavGraph(
@@ -282,7 +287,8 @@ fun NavGraphBuilder.appNavGraph(
             onEvent = { event -> vm.onEvent(event) },
             onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) },
             onNavigateToMiembros = { navController.navigate(Routes.Miembros(route.comunidadId.toLong())) },
-            onNavigateToChat = { navController.navigate(Routes.Chat(route.comunidadId)) }
+            onNavigateToChat = { navController.navigate(Routes.Chat(route.comunidadId)) },
+            onNavigateToGestion = { navController.navigate(Routes.GestionComunidad(route.comunidadId)) }
         )
     }
 
@@ -436,6 +442,23 @@ fun NavGraphBuilder.appNavGraph(
             onTextoCambiado = { vm.onTextoCambiado(it) },
             onEnviarMensaje = { vm.onEnviarMensaje() },
             onNavigateToPerfilUsuario = { usuarioId -> navController.navigate(Routes.PerfilUsuario(usuarioId)) }
+        )
+    }
+
+    composable<Routes.GestionComunidad>(
+        enterTransition = { slideInRight() },
+        exitTransition = { slideOutLeft() },
+        popEnterTransition = { slideInLeft() },
+        popExitTransition = { slideOutRight() }
+    ) { backStackEntry ->
+        val route = backStackEntry.toRoute<Routes.GestionComunidad>()
+        val vm: GestionComunidadViewModel = hiltViewModel()
+        val uiState by vm.state.collectAsState()
+        LaunchedEffect(route) { vm.cargar(route.comunidadId.toLong()) }
+        GestionComunidadScreen(
+            uiState = uiState,
+            onEvent = { vm.onEvent(it) },
+            onBack = { navController.popBackStack() }
         )
     }
 

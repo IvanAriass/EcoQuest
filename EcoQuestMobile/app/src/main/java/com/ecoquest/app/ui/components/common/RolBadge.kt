@@ -1,6 +1,7 @@
 package com.ecoquest.app.ui.components.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +24,8 @@ import com.ecoquest.app.domain.model.RolInfo
 @Composable
 fun RolBadge(
     rolInfo: RolInfo,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
     val bgColor = when (rolInfo.nivel) {
         0 -> MaterialTheme.colorScheme.surfaceVariant
@@ -44,8 +46,9 @@ fun RolBadge(
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
+    val clickMod = if (onClick != null) modifier.clickable(onClick = onClick) else modifier
     Box(
-        modifier = modifier
+        modifier = clickMod
             .clip(RoundedCornerShape(8.dp))
             .background(bgColor)
             .padding(horizontal = 8.dp, vertical = 3.dp)

@@ -173,10 +173,66 @@ interface ApiService {
         @Body body: Map<String, @JvmSuppressWildcards Any>
     ): Response<Void>
 
+    // --- Gestión de comunidad ---
+
+    @PUT("comunidades/{id}/gestionar")
+    suspend fun gestionarComunidad(
+        @Path("id") id: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>,
+        @Query("solicitanteId") solicitanteId: Long
+    ): ComunidadDto
+
+    @DELETE("usuario-comunidad/expulsar")
+    suspend fun expulsarMiembro(
+        @Query("usuarioId") usuarioId: Long,
+        @Query("comunidadId") comunidadId: Long,
+        @Query("solicitanteId") solicitanteId: Long
+    ): Response<Void>
+
+    @PATCH("usuario-comunidad/rol")
+    suspend fun cambiarRol(
+        @Query("usuarioId") usuarioId: Long,
+        @Query("comunidadId") comunidadId: Long,
+        @Query("nuevoRol") nuevoRol: String
+    ): UsuarioComunidadDto
+
     // --- Roles ---
 
     @GET("roles")
     suspend fun getRoles(): List<RolInfoDto>
+
+    @GET("comunidades/{comunidadId}/roles")
+    suspend fun getRolesGestion(@Path("comunidadId") comunidadId: Long): List<RolInfoDto>
+
+    @POST("comunidades/{comunidadId}/roles")
+    suspend fun crearRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Query("solicitanteId") solicitanteId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): RolInfoDto
+
+    @PUT("comunidades/{comunidadId}/roles/{rolId}")
+    suspend fun actualizarRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("rolId") rolId: Long,
+        @Query("solicitanteId") solicitanteId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): RolInfoDto
+
+    @PUT("comunidades/{comunidadId}/roles/{rolId}/permisos")
+    suspend fun actualizarPermisosRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("rolId") rolId: Long,
+        @Query("solicitanteId") solicitanteId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): RolInfoDto
+
+    @DELETE("comunidades/{comunidadId}/roles/{rolId}")
+    suspend fun eliminarRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("rolId") rolId: Long,
+        @Query("solicitanteId") solicitanteId: Long
+    ): Response<Void>
 
     @GET("roles/{usuarioId}/{comunidadId}")
     suspend fun getRolUsuario(

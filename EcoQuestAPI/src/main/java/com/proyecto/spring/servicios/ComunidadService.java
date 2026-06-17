@@ -78,6 +78,14 @@ public class ComunidadService {
         });
     }
 
+    public Optional<Comunidad> actualizar(Long id, String nombre, String descripcion) {
+        return comunidadRepository.findById(id).map(comunidad -> {
+            if (nombre != null && !nombre.isBlank()) comunidad.setNombre(nombre);
+            if (descripcion != null) comunidad.setDescripcion(descripcion);
+            return comunidadRepository.save(comunidad);
+        });
+    }
+
     public boolean eliminar(Long id) {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(id);
         if (comunidadOpt.isEmpty()) return false;

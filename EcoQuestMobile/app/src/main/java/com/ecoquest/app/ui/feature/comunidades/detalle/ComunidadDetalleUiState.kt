@@ -13,6 +13,7 @@ data class ComunidadDetalleUiState(
     val esMiembro: Boolean = false,
     val miRolInfo: RolInfo? = null,
     val puedeCrearEventos: Boolean = false,
+    val puedeGestionar: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
     val info: String? = null,

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,6 +38,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -69,7 +71,8 @@ fun ComunidadDetalleScreen(
     onEvent: (ComunidadDetalleEvent) -> Unit,
     onNavigateToEvento: (Long) -> Unit,
     onNavigateToMiembros: () -> Unit = {},
-    onNavigateToChat: () -> Unit = {}
+    onNavigateToChat: () -> Unit = {},
+    onNavigateToGestion: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -225,7 +228,6 @@ fun ComunidadDetalleScreen(
                                     )
                                 }
                                 if (uiState.puedeCrearEventos) {
-                                    Spacer(modifier = Modifier.width(0.dp))
                                     Button(
                                         onClick = { onEvent(ComunidadDetalleEvent.OnMostrarCrearEvento) },
                                         shape = RoundedCornerShape(12.dp),
@@ -327,6 +329,19 @@ fun ComunidadDetalleScreen(
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                                 )
                             }
+                        }
+                    }
+
+                    if (uiState.puedeGestionar) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = onNavigateToGestion,
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Filled.Settings, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Gestionar comunidad")
                         }
                     }
 

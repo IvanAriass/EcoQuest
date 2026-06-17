@@ -30,6 +30,7 @@ import com.proyecto.spring.dto.ComunidadDTO;
 import com.proyecto.spring.modelos.Comunidad;
 import com.proyecto.spring.repository.ComunidadRepository;
 import com.proyecto.spring.servicios.ComunidadService;
+import com.proyecto.spring.servicios.PermisosService;
 
 @RestController
 @RequestMapping("/api/comunidades")
@@ -43,6 +44,9 @@ public class ComunidadController {
 
     @Autowired
     private ComunidadRepository comunidadRepository;
+
+    @Autowired
+    private PermisosService permisosService;
 
     @GetMapping
     public List<ComunidadDTO> obtenerTodos() {
@@ -143,6 +147,20 @@ public class ComunidadController {
     @PutMapping("/{id}")
     public ResponseEntity<Comunidad> actualizar(@PathVariable Long id, @RequestBody Comunidad comunidad) {
         return comunidadService.actualizar(id, comunidad)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/gestionar")
+    public ResponseEntity<?> gestionar(@PathVariable Long id,
+                                        @RequestBody Map<String, String> body,
+                                        @RequestParam Long solicitanteId) {
+        if (!permisosService.tienePermiso(solicitanteId, id, "ADMINISTRAR")) {
+            return ResponseEntity.status(403).body(Map.of("error", "No tienes permiso para gestionar esta comunidad"));
+        }
+        String nombre = body.get("nombre");
+        String descripcion = body.get("descripcion");
+        return comunidadService.actualizar(id, nombre, descripcion)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
