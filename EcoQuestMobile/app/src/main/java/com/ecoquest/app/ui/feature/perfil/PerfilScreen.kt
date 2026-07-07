@@ -148,7 +148,10 @@ fun PerfilScreen(
                 )
             } else {
                 uiState.comunidades.forEach { comunidad ->
-                    ComunidadCard(comunidad = comunidad, onClick = { })
+                    ComunidadCard(
+                        comunidad = comunidad,
+                        onClick = { onEvent(PerfilEvent.OnGoToComunidad(comunidad.id.toInt())) }
+                    )
                 }
             }
         }
@@ -171,7 +174,10 @@ fun PerfilScreen(
                 )
             } else {
                 uiState.eventos.forEach { evento ->
-                    EventoCard(evento = evento, onClick = { })
+                    EventoCard(
+                        evento = evento,
+                        onClick = { onEvent(PerfilEvent.OnGoToEvento(evento.id)) }
+                    )
                 }
             }
         }

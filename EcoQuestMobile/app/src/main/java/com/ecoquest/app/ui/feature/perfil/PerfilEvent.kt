@@ -14,5 +14,7 @@ sealed interface PerfilEvent {
     data object OnGoToTienda : PerfilEvent
     data object OnGoToEventos : PerfilEvent
     data object OnGoToComunidades : PerfilEvent
+    data class OnGoToComunidad(val comunidadId: Int) : PerfilEvent
+    data class OnGoToEvento(val eventoId: Long) : PerfilEvent
     data object OnLogout : PerfilEvent
 }

@@ -320,6 +320,8 @@ fun NavGraphBuilder.appNavGraph(
                     is PerfilEvent.OnGoToTienda -> navController.navigate(Routes.Tienda) { launchSingleTop = true }
                     is PerfilEvent.OnGoToEventos -> navController.navigate(Routes.Eventos) { launchSingleTop = true }
                     is PerfilEvent.OnGoToComunidades -> navController.navigate(Routes.Comunidades) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToComunidad -> navController.navigate(Routes.ComunidadDentro(event.comunidadId)) { launchSingleTop = true }
+                    is PerfilEvent.OnGoToEvento -> navController.navigate(Routes.Evento(event.eventoId)) { launchSingleTop = true }
                     is PerfilEvent.OnLogout -> onLogout()
                     else -> vm.onEvent(event)
                 }
@@ -481,7 +483,9 @@ fun NavGraphBuilder.appNavGraph(
             onTogglePuntos = { vm.onTogglePuntos() },
             onNavigateToEventos = { navController.navigate(Routes.Eventos) { launchSingleTop = true } },
             onNavigateToComunidades = { navController.navigate(Routes.Comunidades) { launchSingleTop = true } },
-            onNavigateToRetos = { navController.navigate(Routes.Retos) { launchSingleTop = true } }
+            onNavigateToRetos = { navController.navigate(Routes.Retos) { launchSingleTop = true } },
+            onNavigateToComunidad = { comunidadId -> navController.navigate(Routes.ComunidadDentro(comunidadId)) { launchSingleTop = true } },
+            onNavigateToEvento = { eventoId -> navController.navigate(Routes.Evento(eventoId)) { launchSingleTop = true } }
         )
     }
 }

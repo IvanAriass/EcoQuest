@@ -91,6 +91,8 @@ class PerfilViewModel @Inject constructor(
             is PerfilEvent.OnGoToTienda -> { }
             is PerfilEvent.OnGoToEventos -> { }
             is PerfilEvent.OnGoToComunidades -> { }
+            is PerfilEvent.OnGoToComunidad -> { }
+            is PerfilEvent.OnGoToEvento -> { }
             is PerfilEvent.OnLogout -> { }
         }
     }
