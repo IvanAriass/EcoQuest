@@ -210,7 +210,7 @@ fun ComunidadDetalleScreen(
                                     onClick = onNavigateToChat,
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.tertiary
+                                        containerColor = MaterialTheme.colorScheme.secondary
                                     ),
                                     modifier = Modifier
                                         .height(44.dp)
@@ -222,7 +222,7 @@ fun ComunidadDetalleScreen(
                                         Icons.AutoMirrored.Filled.Chat,
                                         contentDescription = "Chat",
                                         modifier = Modifier.size(20.dp),
-                                        tint = MaterialTheme.colorScheme.onTertiary
+                                        tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                                 if (uiState.puedeCrearEventos) {
