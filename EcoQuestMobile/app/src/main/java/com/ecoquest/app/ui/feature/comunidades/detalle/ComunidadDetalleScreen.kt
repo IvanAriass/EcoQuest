@@ -59,10 +59,8 @@ import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.model.UsuarioComunidad
 import com.ecoquest.app.ui.components.common.RolBadge
+import com.ecoquest.app.ui.components.evento.EventoCompactCard
 import com.ecoquest.app.ui.components.evento.EventoDialog
-import com.ecoquest.app.ui.theme.GradientEnd
-import com.ecoquest.app.ui.theme.GradientStart
-import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun ComunidadDetalleScreen(
@@ -212,7 +210,7 @@ fun ComunidadDetalleScreen(
                                     onClick = onNavigateToChat,
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.tertiary
+                                        containerColor = MaterialTheme.colorScheme.secondary
                                     ),
                                     modifier = Modifier
                                         .height(44.dp)
@@ -224,7 +222,7 @@ fun ComunidadDetalleScreen(
                                         Icons.AutoMirrored.Filled.Chat,
                                         contentDescription = "Chat",
                                         modifier = Modifier.size(20.dp),
-                                        tint = MaterialTheme.colorScheme.onTertiary
+                                        tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                                 if (uiState.puedeCrearEventos) {
@@ -451,113 +449,7 @@ private fun AnimatedSection(index: Int, content: @Composable () -> Unit) {
     }
 }
 
-@Composable
-private fun EventoCompactCard(evento: Evento, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier.padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                if (evento.imagen.isNotEmpty()) {
-                    AsyncImage(
-                        model = evento.imagen.takeIf { it.startsWith("http") } 
-                            ?: evento.imagen,
-                        contentDescription = evento.nombre,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(14.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.linearGradient(
-                                    colors = listOf(GradientStart, GradientEnd)
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Filled.CalendarMonth,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.width(14.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = evento.nombre,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            Icons.Filled.CalendarMonth,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = formatearFechaHoraCorta(evento.fechaHora),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    if (evento.ubicacion.isNotBlank()) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(3.dp)
-                        ) {
-                            Icon(
-                                Icons.Filled.LocationOn,
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = evento.ubicacion,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

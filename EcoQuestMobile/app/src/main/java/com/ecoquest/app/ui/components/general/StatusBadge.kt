@@ -24,6 +24,7 @@ fun StatusBadge(
     text: String,
     modifier: Modifier = Modifier
 ) {
+    val bgColor = estadoColor(text)
     Text(
         text = text.ifBlank { "Evento" },
         style = MaterialTheme.typography.labelSmall,
@@ -31,7 +32,7 @@ fun StatusBadge(
         color = Color.White,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(estadoColor(text), RoundedCornerShape(8.dp))
+            .background(bgColor, RoundedCornerShape(8.dp))
             .padding(horizontal = 10.dp, vertical = 4.dp)
     )
 }
