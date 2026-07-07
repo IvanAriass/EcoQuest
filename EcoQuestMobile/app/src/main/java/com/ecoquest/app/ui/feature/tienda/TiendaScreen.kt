@@ -43,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -54,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ecoquest.app.R
 import com.ecoquest.app.domain.model.Producto
-import com.ecoquest.app.ui.components.general.SectionTitle
 import com.ecoquest.app.ui.components.producto.ProductoCard
 import com.ecoquest.app.ui.theme.EcoQuestMobileTheme
 
@@ -65,46 +65,67 @@ fun TiendaScreen(
     onEvent: (TiendaEvent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        SectionTitle(text = "Tienda", Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
-
-        Card(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                        )
+                    )
+                )
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Filled.Eco,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                Column {
                     Text(
-                        text = "Tu saldo",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        text = "Tienda",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Text(
+                        text = "Canjea tus puntos por cosméticos",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                     )
                 }
-                Text(
-                    text = "${uiState.saldoPuntos} pts",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.White.copy(alpha = 0.2f))
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Eco,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "${uiState.saldoPuntos}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         val filterItems = listOf(null as String?) + uiState.tipos
         val filterLabels = listOf("Todas") + uiState.tipos.map { tipo ->
@@ -126,50 +147,75 @@ fun TiendaScreen(
             }
         }
 
-        if (filterItems.size > 1) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                filterItems.forEachIndexed { index, tipo ->
-                    val selected = if (tipo == null) uiState.selectedTipo == null
-                    else uiState.selectedTipo == tipo
-                    FilterChip(
-                        selected = selected,
-                        onClick = {
-                            onEvent(if (tipo == null) TiendaEvent.SelectTipo(null)
-                            else TiendaEvent.SelectTipo(tipo))
-                        },
-                        leadingIcon = if (filterIcons[index] != null) {
-                            { Icon(filterIcons[index]!!, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                        } else null,
-                        label = { Text(filterLabels[index]) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            filterItems.forEachIndexed { index, tipo ->
+                val selected = if (tipo == null) uiState.selectedTipo == null
+                else uiState.selectedTipo == tipo
+                FilterChip(
+                    selected = selected,
+                    onClick = {
+                        onEvent(if (tipo == null) TiendaEvent.SelectTipo(null)
+                        else TiendaEvent.SelectTipo(tipo))
+                    },
+                    leadingIcon = if (filterIcons[index] != null) {
+                        { Icon(filterIcons[index]!!, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                    } else null,
+                    label = { Text(filterLabels[index]) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
                     )
-                }
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp),
-            modifier = Modifier.weight(1f)
-        ) {
-            items(uiState.filteredProductos) { producto ->
-                ProductoCard(
-                    producto = producto,
-                    onClick = { onEvent(TiendaEvent.OnProductoClick(producto)) }
-                )
+        if (uiState.filteredProductos.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ShoppingCart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(
+                        text = "No hay productos disponibles",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 80.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                items(uiState.filteredProductos) { producto ->
+                    ProductoCard(
+                        producto = producto,
+                        onClick = { onEvent(TiendaEvent.OnProductoClick(producto)) }
+                    )
+                }
             }
         }
     }
@@ -187,24 +233,53 @@ fun TiendaScreen(
     if (uiState.canjeExitoso) {
         AlertDialog(
             onDismissRequest = { onEvent(TiendaEvent.OnCanjeConsumido) },
+            shape = RoundedCornerShape(28.dp),
             icon = {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(48.dp))
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             },
             title = {
-                Text("¡Canje exitoso!",
+                Text(
+                    "¡Canje exitoso!",
                     style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth())
+                    modifier = Modifier.fillMaxWidth()
+                )
             },
             text = {
-                Text("El cosmético se ha añadido a tu colección. Puedes aplicarlo desde tu perfil.",
+                Text(
+                    "El cosmético se ha añadido a tu colección. Puedes aplicarlo desde tu perfil.",
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth())
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             },
             confirmButton = {
-                TextButton(onClick = { onEvent(TiendaEvent.OnCanjeConsumido) }) {
-                    Text("Aceptar")
+                TextButton(
+                    onClick = { onEvent(TiendaEvent.OnCanjeConsumido) },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(horizontal = 24.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        "Aceptar",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
         )
@@ -213,20 +288,53 @@ fun TiendaScreen(
     uiState.canjeError?.let { error ->
         AlertDialog(
             onDismissRequest = { onEvent(TiendaEvent.OnErrorConsumido) },
+            shape = RoundedCornerShape(28.dp),
             icon = {
-                Icon(Icons.Filled.Close, contentDescription = null, tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(48.dp))
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.errorContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             },
             title = {
-                Text("Error", style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                Text(
+                    "Error",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             },
             text = {
-                Text(error, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                Text(
+                    error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             },
             confirmButton = {
-                TextButton(onClick = { onEvent(TiendaEvent.OnErrorConsumido) }) {
-                    Text("Aceptar")
+                TextButton(
+                    onClick = { onEvent(TiendaEvent.OnErrorConsumido) },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(horizontal = 24.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        "Aceptar",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
         )
@@ -249,7 +357,7 @@ private fun DetalleProductoDialog(
                 Box(
                     modifier = Modifier
                         .size(200.dp)
-                        .clip(RoundedCornerShape(20.dp))
+                        .clip(RoundedCornerShape(24.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
@@ -259,30 +367,64 @@ private fun DetalleProductoDialog(
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color.Black.copy(alpha = 0.2f)
+                                    )
+                                )
+                            )
+                    )
                     if (producto.tipo.isNotBlank()) {
                         Box(
                             modifier = Modifier
                                 .align(Alignment.TopStart)
-                                .padding(8.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.85f))
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    Brush.linearGradient(
+                                        colors = listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                                        )
+                                    )
+                                )
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
-                            Text(
-                                text = producto.tipoLabel,
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                maxLines = 1
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                Icon(
+                                    imageVector = productoTipoIcon(producto.tipo),
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Text(
+                                    text = producto.tipoLabel,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(producto.nombre, style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold)
+                Text(
+                    producto.nombre,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
             }
         },
         text = {
@@ -298,19 +440,30 @@ private fun DetalleProductoDialog(
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                    )
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Precio:", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                            Text(
+                                "Precio",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Filled.Eco, contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                                Icon(
+                                    Icons.Filled.Eco,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${producto.precio} pts",
@@ -320,14 +473,18 @@ private fun DetalleProductoDialog(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Tu saldo:", style = MaterialTheme.typography.bodyMedium,
-                                color = if (puedeCanjear) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.error)
+                            Text(
+                                "Tu saldo",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                                color = if (puedeCanjear) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.error
+                            )
                             Text(
                                 text = "$saldoPuntos pts",
                                 style = MaterialTheme.typography.bodyMedium,
@@ -335,25 +492,32 @@ private fun DetalleProductoDialog(
                                 color = if (puedeCanjear) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.error
                             )
                         }
-                    }
-                }
 
-                if (!puedeCanjear) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Filled.Close, contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "No tienes suficientes puntos",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        if (!puedeCanjear) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.errorContainer)
+                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                            ) {
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "No tienes suficientes puntos",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -361,19 +525,53 @@ private fun DetalleProductoDialog(
         confirmButton = {
             TextButton(
                 onClick = onCanjear,
-                enabled = puedeCanjear
+                enabled = puedeCanjear,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .then(
+                        if (puedeCanjear) Modifier.background(
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                                )
+                            )
+                        )
+                        else Modifier
+                    )
+                    .padding(horizontal = 20.dp, vertical = 4.dp)
             ) {
-                Icon(Icons.Filled.ShoppingCart, contentDescription = null, modifier = Modifier.size(18.dp))
+                Icon(
+                    Icons.Filled.ShoppingCart,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = if (puedeCanjear) Color.White else MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Canjear")
+                Text(
+                    "Canjear",
+                    fontWeight = FontWeight.Bold,
+                    color = if (puedeCanjear) Color.White else MaterialTheme.colorScheme.onSurface
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onCerrar) {
-                Text("Cancelar")
+                Text(
+                    "Cancelar",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     )
+}
+
+private fun productoTipoIcon(tipo: String): ImageVector = when (tipo) {
+    "MARCO" -> Icons.Filled.WorkspacePremium
+    "TEMA" -> Icons.Filled.Brush
+    "INSIGNIA" -> Icons.Filled.EmojiEvents
+    "ESTILO_NOMBRE" -> Icons.Filled.Style
+    else -> Icons.Filled.ShoppingCart
 }
 
 @Preview(showBackground = true)
