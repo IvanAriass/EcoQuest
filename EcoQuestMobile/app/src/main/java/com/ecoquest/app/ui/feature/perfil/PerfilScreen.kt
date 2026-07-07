@@ -73,8 +73,8 @@ import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.model.UsuarioCosmetico
-import com.ecoquest.app.ui.components.comunidad.ComunidadCard
-import com.ecoquest.app.ui.components.evento.EventoCard
+import com.ecoquest.app.ui.components.comunidad.ComunidadCardHorizontal
+import com.ecoquest.app.ui.components.evento.EventoCompactCard
 import com.ecoquest.app.ui.theme.EcoQuestMobileTheme
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
@@ -148,10 +148,11 @@ fun PerfilScreen(
                 )
             } else {
                 uiState.comunidades.forEach { comunidad ->
-                    ComunidadCard(
+                    ComunidadCardHorizontal(
                         comunidad = comunidad,
                         onClick = { onEvent(PerfilEvent.OnGoToComunidad(comunidad.id.toInt())) }
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -174,10 +175,11 @@ fun PerfilScreen(
                 )
             } else {
                 uiState.eventos.forEach { evento ->
-                    EventoCard(
+                    EventoCompactCard(
                         evento = evento,
                         onClick = { onEvent(PerfilEvent.OnGoToEvento(evento.id)) }
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }

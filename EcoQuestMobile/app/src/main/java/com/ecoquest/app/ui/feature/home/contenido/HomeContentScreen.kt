@@ -27,8 +27,6 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.Star
@@ -51,16 +49,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.ecoquest.app.R
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
 import com.ecoquest.app.domain.model.Juego
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.ui.components.comunidad.ComunidadCard
+import com.ecoquest.app.ui.components.evento.EventoCardVertical
 import com.ecoquest.app.ui.components.general.SectionHeaderWithAction
-import com.ecoquest.app.ui.components.general.StatusBadge
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
-import com.ecoquest.app.ui.util.formatearFechaHoraCorta
 
 @Composable
 fun HomeContentScreen(
@@ -104,7 +101,7 @@ fun HomeContentScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(uiState.proximosEventos, key = { it.id }) { evento ->
-                    EventoHorizontalCard(
+                    EventoCardVertical(
                         evento = evento,
                         onClick = { onEvent(HomeContentEvent.OnNavigateToEvento(evento.id)) }
                     )
@@ -120,14 +117,15 @@ fun HomeContentScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             LazyRow(
-                modifier = Modifier.height(230.dp),
+                modifier = Modifier.height(280.dp),
                 contentPadding = PaddingValues(end = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(uiState.comunidades, key = { it.id }) { comunidad ->
-                    ComunidadHorizontalCard(
+                    ComunidadCard(
                         comunidad = comunidad,
-                        onClick = { onEvent(HomeContentEvent.OnNavigateToComunidad(comunidad.id)) }
+                        onClick = { onEvent(HomeContentEvent.OnNavigateToComunidad(comunidad.id)) },
+                        modifier = Modifier.width(220.dp)
                     )
                 }
             }
@@ -421,225 +419,6 @@ private fun StatCard(
     }
 }
 
-@Composable
-private fun EventoHorizontalCard(
-    evento: Evento,
-    onClick: () -> Unit
-) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.width(240.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-            ) {
-                AsyncImage(
-                    model = if (evento.imagen.isNotEmpty()) evento.imagen else R.drawable.iconoeco,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.5f)
-                                )
-                            )
-                        )
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(10.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.CalendarMonth,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = formatearFechaHoraCorta(evento.fechaHora),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            }
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = evento.nombre,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    if (evento.ubicacion.isNotBlank()) {
-                        Icon(
-                            imageVector = Icons.Filled.LocationOn,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = evento.ubicacion,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                StatusBadge(text = evento.estado)
-            }
-        }
-    }
-}
 
-@Composable
-private fun ComunidadHorizontalCard(
-    comunidad: Comunidad,
-    onClick: () -> Unit
-) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier
-            .width(200.dp)
-            .height(230.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(110.dp)
-            ) {
-                if (comunidad.imagen.isNotEmpty()) {
-                    AsyncImage(
-                        model = comunidad.imagen,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.sweepGradient(
-                                    colors = listOf(
-                                        MaterialTheme.colorScheme.primaryContainer,
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                                    )
-                                )
-                            )
-                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = comunidad.nombre.take(1).uppercase(),
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.6f)
-                                )
-                            )
-                        )
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(12.dp)
-                ) {
-                    Text(
-                        text = comunidad.nombre,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier.padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.People,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "${comunidad.usuarios.size} miembros",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Text(
-                    text = comunidad.descripcion,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
-}
+
+
