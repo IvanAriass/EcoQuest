@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ecoquest.app.domain.model.Usuario
+import com.ecoquest.app.ui.components.common.RolBadge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +46,7 @@ fun MiembrosScreen(
     title: String = "Miembros",
     icon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     onBack: () -> Unit,
-    miembros: List<Usuario>,
+    miembros: List<MiembroConRol>,
     onNavigateToPerfilUsuario: (Long) -> Unit = {}
 ) {
     Scaffold(
@@ -94,10 +95,11 @@ fun MiembrosScreen(
                 ),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(miembros, key = { it.id }) { miembro ->
+                items(miembros, key = { it.usuario.id }) { miembroConRol ->
                     MiembroItem(
-                        miembro = miembro,
-                        onClick = { onNavigateToPerfilUsuario(miembro.id) }
+                        miembro = miembroConRol.usuario,
+                        rolInfo = miembroConRol.rolInfo,
+                        onClick = { onNavigateToPerfilUsuario(miembroConRol.usuario.id) }
                     )
                 }
             }
@@ -106,7 +108,7 @@ fun MiembrosScreen(
 }
 
 @Composable
-private fun MiembroItem(miembro: Usuario, onClick: () -> Unit = {}) {
+private fun MiembroItem(miembro: Usuario, rolInfo: com.ecoquest.app.domain.model.RolInfo = com.ecoquest.app.domain.model.RolInfo(), onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,14 +149,19 @@ private fun MiembroItem(miembro: Usuario, onClick: () -> Unit = {}) {
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            if (miembro.descripcion.isNotBlank()) {
-                Text(
-                    text = miembro.descripcion,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (miembro.descripcion.isNotBlank()) {
+                    Text(
+                        text = miembro.descripcion,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.width(6.dp))
+                RolBadge(rolInfo = rolInfo)
             }
         }
     }

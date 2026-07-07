@@ -66,6 +66,8 @@ import com.ecoquest.app.domain.model.Reto
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
 import com.ecoquest.app.domain.model.UsuarioCosmetico
+import com.ecoquest.app.ui.components.comunidad.ComunidadCard
+import com.ecoquest.app.ui.components.evento.EventoCard
 import com.ecoquest.app.ui.theme.GradientEnd
 import com.ecoquest.app.ui.theme.GradientStart
 
@@ -80,7 +82,9 @@ fun PerfilUsuarioScreen(
     onTogglePuntos: () -> Unit,
     onNavigateToEventos: () -> Unit = {},
     onNavigateToComunidades: () -> Unit = {},
-    onNavigateToRetos: () -> Unit = {}
+    onNavigateToRetos: () -> Unit = {},
+    onNavigateToComunidad: (Int) -> Unit = {},
+    onNavigateToEvento: (Long) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -152,10 +156,9 @@ fun PerfilUsuarioScreen(
                     )
                 } else {
                     uiState.comunidades.forEach { comunidad ->
-                        Text(
-                            text = comunidad.nombre,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        ComunidadCard(
+                            comunidad = comunidad,
+                            onClick = { onNavigateToComunidad(comunidad.id.toInt()) }
                         )
                     }
                 }
@@ -179,10 +182,9 @@ fun PerfilUsuarioScreen(
                     )
                 } else {
                     uiState.eventos.forEach { evento ->
-                        Text(
-                            text = evento.nombre,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        EventoCard(
+                            evento = evento,
+                            onClick = { onNavigateToEvento(evento.id) }
                         )
                     }
                 }

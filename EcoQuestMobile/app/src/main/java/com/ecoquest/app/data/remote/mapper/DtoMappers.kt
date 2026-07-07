@@ -3,15 +3,19 @@ package com.ecoquest.app.data.remote.mapper
 import com.ecoquest.app.data.remote.dto.ComentarioDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
+import com.ecoquest.app.data.remote.dto.MensajeDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
 import com.ecoquest.app.data.remote.dto.RetoDto
+import com.ecoquest.app.data.remote.dto.RolInfoDto
 import com.ecoquest.app.data.remote.dto.TransaccionPuntosDto
 import com.ecoquest.app.data.remote.dto.UsuarioDto
 import com.ecoquest.app.domain.model.Comentario
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.model.Evento
+import com.ecoquest.app.domain.model.Mensaje
 import com.ecoquest.app.domain.model.Producto
 import com.ecoquest.app.domain.model.Reto
+import com.ecoquest.app.domain.model.RolInfo
 import com.ecoquest.app.domain.model.TransaccionPuntos
 import com.ecoquest.app.domain.model.Usuario
 
@@ -101,4 +105,26 @@ fun TransaccionPuntosDto.toDomain(): TransaccionPuntos = TransaccionPuntos(
     concepto = concepto,
     referenciaId = referenciaId,
     fecha = fecha
+)
+
+fun RolInfoDto.toDomain(): RolInfo = RolInfo(
+    id = id.uppercase(),
+    nombre = nombre,
+    emoji = emoji,
+    nivel = nivel,
+    descripcion = descripcion,
+    permisos = permisos
+)
+
+fun MensajeDto.toDomain(): Mensaje = Mensaje(
+    id = id,
+    texto = texto,
+    fechaHora = fechaHora,
+    usuarioId = usuarioId,
+    usuarioNombre = usuarioNombre,
+    usuarioNombreUsuario = usuarioNombreUsuario.ifBlank { usuarioNombre },
+    usuarioImagen = usuarioImagen?.let { img ->
+        if (img.isBlank()) "" else img.toImageUrl("usuarios/imagen")
+    } ?: "",
+    comunidadId = comunidadId
 )

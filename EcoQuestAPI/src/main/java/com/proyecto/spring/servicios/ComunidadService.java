@@ -12,13 +12,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.proyecto.spring.modelos.Comunidad;
+import com.proyecto.spring.modelos.Usuario;
+import com.proyecto.spring.modelos.UsuarioComunidad;
 import com.proyecto.spring.repository.ComunidadRepository;
+import com.proyecto.spring.repository.UsuarioComunidadRepository;
+import com.proyecto.spring.repository.UsuarioRepository;
 
 @Service
 public class ComunidadService {
 
     @Autowired
     private ComunidadRepository comunidadRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioComunidadRepository usuarioComunidadRepository;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -47,12 +57,31 @@ public class ComunidadService {
         return comunidadRepository.save(comunidad);
     }
 
+    public Comunidad crearConCreador(Comunidad comunidad, Long creadorId) {
+        Comunidad guardada = comunidadRepository.save(comunidad);
+        if (creadorId != null && creadorId > 0) {
+            usuarioRepository.findById(creadorId).ifPresent(usuario -> {
+                UsuarioComunidad relacion = new UsuarioComunidad(usuario, guardada, "FUNDADOR");
+                usuarioComunidadRepository.save(relacion);
+            });
+        }
+        return guardada;
+    }
+
     public Optional<Comunidad> actualizar(Long id, Comunidad comunidadActualizada) {
         return comunidadRepository.findById(id).map(comunidad -> {
             comunidad.setNombre(comunidadActualizada.getNombre());
             comunidad.setDescripcion(comunidadActualizada.getDescripcion());
             comunidad.setImagen(comunidadActualizada.getImagen());
             comunidad.setEstado(comunidadActualizada.getEstado());
+            return comunidadRepository.save(comunidad);
+        });
+    }
+
+    public Optional<Comunidad> actualizar(Long id, String nombre, String descripcion) {
+        return comunidadRepository.findById(id).map(comunidad -> {
+            if (nombre != null && !nombre.isBlank()) comunidad.setNombre(nombre);
+            if (descripcion != null) comunidad.setDescripcion(descripcion);
             return comunidadRepository.save(comunidad);
         });
     }

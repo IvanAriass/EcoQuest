@@ -5,8 +5,10 @@ import com.ecoquest.app.data.remote.dto.CategoriaDto
 import com.ecoquest.app.data.remote.dto.ComentarioDto
 import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.dto.EventoDto
+import com.ecoquest.app.data.remote.dto.MensajeDto
 import com.ecoquest.app.data.remote.dto.ProductoDto
 import com.ecoquest.app.data.remote.dto.RetoDto
+import com.ecoquest.app.data.remote.dto.RolInfoDto
 import com.ecoquest.app.data.remote.dto.TransaccionPuntosDto
 import com.ecoquest.app.data.remote.dto.UsuarioComunidadDto
 import com.ecoquest.app.data.remote.dto.UsuarioCosmeticoDto
@@ -35,7 +37,7 @@ interface ApiService {
     suspend fun getComunidadesPorEstado(@Query("estado") estado: String): List<ComunidadDto>
 
     @POST("comunidades")
-    suspend fun crearComunidad(@Body comunidad: ComunidadDto): ComunidadDto
+    suspend fun crearComunidad(@Body comunidad: ComunidadDto, @Query("creadorId") creadorId: Long? = null): ComunidadDto
 
     @PUT("comunidades/{id}")
     suspend fun actualizarComunidad(@Path("id") id: Long, @Body comunidad: ComunidadDto): ComunidadDto
@@ -152,4 +154,104 @@ interface ApiService {
         @Path("usuarioId") usuarioId: Long,
         @Path("productoId") productoId: Long
     ): Response<Void>
+
+    // --- Chat (Mensajes) ---
+
+    @GET("comunidades/{comunidadId}/mensajes")
+    suspend fun getMensajes(@Path("comunidadId") comunidadId: Long): List<MensajeDto>
+
+    @POST("comunidades/{comunidadId}/mensajes")
+    suspend fun crearMensaje(
+        @Path("comunidadId") comunidadId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): MensajeDto
+
+    @DELETE("comunidades/{comunidadId}/mensajes/{mensajeId}")
+    suspend fun eliminarMensaje(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("mensajeId") mensajeId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): Response<Void>
+
+    // --- Gestión de comunidad ---
+
+    @PUT("comunidades/{id}/gestionar")
+    suspend fun gestionarComunidad(
+        @Path("id") id: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>,
+        @Query("solicitanteId") solicitanteId: Long
+    ): ComunidadDto
+
+    @DELETE("usuario-comunidad/expulsar")
+    suspend fun expulsarMiembro(
+        @Query("usuarioId") usuarioId: Long,
+        @Query("comunidadId") comunidadId: Long,
+        @Query("solicitanteId") solicitanteId: Long
+    ): Response<Void>
+
+    @PATCH("usuario-comunidad/rol")
+    suspend fun cambiarRol(
+        @Query("usuarioId") usuarioId: Long,
+        @Query("comunidadId") comunidadId: Long,
+        @Query("nuevoRol") nuevoRol: String
+    ): UsuarioComunidadDto
+
+    // --- Roles ---
+
+    @GET("roles")
+    suspend fun getRoles(): List<RolInfoDto>
+
+    @GET("comunidades/{comunidadId}/roles")
+    suspend fun getRolesGestion(@Path("comunidadId") comunidadId: Long): List<RolInfoDto>
+
+    @POST("comunidades/{comunidadId}/roles")
+    suspend fun crearRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Query("solicitanteId") solicitanteId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): RolInfoDto
+
+    @PUT("comunidades/{comunidadId}/roles/{rolId}")
+    suspend fun actualizarRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("rolId") rolId: Long,
+        @Query("solicitanteId") solicitanteId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): RolInfoDto
+
+    @PUT("comunidades/{comunidadId}/roles/{rolId}/permisos")
+    suspend fun actualizarPermisosRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("rolId") rolId: Long,
+        @Query("solicitanteId") solicitanteId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): RolInfoDto
+
+    @DELETE("comunidades/{comunidadId}/roles/{rolId}")
+    suspend fun eliminarRol(
+        @Path("comunidadId") comunidadId: Long,
+        @Path("rolId") rolId: Long,
+        @Query("solicitanteId") solicitanteId: Long
+    ): Response<Void>
+
+    @GET("roles/{usuarioId}/{comunidadId}")
+    suspend fun getRolUsuario(
+        @Path("usuarioId") usuarioId: Long,
+        @Path("comunidadId") comunidadId: Long
+    ): Map<String, String>
+
+    @GET("roles/{usuarioId}/{comunidadId}/permiso/{permiso}")
+    suspend fun verificarPermiso(
+        @Path("usuarioId") usuarioId: Long,
+        @Path("comunidadId") comunidadId: Long,
+        @Path("permiso") permiso: String
+    ): Map<String, Boolean>
+
+    // --- Eventos con permiso ---
+
+    @POST("eventos/comunidad/{comunidadId}/con-permiso")
+    suspend fun crearEventoConPermiso(
+        @Path("comunidadId") comunidadId: Long,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): EventoDto
 }

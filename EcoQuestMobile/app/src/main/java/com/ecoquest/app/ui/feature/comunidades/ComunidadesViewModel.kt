@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.repository.ComunidadRepository
 import com.ecoquest.app.domain.usecase.comunidades.GetComunidadesUseCase
+import com.ecoquest.app.managers.TokenManager
 import com.ecoquest.app.ui.components.comunidad.ComunidadDialogConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ComunidadesViewModel @Inject constructor(
     private val getComunidadesUseCase: GetComunidadesUseCase,
-    private val comunidadRepository: ComunidadRepository
+    private val comunidadRepository: ComunidadRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ComunidadesUiState())
@@ -38,10 +40,14 @@ class ComunidadesViewModel @Inject constructor(
             }
             is ComunidadesEvent.OnGuardarComunidad -> {
                 viewModelScope.launch {
-                    comunidadRepository.upsert(
-                        Comunidad(nombre = event.nombre, descripcion = event.descripcion, imagen = event.imagen)
-                    )
+                    val comunidad = Comunidad(nombre = event.nombre, descripcion = event.descripcion, imagen = event.imagen)
+                    val creadorId = tokenManager.getUsuarioId()
+                    comunidadRepository.upsert(comunidad)
+                    if (creadorId > 0) {
+                        comunidadRepository.crearEnServidor(comunidad, creadorId)
+                    }
                     _state.update { it.copy(dialogo = null) }
+                    cargarComunidades()
                 }
             }
             is ComunidadesEvent.OnDismissDialog -> {

@@ -7,6 +7,7 @@ import com.ecoquest.app.data.local.entity.UsuarioComunidadEntity
 import com.ecoquest.app.data.local.mapper.toDomain
 import com.ecoquest.app.data.local.mapper.toEntity
 import com.ecoquest.app.data.remote.ApiService
+import com.ecoquest.app.data.remote.dto.ComunidadDto
 import com.ecoquest.app.data.remote.mapper.toDomain
 import com.ecoquest.app.domain.model.Comunidad
 import com.ecoquest.app.domain.repository.ComunidadRepository
@@ -73,6 +74,12 @@ class ComunidadRepositoryImpl @Inject constructor(
     }
 
     override suspend fun upsert(comunidad: Comunidad) = comunidadDao.upsert(comunidad.toEntity())
+
+    override suspend fun crearEnServidor(comunidad: Comunidad, creadorId: Long) {
+        val dto = ComunidadDto(nombre = comunidad.nombre, descripcion = comunidad.descripcion, imagen = comunidad.imagen)
+        val creada = apiService.crearComunidad(dto, creadorId)
+        comunidadDao.upsert(creada.toDomain().toEntity())
+    }
 
     override suspend fun delete(comunidad: Comunidad) = comunidadDao.delete(comunidad.toEntity())
 
