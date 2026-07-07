@@ -12,11 +12,14 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +28,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +51,8 @@ import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -53,7 +60,9 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -201,18 +210,16 @@ fun PerfilScreen(
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             } else {
-                uiState.cosmeticos.forEach { cosmetico ->
-                    CosmeticoRow(
-                        cosmetico = cosmetico,
-                        onToggle = {
-                            if (cosmetico.aplicado) {
-                                onEvent(PerfilEvent.OnDesaplicarCosmetico(cosmetico.productoId))
-                            } else {
-                                onEvent(PerfilEvent.OnAplicarCosmetico(cosmetico.productoId))
-                            }
+                CosmeticosGrid(
+                    cosmeticos = uiState.cosmeticos,
+                    onToggle = { productoId, aplicado ->
+                        if (aplicado) {
+                            onEvent(PerfilEvent.OnDesaplicarCosmetico(productoId))
+                        } else {
+                            onEvent(PerfilEvent.OnAplicarCosmetico(productoId))
                         }
-                    )
-                }
+                    }
+                )
             }
         }
 
@@ -740,56 +747,225 @@ private fun ExpandableSection(
 }
 
 @Composable
-private fun CosmeticoRow(
-    cosmetico: UsuarioCosmetico,
-    onToggle: () -> Unit
+private fun CosmeticosGrid(
+    cosmeticos: List<UsuarioCosmetico>,
+    onToggle: (Long, Boolean) -> Unit
 ) {
+    var selectedTipo by remember { mutableStateOf<String?>(null) }
+    val tipos = remember(cosmeticos) {
+        cosmeticos.map { it.productoTipo }.distinct()
+    }
+    val filtered = remember(cosmeticos, selectedTipo) {
+        if (selectedTipo == null) cosmeticos
+        else cosmeticos.filter { it.productoTipo == selectedTipo }
+    }
+    val aplicados = cosmeticos.filter { it.aplicado }
+
+    if (aplicados.isNotEmpty()) {
+        Text(
+            text = "Aplicados",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+        )
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(aplicados, key = { it.productoId }) { cosmetico ->
+                CosmeticoAppliedPill(
+                    cosmetico = cosmetico,
+                    onClick = { onToggle(cosmetico.productoId, cosmetico.aplicado) }
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+
+    val filterLabels = listOf(null as String?) + tipos
+    val filterNames = listOf("Todos") + tipos.map { tipo ->
+        when (tipo) {
+            "MARCO" -> "Marcos"
+            "TEMA" -> "Temas"
+            "INSIGNIA" -> "Insignias"
+            "ESTILO_NOMBRE" -> "Estilos"
+            else -> tipo
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(
-                    if (cosmetico.aplicado) MaterialTheme.colorScheme.primaryContainer
-                    else MaterialTheme.colorScheme.surfaceVariant
+        filterLabels.forEachIndexed { index, tipo ->
+            val selected = if (tipo == null) selectedTipo == null
+            else selectedTipo == tipo
+            FilterChip(
+                selected = selected,
+                onClick = { selectedTipo = tipo },
+                label = { Text(filterNames[index], style = MaterialTheme.typography.labelMedium) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
                 ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = null,
-                tint = if (cosmetico.aplicado) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.height(32.dp)
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    val rows = filtered.chunked(3)
+    rows.forEach { rowItems ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            rowItems.forEach { cosmetico ->
+                CosmeticoGridItem(
+                    cosmetico = cosmetico,
+                    onClick = { onToggle(cosmetico.productoId, cosmetico.aplicado) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            repeat(3 - rowItems.size) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+    }
+}
+
+@Composable
+private fun CosmeticoAppliedPill(
+    cosmetico: UsuarioCosmetico,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(GradientStart, GradientEnd)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
             Text(
                 text = cosmetico.productoNombre,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = cosmetico.tipoLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
-        Switch(
-            checked = cosmetico.aplicado,
-            onCheckedChange = { onToggle() },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.primary,
-                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
+    }
+}
+
+@Composable
+private fun CosmeticoGridItem(
+    cosmetico: UsuarioCosmetico,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val aplicado = cosmetico.aplicado
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (aplicado) 3.dp else 1.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (aplicado) MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.surface
+        ),
+        border = if (aplicado) BorderStroke(
+            2.dp, MaterialTheme.colorScheme.primary
+        ) else null
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (aplicado) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (cosmetico.productoImagen.isNotEmpty()) {
+                    AsyncImage(
+                        model = cosmetico.productoImagen,
+                        contentDescription = cosmetico.productoNombre,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(12.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        Icons.Filled.Favorite,
+                        contentDescription = null,
+                        tint = if (aplicado) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = cosmetico.productoNombre,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = if (aplicado) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
             )
-        )
+            if (aplicado) {
+                Text(
+                    text = "Activo",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 

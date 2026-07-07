@@ -68,19 +68,11 @@ class PerfilViewModel @Inject constructor(
             is PerfilEvent.OnAplicarCosmetico -> {
                 viewModelScope.launch {
                     usuarioCosmeticoRepository.aplicarCosmetico(usuarioId, event.productoId)
-                    productoIdToThemeName(event.productoId)?.let { preferencesManager.setThemeName(it) }
                 }
             }
             is PerfilEvent.OnDesaplicarCosmetico -> {
                 viewModelScope.launch {
                     usuarioCosmeticoRepository.desaplicarCosmetico(usuarioId, event.productoId)
-                    val current = _state.value.cosmeticos
-                    val stillApplied = current.firstOrNull {
-                        it.productoTipo == "TEMA" && it.aplicado && it.productoId != event.productoId
-                    }
-                    preferencesManager.setThemeName(
-                        stillApplied?.let { productoIdToThemeName(it.productoId) } ?: "default"
-                    )
                 }
             }
             is PerfilEvent.OnToggleCosmeticos -> {
@@ -151,6 +143,12 @@ class PerfilViewModel @Inject constructor(
         viewModelScope.launch {
             usuarioCosmeticoRepository.getByUsuario(usuarioId).collect { cosmeticos ->
                 _state.update { it.copy(cosmeticos = cosmeticos) }
+                val appliedTheme = cosmeticos.firstOrNull {
+                    it.productoTipo == "TEMA" && it.aplicado
+                }
+                preferencesManager.setThemeName(
+                    appliedTheme?.let { productoIdToThemeName(it.productoId) } ?: "default"
+                )
             }
         }
     }
